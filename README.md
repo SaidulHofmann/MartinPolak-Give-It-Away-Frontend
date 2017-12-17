@@ -1,4 +1,5 @@
-# GiveItAwayFrontend
+Projekt: HSR CAS FEE 2017, Projekt 02
+Titel: Give It Away Frontend
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.5.4.
 

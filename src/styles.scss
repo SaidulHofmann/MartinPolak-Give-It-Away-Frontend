@@ -1,0 +1,16 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Theme01 can overwrite bootstrap definitions. */
+/* @import "styles/theme01"; */
+
+/* Bootstrap style definitions */
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+body {
+  padding-top: 80px;
+}
+
+.starter-template {
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
