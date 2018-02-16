@@ -1,0 +1,15 @@
+<h2>Test 1 Detail</h2>
+<div *ngIf="article">
+
+  <h2>{{ article.name | uppercase }} Details</h2>
+  <div><span>id: </span>{{article.id}}</div>
+  <div>
+    <label>name:
+      <input [(ngModel)]="article.name" placeholder="name">
+    </label>
+  </div>
+
+  <button (click)="goBack()">Zurück</button>
+  <button (click)="save()">Speichern</button>
+
+</div>

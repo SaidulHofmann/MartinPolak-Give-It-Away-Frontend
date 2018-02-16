@@ -1,3 +1,7 @@
-<p>
-  messages works!
-</p>
+<h2>Meldungen: </h2>
+<div *ngIf="messageService.messages.length">
+  <button class="clear" (click)="messageService.clear()">löschen</button>
+  <div *ngFor="let message of messageService.messages">
+    {{ message }}
+  </div>
+</div>
