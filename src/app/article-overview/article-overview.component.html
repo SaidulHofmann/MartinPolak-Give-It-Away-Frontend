@@ -1,1 +1,16 @@
-<h3>Artikel Übersicht</h3>
+<table>
+  <thead>
+  <tr>
+    <td>Name</td>
+    <td>Beschreibung</td>
+  </tr>
+  </thead>
+
+  <tbody>
+  <tr *ngFor="let article of articles">
+    <td>{{ article.name }}</td>
+    <td>{{ article.description }}</td>
+  </tr>
+  </tbody>
+</table>
+

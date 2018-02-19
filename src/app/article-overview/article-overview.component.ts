@@ -1,6 +1,8 @@
 /* Implements UC04-Artikel anzeigen. */
 
 import { Component, OnInit } from '@angular/core';
+import {ArticleService} from '../article.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-article-overview',
@@ -9,9 +11,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ArticleOverviewComponent implements OnInit {
 
-  constructor() { }
+  articles: any;
+  constructor(private http: HttpClient, private service: ArticleService) { }
 
   ngOnInit() {
+    this.getArticles();
+  }
+
+  getArticles() {
+    this.service.getArticles().subscribe(res => {
+      this.articles = res;
+    });
   }
 
 }
