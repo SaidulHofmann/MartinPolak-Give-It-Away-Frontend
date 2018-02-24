@@ -4,7 +4,7 @@
     <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
       <label for="firstname">Vorname</label>
       <input type="text" class="form-control" name="firstName" [(ngModel)]="model.firstname" #firstname="ngModel" required />
-      <div *ngIf="f.submitted && !firstname.valid" class="help-block">First Name is required</div>
+      <div *ngIf="f.submitted && !firstname.valid" class="help-block">Vorname ist ein Pflichtfeld</div>
     </div>
     <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
       <label for="lastname">Nachname</label>
