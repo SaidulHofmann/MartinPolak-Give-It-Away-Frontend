@@ -28,6 +28,7 @@ import { ArticleEditComponent } from './article-edit/article-edit.component';
 import { ArticleGiveawayComponent } from './article-giveaway/article-giveaway.component';
 import { ArticleDetailComponent } from './article-detail/article-detail.component';
 import { ArticleSearchComponent } from './article-search/article-search.component';
+import {UserService} from './_services/user.service';
 
 
 @NgModule({
@@ -69,7 +70,7 @@ import { ArticleSearchComponent } from './article-search/article-search.componen
     //  InMemoryDataService, { dataEncapsulation: false }
     // )
   ],
-  providers: [ ArticleService, MessageService ],
+  providers: [ ArticleService, MessageService, UserService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
