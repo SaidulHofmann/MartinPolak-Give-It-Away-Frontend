@@ -24,13 +24,13 @@ export class UserService {
   /** POST: add a new user to the server */
   register(user: User): Observable<User> {
     return this.http.post<User>(this.usersUrl, user, httpOptions).pipe(
-      tap((article: User) => this.log(`User ${user.username} hinzugefügt.`)),
+      tap((article: User) => this.log(`User ${user.lastname} hinzugefügt.`)),
       catchError(this.handleError<User>('addUser'))
     );
   }
 
   private log(message: string) {
-    this.messageService.add('Artikel Service: ' + message);
+    this.messageService.add('User Service: ' + message);
   }
 
   /**
