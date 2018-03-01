@@ -2,7 +2,7 @@
 <div *ngIf="article">
 
   <h2>{{ article.name | uppercase }} Details</h2>
-  <div><span>id: </span>{{article.id}}</div>
+  <div><span>id: </span>{{article._id}}</div>
   <div>
     <label>name:
       <input [(ngModel)]="article.name" placeholder="name">

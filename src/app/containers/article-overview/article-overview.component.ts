@@ -1,7 +1,7 @@
 /* Implements UC04-Artikel anzeigen. */
 
 import { Component, OnInit } from '@angular/core';
-import {ArticleService} from '../article.service';
+import {ArticleService} from '../../services/article.service';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -12,14 +12,16 @@ import { HttpClient } from '@angular/common/http';
 export class ArticleOverviewComponent implements OnInit {
 
   articles: any;
-  constructor(private http: HttpClient, private service: ArticleService) { }
+  constructor(
+    private http: HttpClient,
+    private articleService: ArticleService) { }
 
   ngOnInit() {
     this.getArticles();
   }
 
   getArticles() {
-    this.service.getArticles().subscribe(res => {
+    this.articleService.getArticles().subscribe(res => {
       this.articles = res;
     });
   }

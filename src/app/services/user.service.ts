@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {User} from '../_models/user';
+import {User} from '../models/user.model';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import {MessageService} from '../message.service';
@@ -13,7 +13,7 @@ const httpOptions = {
 
 @Injectable()
 export class UserService {
-  private usersUrl = 'http://localhost:3003/api/users';
+  private usersUrl = 'http://localhost:3003/users';
 
   constructor(
     private http: HttpClient,

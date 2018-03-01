@@ -11,7 +11,7 @@
 </div>
 <ul class="articles">
   <li *ngFor="let article of articles">
-    <a routerLink="/test1Detail/{{ article.id }}">
+    <a routerLink="/test1Detail/{{ article._id }}">
       <span class="badge">{{ article.id }}</span> {{ article.name }}
     </a>
     <button class="delete" title="Artikel löschen"

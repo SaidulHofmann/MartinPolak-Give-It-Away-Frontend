@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Article } from './article';
+import { Article } from '../models/article.model';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import { MessageService } from './message.service';
+import { MessageService } from '../message.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 
@@ -12,36 +12,42 @@ const httpOptions = {
 
 @Injectable()
 export class ArticleService {
-  private articlesUrl = 'http://localhost:3003/api/articles';
+
+  private api_url = 'http://localhost:3003';
+  private articlesUrl = `${this.api_url}/api/articles`;
 
   constructor(
     private http: HttpClient,
     private messageService: MessageService) { }
 
+
   /** GET articles from the server. */
   getArticles(): Observable<Article[]> {
     return this.http.get<Article[]>(this.articlesUrl)
       .pipe(
+        map(res  => res['data'].docs as Article[]),
         tap(articles => this.log(`Artikel geladen.`)),
         catchError(this.handleError('getArticles', []))
       );
   }
 
   /** GET article by id. Will 404 if id not found */
-  getArticle(id: number): Observable<Article> {
+  getArticle(id: string): Observable<Article> {
     const url = `${this.articlesUrl}/${id}`;
     return this.http.get<Article>(url).pipe(
+      map(res  => res['data'] as Article),
       tap(_ => this.log(`Àrtikel id=${id} geladen.`)),
       catchError(this.handleError<Article>(`getArticle id=${id}`))
     );
   }
 
-  /** GET heroes whose name contains search term */
+  /** GET articles whose name contains search term */
   searchArticles(term: string): Observable<Article[]> {
     if(!term.trim()) {
       return of([]);
     }
     return this.http.get<Article[]>(`api/articles/?name=${term}`).pipe(
+      map(res  => res['data'].docs as Article[]),
       tap(_ => this.log(`Übereinstimmende Artikel zum Filter "${term}" gefunden.`)),
       catchError(this.handleError<Article[]>('searchArticle', []))
     );
@@ -50,25 +56,28 @@ export class ArticleService {
   /** PUT: update the article on the server */
   updateArticle(article: Article): Observable<any> {
     return this.http.put(this.articlesUrl, article, httpOptions).pipe(
-      tap(_ => this.log(`Artikel id=${article.id} aktualisiert.`)),
+      map(res  => res['data'] as Article),
+      tap(_ => this.log(`Artikel id=${article._id} aktualisiert.`)),
       catchError(this.handleError<any>('updateArticle'))
     );
   }
 
   /** POST: add a new article to the server */
-  addArticle(article: Article): Observable<Article> {
+  createArticle(article: Article): Observable<Article> {
     return this.http.post<Article>(this.articlesUrl, article, httpOptions).pipe(
-      tap((article: Article) => this.log(`Artikel mit id=${article.id} hinzugefügt.`)),
-      catchError(this.handleError<Article>('addArticle'))
+      map(res  => res['data'] as Article),
+      tap((article: Article) => this.log(`Artikel mit id=${article._id} hinzugefügt.`)),
+      catchError(this.handleError<Article>('createArticle'))
     );
   }
 
   /** DELETE: delete the article from the server */
-  deleteArticle(article: Article | number): Observable<Article> {
-    const id = typeof article === 'number' ? article : article.id;
+  deleteArticle(article: Article | string): Observable<Article> {
+    const id = typeof article === 'string' ? article : article._id;
     const url = `${this.articlesUrl}/${id}`;
 
     return this.http.delete<Article>(url, httpOptions).pipe(
+      map(res  => res['data'] as Article),
       tap(_ => this.log(`Artikel mit id=${id} wurde gelöscht.`)),
       catchError(this.handleError<Article>('deleteArticle'))
     );

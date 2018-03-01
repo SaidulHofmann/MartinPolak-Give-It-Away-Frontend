@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Article } from '../article';
-import { ArticleService } from '../article.service';
+import { Article } from '../../models/article.model';
+import { ArticleService } from '../../services/article.service';
 
 @Component({
   selector: 'app-test1',
@@ -29,7 +29,7 @@ export class Test1Component implements OnInit {
   add(name: string): void {
     name = name.trim();
     if(!name) { return; }
-    this.articleService.addArticle({ name } as Article )
+    this.articleService.createArticle({ name } as Article )
       .subscribe(article => {
         this.articles.push(article);
       });

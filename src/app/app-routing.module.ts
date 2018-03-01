@@ -1,17 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { ArticleOverviewComponent } from './article-overview/article-overview.component';
-import { ArticleNewComponent } from './article-new/article-new.component';
-import { RegisterComponent } from './register/register.component';
-import { LoginComponent } from './login/login.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { Test1Component } from './test1/test1.component';
-import { Test1DetailComponent } from './test1-detail/test1-detail.component';
-import { Test2Component } from './test2/test2.component';
-import { Test3Component } from './test3/test3.component';
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { ArticleDetailComponent } from './article-detail/article-detail.component';
+import { ArticleOverviewComponent } from './containers/article-overview/article-overview.component';
+import { ArticleNewComponent } from './containers/article-new/article-new.component';
+import { RegisterComponent } from './containers/register/register.component';
+import { LoginComponent } from './containers/login/login.component';
+import { DashboardComponent } from './containers/dashboard/dashboard.component';
+import { Test1Component } from './containers/test1/test1.component';
+import { Test1DetailComponent } from './containers/test1-detail/test1-detail.component';
+import { Test2Component } from './containers/test2/test2.component';
+import { Test3Component } from './containers/test3/test3.component';
+import { PageNotFoundComponent } from './containers/page-not-found/page-not-found.component';
+import { ArticleDetailComponent } from './containers/article-detail/article-detail.component';
 
 const routes = [
   { path: 'articleOverview', component: ArticleOverviewComponent },
