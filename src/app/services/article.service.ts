@@ -46,7 +46,7 @@ export class ArticleService {
     if(!term.trim()) {
       return of([]);
     }
-    return this.http.get<Article[]>(`api/articles/?name=${term}`).pipe(
+    return this.http.get<Article[]>(`${this.articlesUrl}/?name=${term}`).pipe(
       map(res  => res['data'].docs as Article[]),
       tap(_ => this.log(`Übereinstimmende Artikel zum Filter "${term}" gefunden.`)),
       catchError(this.handleError<Article[]>('searchArticle', []))
