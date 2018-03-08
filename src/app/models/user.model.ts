@@ -4,4 +4,7 @@ export default class User {
   password: string;
   firstname: string;
   lastname: string;
+
+  createdAt = new Date();
+  updatedAt = new Date();
 }
