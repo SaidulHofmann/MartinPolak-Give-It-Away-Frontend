@@ -21,8 +21,8 @@ export class ArticleOverviewComponent implements OnInit {
   }
 
   getArticles() {
-    this.articleService.getArticles().subscribe(res => {
-      this.articles = res;
+    this.articleService.getArticles().subscribe(articles => {
+      this.articles = articles;
     });
   }
 

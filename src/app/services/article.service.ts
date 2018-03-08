@@ -32,7 +32,7 @@ export class ArticleService {
   }
 
   /** GET article by id. Will 404 if id not found */
-  getArticle(id: string): Observable<Article> {
+  getArticleById(id: string): Observable<Article> {
     const url = `${this.articlesUrl}/${id}`;
     return this.http.get<Article>(url).pipe(
       map(res  => res['data'] as Article),

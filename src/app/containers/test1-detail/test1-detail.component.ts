@@ -25,7 +25,7 @@ export class Test1DetailComponent implements OnInit {
 
   getArticle(): void {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
-    this.articleService.getArticle(id)
+    this.articleService.getArticleById(id)
       .subscribe(article => this.article = article);
   }
 
