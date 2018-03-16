@@ -1,10 +1,17 @@
-export default class User {
+
+export class User {
   _id: string;
   email: string;
   password: string;
   firstname: string;
   lastname: string;
 
-  createdAt = new Date();
-  updatedAt = new Date();
+  createdAt = null;
+  updatedAt = null;
+}
+
+export class UserRef {
+  _id: string;
+  firstname: string;
+  lastname: string;
 }

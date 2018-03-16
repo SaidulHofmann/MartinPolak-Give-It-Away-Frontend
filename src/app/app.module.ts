@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemoryDataService } from './in-memory-data.service';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ArticleService } from './services/article.service';
 import { MessageService } from './message.service';
 
@@ -29,6 +29,7 @@ import { ArticleGiveawayComponent } from './containers/article-giveaway/article-
 import { ArticleDetailComponent } from './containers/article-detail/article-detail.component';
 import { ArticleSearchComponent } from './containers/article-search/article-search.component';
 import {UserService} from './services/user.service';
+import {DateValueAccessorDirective} from './shared/dateValueAccessor.directive';
 
 
 @NgModule({
@@ -56,10 +57,12 @@ import {UserService} from './services/user.service';
     ArticleDetailComponent,
     ArticleEditComponent,
     ArticleGiveawayComponent,
+    DateValueAccessorDirective
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     AppRoutingModule,
     HttpClientModule,
 

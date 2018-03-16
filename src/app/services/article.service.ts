@@ -36,7 +36,7 @@ export class ArticleService {
     const url = `${this.articlesUrl}/${id}`;
     return this.http.get<Article>(url).pipe(
       map(res  => res['data'] as Article),
-      tap(_ => this.log(`Àrtikel id=${id} geladen.`)),
+      tap(article => this.log(`Àrtikel mit name = '${article.name}' und id = '${article._id}' wurde geladen.`)),
       catchError(this.handleError<Article>(`getArticle id=${id}`))
     );
   }
@@ -57,7 +57,7 @@ export class ArticleService {
   updateArticle(article: Article): Observable<any> {
     return this.http.put(this.articlesUrl, article, httpOptions).pipe(
       map(res  => res['data'] as Article),
-      tap(_ => this.log(`Artikel id=${article._id} aktualisiert.`)),
+      tap(_ => this.log(`Artikel mit name = '${article.name}' und id = '${article._id}' wurde aktualisiert.`)),
       catchError(this.handleError<any>('updateArticle'))
     );
   }
@@ -66,19 +66,25 @@ export class ArticleService {
   createArticle(article: Article): Observable<Article> {
     return this.http.post<Article>(this.articlesUrl, article, httpOptions).pipe(
       map(res  => res['data'] as Article),
-      tap((article: Article) => this.log(`Artikel mit id=${article._id} hinzugefügt.`)),
+      tap((resArticle: Article) => this.log(`Artikel mit name = '${resArticle.name}' und id = '${resArticle._id}' wurde hinzugefügt.`)),
       catchError(this.handleError<Article>('createArticle'))
     );
   }
 
   /** DELETE: delete the article from the server */
   deleteArticle(article: Article | string): Observable<Article> {
-    const id = typeof article === 'string' ? article : article._id;
+    let id, name = '';
+    if (typeof article === 'string') {
+      id = article;
+    } else {
+      id = article._id;
+      name = article.name;
+    }
     const url = `${this.articlesUrl}/${id}`;
 
     return this.http.delete<Article>(url, httpOptions).pipe(
       map(res  => res['data'] as Article),
-      tap(_ => this.log(`Artikel mit id=${id} wurde gelöscht.`)),
+      tap(_ => this.log(`Artikel mit name = '${name}' und id = '${id}' wurde gelöscht.`)),
       catchError(this.handleError<Article>('deleteArticle'))
     );
   }

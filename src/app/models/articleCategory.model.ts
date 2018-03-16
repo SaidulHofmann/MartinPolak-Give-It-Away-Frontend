@@ -1,4 +1,5 @@
-export default class ArticleCategory {
+
+export class ArticleCategory {
   _id = '';
   name = '';
 }

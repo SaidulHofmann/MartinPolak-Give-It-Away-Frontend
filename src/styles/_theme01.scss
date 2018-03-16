@@ -17,3 +17,30 @@ $theme-colors: (
 $navbar-dark-color: rgba(255,255,255,.6);
 $navbar-dark-hover-color: rgba(255,255,255,.90);
 
+
+/* Bootstrap components */
+.card {
+  background-color: #f4f4f4;
+}
+
+.card-header {
+  background-color: #BBD8DC;
+}
+
+
+/* Other styles. */
+/*-------------------------*/
+
+// Forms
+form {
+  padding: 2rem;
+  //background-color: #eee;
+}
+
+.ng-valid[required], .ng-valid.required  {
+  border-left: 5px solid #42A948; /* green */
+}
+
+.ng-invalid:not(form)  {
+  border-left: 5px solid #a94442; /* red */
+}

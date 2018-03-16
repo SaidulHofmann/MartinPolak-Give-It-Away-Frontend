@@ -1,24 +1,25 @@
-import User from './user.model';
-import ArticleCategory from './articleCategory.model';
-import ArticleStatus from './articleStatus.model';
+import {User, UserRef} from './user.model';
+import { ArticleCategory } from './articleCategory.model';
+import { ArticleStatus } from './articleStatus.model';
+import {articleCategories, articleStatus} from './enum.model';
 
-export default class Article {
+export class Article {
 
-  _id = '';
+  _id = null;
   name = '';
   description = '';
   handover = '';
   pictureOverview = '';
-  pictures: Array<string> = [];
-  videos: Array<string> = [];
-  tags: Array<string> = [];
+  pictures: string[] = [];
+  videos: string[] = [];
+  tags = '';
   donationDate: Date = null;
 
-  publisher: User = null;
-  donee: User = null;
-  category: ArticleCategory = null;
-  status: ArticleStatus = null;
+  publisher: UserRef = null;
+  donee: UserRef = null;
+  category: ArticleCategory = articleCategories[0];
+  status: ArticleStatus = articleStatus[0];
 
-  createdAt = new Date();
-  updatedAt = new Date();
+  createdAt: Date = null; // assigned by MongoDb
+  updatedAt: Date = null; // assigned by MongoDb
 }

@@ -1,16 +1,29 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* Bootstrap style definitions */
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
+
 /* Theme01 can overwrite bootstrap definitions. */
 @import "styles/theme01";
 
-/* Bootstrap style definitions */
-@import "../node_modules/bootstrap/scss/bootstrap.scss";
-@import '../node_modules/font-awesome/css/font-awesome.css';
+/* Font Awesome */
+$fa-font-path: "../node_modules/font-awesome/fonts";
+@import '~font-awesome/scss/font-awesome.scss';
+
+body {
+  //margin: 2rem;
+}
+
+body, input[text], button {
+  color: #333;
+  font-family: Cambria, Georgia;
+}
+
 
 h1 {
   color: #369;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 250%;
+  font-size: 230%;
 }
 
 h2, h3 {
@@ -19,16 +32,9 @@ h2, h3 {
   font-weight: lighter;
 }
 
-body {
-  margin: 2rem;
-}
-
-body, input[text], button {
-  color: #888;
-  font-family: Cambria, Georgia;
-}
 
 /* everywhere else */
 * {
   font-family: Arial, Helvetica, sans-serif;
 }
+

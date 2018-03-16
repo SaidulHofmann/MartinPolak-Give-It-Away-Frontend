@@ -1,42 +1,39 @@
 <div container-fluid>
+  <div class="row mx-xs-0 mx-md-3">
+    <div class="col-xl-10 offset-xl-1">
 
-  <div class="row">
+      <div class="row">
+        <div class="col-sm-12">
+          <header class="header">
+            <app-header></app-header>
+          </header>
+        </div>
+      </div>
 
-    <div class="col-sm-12 order-1">
-      <header class="header">
-        <app-header></app-header>
-      </header>
+      <div class="row">
+        <div class="col-sm-12">
+          <nav class="mainMenu">
+            <app-navbar></app-navbar>
+          </nav>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-12">
+          <main class="content">
+            <router-outlet></router-outlet>
+          </main>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-12">
+          <footer class="footer">
+            <app-messages></app-messages>
+          </footer>
+        </div>
+      </div>
+
     </div>
-
-    <div class="col-sm-12 order-2">
-      <nav class="mainMenu">
-        <app-navbar></app-navbar>
-      </nav>
-    </div>
-
-    <div class="col-sm-12 col-md-3 order-3">
-      <nav class="subMenu">
-
-      </nav>
-    </div>
-
-    <div class="col-sm-12 order-4 col-md-3 order-md-5">
-      <aside class="sidebar">
-        <app-sidebar></app-sidebar>
-      </aside>
-    </div>
-
-    <div class="col-sm-12 order-5 col-md-6 order-md-4">
-      <main class="content">
-        <router-outlet></router-outlet>
-      </main>
-    </div>
-
-    <div class="col-sm-12 order-6">
-      <footer class="footer">
-        <app-messages></app-messages>
-      </footer>
-    </div>
-
   </div>
 </div>

@@ -1,4 +1,5 @@
-export default class ArticleStatus {
+
+export class ArticleStatus {
   _id = '';
   name = '';
 }

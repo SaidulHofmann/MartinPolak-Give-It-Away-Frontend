@@ -5,6 +5,7 @@ import { of } from 'rxjs/observable/of';
 import {MessageService} from '../message.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
+import { testUser } from '../models/enum.model';
 
 
 const httpOptions = {
@@ -33,6 +34,15 @@ export class UserService {
     this.messageService.add('User Service: ' + message);
   }
 
+
+  /**
+   * Returns the currently logged in User.
+   */
+  getCurrentUser(): Observable<User> {
+    // ToDo: Implement save/load from local storage.
+    return of(testUser);
+  }
+
   /**
    * Handle Http operation that failed.
    * Let the app continue.
@@ -52,5 +62,6 @@ export class UserService {
       return of(result as T);
     };
   }
+
 
 }
