@@ -3,10 +3,13 @@
 
   <form [formGroup]="articleForm" (ngSubmit)="onSubmit()" class="p-0">
   <div class="mb-3">
+    <span *ngIf="editMode !== editModeEnum.READ">
     <button type="submit" [disabled]="articleForm.pristine" class="btn btn-success">Speichern</button> &nbsp;
-    <button type="button" [disabled]="articleForm.pristine" class="btn btn-danger mr-2"
-            (click)="onRevert()">Änderungen verwerfen</button>
+      <button type="button" [disabled]="articleForm.pristine" class="btn btn-danger mr-2"
+              (click)="onRevert()">Änderungen verwerfen</button>
+    </span>
     <button type="button" class="btn btn-primary" (click)="onCancel()">Abbrechen</button>
+
   </div>
 
   <div class="card">
@@ -159,4 +162,5 @@
 <hr>
 <p>Form value: {{ articleForm.value | json }}</p>
 <p>Form status: {{ articleForm.status | json }}</p>
+<p>EditMode: {{ editMode }}</p>
 

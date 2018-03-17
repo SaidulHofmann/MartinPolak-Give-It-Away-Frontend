@@ -1,15 +1,14 @@
 // Creates a new article. UC3.1-Artikel erfassen.
 
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
-import { Article } from '../../models/article.model';
-import { articleCategories, articleStatus, testUserRef, testArticle } from '../../models/enum.model';
+import {Location} from '@angular/common';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {forEach} from '@angular/router/src/utils/collection';
+
+import { Article, ArticleCategory, ArticleStatus, User, UserRef, EditModeEnum } from '../../models/index.model';
+import { articleCategories, articleStatus, testUserRef, defaultUserRef, testArticle } from '../../models/data.model';
 import {ArticleService} from '../../services/article.service';
-import {UserRef} from '../../models/user.model';
-import {ArticleCategory} from '../../models/articleCategory.model';
-import {ArticleStatus} from '../../models/articleStatus.model';
-import {Location} from '@angular/common';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-article-new',
@@ -17,18 +16,25 @@ import {Location} from '@angular/common';
   styleUrls: ['./article-new.component.scss']
 })
 export class ArticleNewComponent implements OnInit, OnChanges {
-  // @Input() article: Article;
-  article: Article = testArticle;
+  @Input() editMode: string = EditModeEnum.CREATE;
+  get editModeEnum(){ return EditModeEnum; }
+  @Input() article: Article;
+  // article: Article = testArticle;
 
   articleCategories = articleCategories;
   articleStatus = articleStatus;
   articleForm: FormGroup;
 
+
   constructor(
     private formBuilder: FormBuilder,
     private articleService: ArticleService,
+    private userService: UserService,
     private location: Location) {
 
+    if (!this.article) {
+      this.createArticle();
+    }
     this.createForm();
     this.rebuildForm();
   }
@@ -43,7 +49,15 @@ export class ArticleNewComponent implements OnInit, OnChanges {
     this.rebuildForm();
   }
 
+  createArticle() {
+    this.article = new Article();
+    this.userService.getCurrentUser().subscribe(
+      (user) => { this.article.publisher = user as UserRef; }
+    );
+  }
+
   createForm() {
+    console.log('@ArticleNewComponent.createForm()');
     // Article
     this.articleForm =    this.formBuilder.group({
       category:           this.article.category || articleCategories[0],
@@ -59,35 +73,32 @@ export class ArticleNewComponent implements OnInit, OnChanges {
       // Give away
       donationDate:       this.article.donationDate || null,
       donee:              this.formBuilder.group({
-        _id:              this.article.donee._id || '',
-        firstname:        this.article.donee.firstname || '',
-        lastname:         this.article.donee.lastname || ''
+        _id:              this.article.donee ? this.article.donee._id : null,
+        firstname:        this.article.donee ? this.article.donee.firstname : '',
+        lastname:         this.article.donee ? this.article.donee.lastname : ''
       }),
 
       // Publisher
       publisher:          this.formBuilder.group({
-        _id:              this.article.publisher._id || '',
-        firstname:        this.article.publisher.firstname || '',
-        lastname:         this.article.publisher.lastname || ''
+        _id:              this.article.publisher ? this.article.publisher._id : null,
+        firstname:        this.article.publisher ? this.article.publisher.firstname : '',
+        lastname:         this.article.publisher ? this.article.publisher.lastname : ''
       }),
-      createdAt: this.article.createdAt || null,
-      updatedAt: this.article.updatedAt || null,
-      _id: this.article._id || ''
+      createdAt:          this.article.createdAt || null,
+      updatedAt:          this.article.updatedAt || null,
+      _id:                this.article._id || null
 
     });
   }
 
   // FormControl Getters
   get name() { return this.articleForm.get('name'); }
-  get description() { return this.articleForm.get('description'); }
-  get handover() { return this.articleForm.get('handover'); }
   get pictureOverview() { return this.articleForm.get('pictureOverview'); }
   get pictures(): FormArray { return this.articleForm.get('pictures') as FormArray; }
   get videos(): FormArray { return this.articleForm.get('videos') as FormArray; }
-  get tags() { return this.articleForm.get('tags'); }
-  get donationDate() { return this.articleForm.get('donationDate'); }
 
   rebuildForm() {
+    console.log('@ArticleNewComponent.rebuildForm()');
     this.articleForm.reset({
       name:               this.article.name || '',
       description:        this.article.description || '',
@@ -96,14 +107,22 @@ export class ArticleNewComponent implements OnInit, OnChanges {
       tags:               this.article.tags || '',
       donationDate:       this.article.donationDate || null,
 
-      publisher:          this.article.publisher || null,
-      donee:              this.article.donee || null,
+      publisher:          {
+        _id:              this.article.publisher ? this.article.publisher._id : null,
+        firstname:        this.article.publisher ? this.article.publisher.firstname : '',
+        lastname:         this.article.publisher ? this.article.publisher.lastname : '' },
+
+      donee:              {
+        _id:              this.article.donee ? this.article.donee._id : null,
+        firstname:        this.article.donee ? this.article.donee.firstname : '',
+        lastname:         this.article.donee ? this.article.donee.lastname : '' },
+
       category:           this.article.category || articleCategories[0],
       status:             this.article.status || articleStatus[0],
 
       createdAt:          this.article.createdAt || null,
       updatedAt:          this.article.updatedAt || null,
-      _id:                this.article._id || ''
+      _id:                this.article._id || null
     });
 
     this.setPictures(this.article.pictures);
@@ -111,9 +130,10 @@ export class ArticleNewComponent implements OnInit, OnChanges {
   }
 
   prepareSaveArticle(): Article {
+    console.log('@ArticleNewComponent.prepareSaveArticle()');
     const formModel = this.articleForm.value;
 
-    // Create copies of the pictures array items to prevent changing this.article values by entry form.
+    // Create copies of the pictures array items to prevent changing the original values of this.article by entry form.
     const picturesArray: string[] = formModel.pictures.map(
       (picture) => (picture as string)
     );
@@ -128,19 +148,16 @@ export class ArticleNewComponent implements OnInit, OnChanges {
     saveArticle.tags =            formModel.tags as string;
     saveArticle.donationDate =    formModel.donationDate as Date;
 
-    saveArticle.publisher =       (formModel.publisher as UserRef);
-    saveArticle.donee =           (formModel.donee as UserRef);
+    saveArticle.publisher =       this.article.publisher;
+    saveArticle.donee =           this.article.donee,
     saveArticle.category =        (formModel.category as ArticleCategory);
     saveArticle.status =          (formModel.status as ArticleStatus);
 
     saveArticle.createdAt =        this.article.createdAt || null,
-    saveArticle.updatedAt =        this.article.updatedAt || null,
-    saveArticle._id =              this.article._id || ''
-
-    console.log('@ArticleNewComponent.saveArticle()', saveArticle);
+    saveArticle.updatedAt =        null,
+    saveArticle._id =              this.article._id || null;
 
     return saveArticle;
-
   }
 
   // Handle pictures array
@@ -152,19 +169,13 @@ export class ArticleNewComponent implements OnInit, OnChanges {
   }
   onAddPicture() {
     this.pictures.push(this.formBuilder.control('', Validators.required));
-
-    // Remove from db (service).
   }
   onDeletePicture(index: number) {
-    // Remove from local article pictures array.
     this.pictures.removeAt(index);
-
-    // Remove from db (service).
   }
 
   // Handle videos array
   // --------------------------------------------------------------------------
-
   setVideos(videos: string[]) {
     const videosFCs = videos.map(videoUrl =>
       this.formBuilder.control(videoUrl, Validators.required));
@@ -172,33 +183,33 @@ export class ArticleNewComponent implements OnInit, OnChanges {
   }
   onAddVideo() {
     this.videos.push(this.formBuilder.control('', Validators.required));
-
-    // Remove from db (service).
   }
   onDeleteVideo(index: number) {
-    // Remove from local article videos array.
     this.videos.removeAt(index);
-
-    // Remove from db (service).
   }
 
 
   onSubmit() {
-    this.article = this.prepareSaveArticle();
     console.log('@ArticleNewComponent.onSubmit()');
 
-    // Test creatArticle
-    this.article._id = null;
-    this.articleService.createArticle(this.article).subscribe(
-      (article: Article) => {
-        this.article = article;
-        this.rebuildForm();
-      }
-    );
+    this.article = this.prepareSaveArticle();
 
-    // this.articleService.updateArticle(this.article).subscribe();
-
-
+    if (this.editMode === EditModeEnum.CREATE) {
+      this.articleService.createArticle(this.article).subscribe(
+        (article: Article) => {
+          this.article = article;
+          this.editMode = EditModeEnum.UPDATE;
+          this.rebuildForm();
+        }
+      );
+    } else if (this.editMode === EditModeEnum.UPDATE) {
+      this.articleService.updateArticle(this.article).subscribe(
+        (article: Article) => {
+          this.article = article;
+          this.rebuildForm();
+        }
+      );
+    }
   }
 
   onRevert() {

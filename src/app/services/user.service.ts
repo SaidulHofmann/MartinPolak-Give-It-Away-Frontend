@@ -5,7 +5,7 @@ import { of } from 'rxjs/observable/of';
 import {MessageService} from '../message.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
-import { testUser } from '../models/enum.model';
+import { testUser } from '../models/index.model';
 
 
 const httpOptions = {

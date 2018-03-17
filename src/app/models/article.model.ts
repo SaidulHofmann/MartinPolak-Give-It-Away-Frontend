@@ -1,7 +1,5 @@
-import {User, UserRef} from './user.model';
-import { ArticleCategory } from './articleCategory.model';
-import { ArticleStatus } from './articleStatus.model';
-import {articleCategories, articleStatus} from './enum.model';
+import {ArticleCategory, ArticleStatus, User, UserRef} from './index.model';
+import {articleCategories, articleStatus} from './data.model';
 
 export class Article {
 
