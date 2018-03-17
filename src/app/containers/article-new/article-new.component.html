@@ -5,7 +5,7 @@
   <div class="mb-3">
     <span *ngIf="editMode !== editModeEnum.READ">
     <button type="submit" [disabled]="articleForm.pristine" class="btn btn-success">Speichern</button> &nbsp;
-      <button type="button" [disabled]="articleForm.pristine" class="btn btn-danger mr-2"
+      <button type="button" [disabled]="articleForm.pristine" class="btn btn-secondary mr-2"
               (click)="onRevert()">Änderungen verwerfen</button>
     </span>
     <button type="button" class="btn btn-primary" (click)="onCancel()">Abbrechen</button>
@@ -35,12 +35,14 @@
         <label for="textareaDescription">Beschreibung:</label>
         <textarea id="textareaDescription" required rows="4" class="form-control" formControlName="description"
                   placeholder="Detailinformationen zum Artikel, dessen Zustand, weshalb dieser verschenkt werden soll, etc."></textarea>
+        <div [hidden]="description.valid || description.pristine" class="alert alert-danger">Die Beschreibung muss eingegeben werden.</div>
       </div>
 
       <div class="form-group">
         <label for="textareaHandover">Übergabe:</label>
         <textarea id="textareaHandover" required rows="4" class="form-control" formControlName="handover"
                   placeholder="Wie soll die Übergabe erfolgen ?"></textarea>
+        <div [hidden]="handover.valid || handover.pristine" class="alert alert-danger">Die Übergabe muss beschrieben werden.</div>
       </div>
 
       <div class="form-group">
@@ -160,7 +162,8 @@
 </form>
 <!-- Debug messages -->
 <hr>
-<p>Form value: {{ articleForm.value | json }}</p>
+<p>Debug Infos:<p>
+<p>Form value: {{ articleForm.value | json }}<p>
 <p>Form status: {{ articleForm.status | json }}</p>
 <p>EditMode: {{ editMode }}</p>
 
