@@ -25,12 +25,12 @@ import { FooterComponent } from './components/footer/footer.component';
 import { MessagesComponent } from './components/messages/messages.component';
 import { ArticleComponent } from './components/articles/article/article.component';
 import { ArticleGiveawayComponent } from './components/article-giveaway/article-giveaway.component';
-import { ArticleDetailComponent } from './components/article-detail/article-detail.component';
 import { ArticleSearchComponent } from './components/article-search/article-search.component';
 import {UserService} from './services/user.service';
 import {DateValueAccessorDirective} from './directives/dateValueAccessor.directive';
 import { EditArticleComponent } from './components/articles/edit-article/edit-article.component';
 import { CreateArticleComponent } from './components/articles/create-article/create-article.component';
+import { ArticleDetailsComponent } from './components/articles/article-details/article-details.component';
 
 
 @NgModule({
@@ -55,12 +55,12 @@ import { CreateArticleComponent } from './components/articles/create-article/cre
 
     Test2Component,
     Test3Component,
-    ArticleDetailComponent,
     ArticleComponent,
     ArticleGiveawayComponent,
     DateValueAccessorDirective,
     EditArticleComponent,
-    CreateArticleComponent
+    CreateArticleComponent,
+    ArticleDetailsComponent
   ],
   imports: [
     BrowserModule,

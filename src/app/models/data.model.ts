@@ -28,9 +28,9 @@ export const articleCategories: ArticleCategory[] = [
 ];
 
 export const articleStatus: ArticleStatus[] = [
-  {_id: 'available', name: 'Verfügbar'},
+  {_id: 'available', name: 'Artikel verfügbar'},
   {_id: 'handoverPending', name: 'Übergabe pendent'},
-  {_id: 'donated', name: 'Verschenkt'}
+  {_id: 'donated', name: 'Artikel verschenkt'}
 ];
 
 export const testUser: User = {

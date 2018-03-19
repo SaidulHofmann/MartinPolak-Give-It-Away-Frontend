@@ -12,11 +12,11 @@ import { Test1DetailComponent } from './components/test1-detail/test1-detail.com
 import { Test2Component } from './components/test2/test2.component';
 import { Test3Component } from './components/test3/test3.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
-import { ArticleDetailComponent } from './components/article-detail/article-detail.component';
+import { ArticleDetailsComponent } from './components/articles/article-details/article-details.component';
 
 const routes = [
   { path: 'articles', component: ArticlesComponent },
-  { path: 'detail/:id', component: ArticleDetailComponent },
+  { path: 'articles/:id/details', component: ArticleDetailsComponent },
   { path: 'articles/create', component: CreateArticleComponent },
   { path: 'articles/:id/edit', component: EditArticleComponent },
   { path: 'register', component: RegisterComponent },
