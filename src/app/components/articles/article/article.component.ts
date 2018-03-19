@@ -5,26 +5,42 @@ import {Location} from '@angular/common';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {forEach} from '@angular/router/src/utils/collection';
 
-import { Article, ArticleCategory, ArticleStatus, User, UserRef, EditModeEnum } from '../../models/index.model';
-import { articleCategories, articleStatus, testUserRef, defaultUserRef, testArticle } from '../../models/data.model';
-import {ArticleService} from '../../services/article.service';
-import {UserService} from '../../services/user.service';
+import { Article, ArticleCategory, ArticleStatus, User, UserRef, EditModeEnum } from '../../../models/index.model';
+import { articleCategories, articleStatus, testUserRef, defaultUserRef, testArticle } from '../../../models/data.model';
+import {ArticleService} from '../../../services/article.service';
+import {UserService} from '../../../services/user.service';
 
 @Component({
-  selector: 'app-article-new',
-  templateUrl: './article-new.component.html',
-  styleUrls: ['./article-new.component.scss']
+  selector: 'app-article',
+  templateUrl: './article.component.html',
+  styleUrls: ['./article.component.scss']
 })
-export class ArticleNewComponent implements OnInit, OnChanges {
-  @Input() editMode: string = EditModeEnum.CREATE;
-  get editModeEnum(){ return EditModeEnum; }
-  @Input() article: Article;
-  // article: Article = testArticle;
+export class ArticleComponent implements OnInit, OnChanges {
 
+  // Constants, variables
+  // ---------------------
+  @Input() editMode: string = EditModeEnum.READ;
+  @Input() article: Article;
+
+  articleForm: FormGroup;
   articleCategories = articleCategories;
   articleStatus = articleStatus;
-  articleForm: FormGroup;
 
+  // Properties
+  // ---------------------
+  get editModeEnum() { return EditModeEnum; } // Needed for template.
+
+  // FormControl Getters
+  get name() { return this.articleForm.get('name'); }
+  get description() { return this.articleForm.get('description'); }
+  get handover() { return this.articleForm.get('handover'); }
+  get pictureOverview() { return this.articleForm.get('pictureOverview'); }
+  get pictures(): FormArray { return this.articleForm.get('pictures') as FormArray; }
+  get videos(): FormArray { return this.articleForm.get('videos') as FormArray; }
+
+
+  // Methods
+  // ------------------
 
   constructor(
     private formBuilder: FormBuilder,
@@ -36,14 +52,13 @@ export class ArticleNewComponent implements OnInit, OnChanges {
       this.createArticle();
     }
     this.createForm();
-    this.rebuildForm();
   }
 
   ngOnInit() {
   }
 
   /**
-   * Updates the article on @Input() Property Change.
+   * Updates the article form on @Input() Property Change.
    */
   ngOnChanges() {
     this.rebuildForm();
@@ -57,14 +72,15 @@ export class ArticleNewComponent implements OnInit, OnChanges {
   }
 
   /**
-   * Creates the article form for creating or updating articles.
+   * Creates the article form for displaying and editing articles.
    */
   createForm() {
-    console.log('@ArticleNewComponent.createForm()');
+    console.log('@ArticleComponent.createForm()');
+    console.log('this.article: ', this.article);
     // Article
     this.articleForm =    this.formBuilder.group({
       _id:                this.article._id || null,
-      category:           this.getArticleCategory(this.article.category._id),
+      category:           this.getArticleCategory(this.article),
       name:               [this.article.name || '', Validators.required ],
       description:        [this.article.description || '', Validators.required ],
       handover:           [this.article.handover || '', Validators.required ],
@@ -73,7 +89,7 @@ export class ArticleNewComponent implements OnInit, OnChanges {
       pictures:           this.formBuilder.array( []),
       videos:             this.formBuilder.array( []),
       tags:               this.article.tags || '',
-      status:             this.getArticleStatus(this.article.status._id),
+      status:             this.getArticleStatus(this.article),
 
       // Give away
       donee:              this.formBuilder.group({
@@ -92,31 +108,31 @@ export class ArticleNewComponent implements OnInit, OnChanges {
       createdAt:          this.article.createdAt || null,
       updatedAt:          this.article.updatedAt || null
     });
+
+    this.setPictures(this.article.pictures);
+    this.setVideos(this.article.videos);
   }
 
-  // FormControl Getters
-  get name() { return this.articleForm.get('name'); }
-  get description() { return this.articleForm.get('description'); }
-  get handover() { return this.articleForm.get('handover'); }
-  get pictureOverview() { return this.articleForm.get('pictureOverview'); }
-  get pictures(): FormArray { return this.articleForm.get('pictures') as FormArray; }
-  get videos(): FormArray { return this.articleForm.get('videos') as FormArray; }
+
 
   /**
    * Sets the article values to the form controls.
    */
   rebuildForm() {
-    console.log('@ArticleNewComponent.rebuildForm()');
+    if (!this.article) { return; }
+
+    console.log('@ArticleComponent.rebuildForm()');
+    console.log('this.article: ', this.article);
     this.articleForm.reset({
       _id:                this.article._id || null,
-      category:           this.getArticleCategory(this.article.category._id),
+      category:           this.getArticleCategory(this.article),
       name:               this.article.name || '',
       description:        this.article.description || '',
       handover:           this.article.handover || '',
 
       pictureOverview:    this.article.pictureOverview || '',
       tags:               this.article.tags || '',
-      status:             this.getArticleStatus(this.article.status._id),
+      status:             this.getArticleStatus(this.article),
       donee:              {
         _id:              this.article.donee ? this.article.donee._id : null,
         firstname:        this.article.donee ? this.article.donee.firstname : '',
@@ -137,52 +153,37 @@ export class ArticleNewComponent implements OnInit, OnChanges {
     this.setVideos(this.article.videos);
   }
 
-  getArticleCategory(_id: string): ArticleCategory {
-    if (!_id) { return  articleCategories[0] ; } // default value
-    return this.articleCategories.find(category => category._id === _id);
-  }
-
-  getArticleStatus(_id: string): ArticleStatus {
-    if (!_id) { return  articleStatus[0] ; } // default value
-    return this.articleStatus.find(status => status._id === _id);
+  /**
+   * Returns the ArticleCategory entry in the articleCategories selection list for displaying the correct entry.
+   */
+  getArticleCategory(article: Article): ArticleCategory {
+    if (!article.category || !article.category._id) { return  this.articleCategories[0] ; } // default value
+    return this.articleCategories.find(category => category._id === article.category._id);
   }
 
   /**
-   * Sets the formControl values to a new article object.
-   * @returns {Article}
+   * Returns the ArticleStatus entry in the articleStatus selection list for displaying the correct entry.
+   */
+  getArticleStatus(article: Article): ArticleStatus {
+    if (!article.status || !article.status._id) { return  this.articleStatus[0] ; } // default value
+    return this.articleStatus.find(status => status._id === article.status._id);
+  }
+
+  /**
+   * Returns a new article object with formControl values.
    */
   prepareSaveArticle(): Article {
-    console.log('@ArticleNewComponent.prepareSaveArticle()');
-    const formModel = this.articleForm.value;
+    console.log('@ArticleComponent.prepareSaveArticle()');
 
-    // Create copies of the pictures / videos array items to prevent changing the original values of this.article by entry form.
-    const picturesArray: string[] = formModel.pictures.map(
-      (picture) => (picture as string)
-    );
-    const videosArray: string[] = formModel.videos.map(
-      (video) => (video as string)
-    );
+    const saveArticle = Object.assign(new Article(), this.articleForm.value);
 
-    const saveArticle = new Article();
-    saveArticle._id =             this.article._id || null;
-    saveArticle.category =        (formModel.category as ArticleCategory);
-    saveArticle.name =            formModel.name as string;
-    saveArticle.description =     formModel.description as string;
-    saveArticle.handover =        formModel.handover as string;
-
-    saveArticle.pictureOverview = formModel.pictureOverview as string;
-    saveArticle.pictures =        picturesArray;
-    saveArticle.videos =          videosArray;
-    saveArticle.tags =            formModel.tags as string;
-    saveArticle.status =          (formModel.status as ArticleStatus);
-
-    saveArticle.donee =           this.article.donee,
-    saveArticle.donationDate =    formModel.donationDate as Date;
-
-    saveArticle.publisher =       this.article.publisher;
-    saveArticle.createdAt =       this.article.createdAt || null,
-    saveArticle.updatedAt =       null;
-
+    // Change view-model properties to model properties.
+    if (saveArticle.publisher && !saveArticle.publisher._id) {
+      saveArticle.publisher = null;
+    }
+    if (saveArticle.donee && !saveArticle.donee._id) {
+      saveArticle.donee = null;
+    }
     return saveArticle;
   }
 
@@ -216,9 +217,9 @@ export class ArticleNewComponent implements OnInit, OnChanges {
 
 
   onSubmit() {
-    console.log('@ArticleNewComponent.onSubmit()');
+    console.log('@ArticleComponent.onSubmit()');
 
-    let articleToSave = this.prepareSaveArticle();
+    const articleToSave = this.prepareSaveArticle();
 
     if (this.editMode === EditModeEnum.CREATE) {
       this.articleService.createArticle(articleToSave).subscribe(
@@ -242,7 +243,7 @@ export class ArticleNewComponent implements OnInit, OnChanges {
     this.rebuildForm();
   }
 
-  onCancel(): void {
+  onGoBack(): void {
     this.location.back();
   }
 

@@ -9,27 +9,28 @@ import { MessageService } from './message.service';
 
 import { AppComponent } from './app.component';
 import { AppNavbarComponent } from './components/app-navbar/app-navbar.component';
-import { ArticleOverviewComponent } from './containers/article-overview/article-overview.component';
+import { ArticlesComponent } from './components/articles/articles.component';
 import { AppRoutingModule } from './/app-routing.module';
-import { ArticleNewComponent } from './containers/article-new/article-new.component';
-import { DashboardComponent } from './containers/dashboard/dashboard.component';
-import { Test1Component } from './containers/test1/test1.component';
-import { Test1DetailComponent } from './containers/test1-detail/test1-detail.component';
-import { RegisterComponent } from './containers/register/register.component';
-import { LoginComponent } from './containers/login/login.component';
-import { Test2Component } from './containers/test2/test2.component';
-import { Test3Component } from './containers/test3/test3.component';
-import { PageNotFoundComponent } from './containers/page-not-found/page-not-found.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { Test1Component } from './components/test1/test1.component';
+import { Test1DetailComponent } from './components/test1-detail/test1-detail.component';
+import { RegisterComponent } from './components/register/register.component';
+import { LoginComponent } from './components/login/login.component';
+import { Test2Component } from './components/test2/test2.component';
+import { Test3Component } from './components/test3/test3.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { MessagesComponent } from './components/messages/messages.component';
-import { ArticleEditComponent } from './containers/article-edit/article-edit.component';
-import { ArticleGiveawayComponent } from './containers/article-giveaway/article-giveaway.component';
-import { ArticleDetailComponent } from './containers/article-detail/article-detail.component';
-import { ArticleSearchComponent } from './containers/article-search/article-search.component';
+import { ArticleComponent } from './components/articles/article/article.component';
+import { ArticleGiveawayComponent } from './components/article-giveaway/article-giveaway.component';
+import { ArticleDetailComponent } from './components/article-detail/article-detail.component';
+import { ArticleSearchComponent } from './components/article-search/article-search.component';
 import {UserService} from './services/user.service';
-import {DateValueAccessorDirective} from './shared/dateValueAccessor.directive';
+import {DateValueAccessorDirective} from './directives/dateValueAccessor.directive';
+import { EditArticleComponent } from './components/articles/edit-article/edit-article.component';
+import { CreateArticleComponent } from './components/articles/create-article/create-article.component';
 
 
 @NgModule({
@@ -43,8 +44,8 @@ import {DateValueAccessorDirective} from './shared/dateValueAccessor.directive';
     Test1Component,
     Test1DetailComponent,
     MessagesComponent,
-    ArticleOverviewComponent,
-    ArticleNewComponent,
+    ArticlesComponent,
+    ArticleComponent,
 
     DashboardComponent,
     LoginComponent,
@@ -55,9 +56,11 @@ import {DateValueAccessorDirective} from './shared/dateValueAccessor.directive';
     Test2Component,
     Test3Component,
     ArticleDetailComponent,
-    ArticleEditComponent,
+    ArticleComponent,
     ArticleGiveawayComponent,
-    DateValueAccessorDirective
+    DateValueAccessorDirective,
+    EditArticleComponent,
+    CreateArticleComponent
   ],
   imports: [
     BrowserModule,

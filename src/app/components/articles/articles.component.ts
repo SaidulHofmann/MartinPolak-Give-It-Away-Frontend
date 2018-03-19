@@ -1,17 +1,18 @@
-/* Implements UC04-Artikel anzeigen. */
+// Implements UC04-Artikel anzeigen.
 
 import { Component, OnInit } from '@angular/core';
 import {ArticleService} from '../../services/article.service';
 import { HttpClient } from '@angular/common/http';
+import {Article} from '../../models/article.model';
 
 @Component({
-  selector: 'app-article-overview',
-  templateUrl: './article-overview.component.html',
-  styleUrls: ['./article-overview.component.scss']
+  selector: 'app-articles',
+  templateUrl: './articles.component.html',
+  styleUrls: ['./articles.component.scss']
 })
-export class ArticleOverviewComponent implements OnInit {
+export class ArticlesComponent implements OnInit {
+  articles: Article[];
 
-  articles: any;
   constructor(
     private http: HttpClient,
     private articleService: ArticleService) { }

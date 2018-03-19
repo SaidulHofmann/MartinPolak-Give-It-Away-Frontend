@@ -1,14 +1,11 @@
-<h3>Artikel verschenken</h3>
-<h5>Details zum Artikel, welcher verschenkt werden soll.</h5>
-
-  <form [formGroup]="articleForm" (ngSubmit)="onSubmit()" class="p-0">
+  <form [formGroup]="articleForm" (ngSubmit)="onSubmit()" class="p-0 mt-3">
   <div class="mb-3">
     <span *ngIf="editMode !== editModeEnum.READ">
     <button type="submit" [disabled]="articleForm.pristine" class="btn btn-success">Speichern</button> &nbsp;
       <button type="button" [disabled]="articleForm.pristine" class="btn btn-secondary mr-2"
               (click)="onRevert()">Änderungen verwerfen</button>
     </span>
-    <button type="button" class="btn btn-primary" (click)="onCancel()">Abbrechen</button>
+    <button type="button" class="btn btn-primary" (click)="onGoBack()">Zurück</button>
 
   </div>
 
@@ -16,13 +13,27 @@
     <h5 class="card-header">Artikel</h5>
     <div class="card-body">
 
-      <div class="form-group">
-        <label for="selectArticleCategory">Kategorie:</label>
-        <select id="selectArticleCategory" class="form-control" formControlName="category">
-          <option *ngFor="let categoryEntry of articleCategories"
-                  [ngValue]="categoryEntry">{{categoryEntry.name}}
-          </option>
-        </select>
+      <div class="form-row">
+        <div class="col-sm">
+          <div class="form-group">
+            <label for="selectArticleCategory">Kategorie:</label>
+            <select id="selectArticleCategory" class="form-control" formControlName="category">
+              <option *ngFor="let categoryEntry of articleCategories"
+                      [ngValue]="categoryEntry">{{categoryEntry.name}}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-sm">
+          <div class="form-group">
+            <label for="selectArticleStatus">Status:</label>
+            <select id="selectArticleStatus" class="form-control" formControlName="status">
+              <option *ngFor="let articleStatusEntry of articleStatus"
+                      [ngValue]="articleStatusEntry">{{articleStatusEntry.name}}
+              </option>
+            </select>
+          </div>
+        </div>
       </div>
 
       <div class="form-group">
@@ -82,15 +93,6 @@
         <input id="inputTags" type="text" class="form-control" formControlName="tags">
       </div>
 
-      <div class="form-group">
-        <label for="selectArticleStatus">Status:</label>
-        <select id="selectArticleStatus" class="form-control" formControlName="status">
-          <option *ngFor="let articleStatusEntry of articleStatus"
-                  [ngValue]="articleStatusEntry">{{articleStatusEntry.name}}
-          </option>
-        </select>
-      </div>
-
     </div>
   </div><br>
 
@@ -137,7 +139,7 @@
           <div class="form-group">
             <label for="inputCreatedAt">Erfasst am:</label>
               <input id="inputCreatedAt" readonly class="form-control"
-                     placeholder="{{ articleForm.get('createdAt').value | date:'dd.MM.yyyy' }}">
+                     placeholder="{{ articleForm.get('createdAt').value | date:'dd.MM.yyyy  HH:mm:ss' }}">
           </div>
         </div>
       </div>
@@ -152,7 +154,7 @@
         <div class="col">
           <div class="form-group">
             <label for="inputUpdatedAt">Aktualisiert am:</label>
-            <input id="inputUpdatedAt" readonly class="form-control" placeholder="{{ articleForm.get('updatedAt').value | date:'dd.MM.yyyy' }}">
+            <input id="inputUpdatedAt" readonly class="form-control" placeholder="{{ articleForm.get('updatedAt').value | date:'dd.MM.yyyy  HH:mm:ss' }}">
           </div>
         </div>
       </div>
