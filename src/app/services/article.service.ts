@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Article } from '../models/article.model';
+import {Article, ArticleFilter, HttpResponseArticles} from '../models/article.model';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { MessageService } from '../message.service';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 
 const httpOptions = {
@@ -22,11 +22,28 @@ export class ArticleService {
 
 
   /** GET articles from the server. */
-  getArticles(): Observable<Article[]> {
-    return this.http.get<Article[]>(this.articlesUrl)
+  getArticles(page: number = 1, limit: number = 10): Observable<any> {
+    return this.http.get(`${this.articlesUrl}/?page=${page}&limit=${limit}`)
       .pipe(
-        map(res  => res['data'].docs as Article[]),
-        tap(articles => this.log(`Artikel geladen.`)),
+        tap(res => this.log(`Artikel geladen.`)),
+        catchError(this.handleError('getArticles', []))
+      );
+  }
+
+  /** GET articles from the server. */
+  getArticlesByFilter(articleFilter: ArticleFilter): Observable<any> {
+    const httpParams = !articleFilter ? {} : { params: new HttpParams()
+        .set('page', articleFilter.page.toString())
+        .set('limit', articleFilter.limit.toString())
+        .set('name', articleFilter.name)
+        .set('category', articleFilter.category._id)
+        .set('status', articleFilter.status._id)
+        .set('sort', articleFilter.sort._id)
+        .set('tags', articleFilter.tags)
+    };
+    return this.http.get(this.articlesUrl, httpParams)
+      .pipe(
+        tap(res => this.log(`Artikel geladen.`)),
         catchError(this.handleError('getArticles', []))
       );
   }

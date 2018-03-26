@@ -18,7 +18,7 @@ import {UserService} from '../../../services/user.service';
 export class ArticleComponent implements OnInit, OnChanges {
 
   // Constants, variables
-  // ---------------------
+  // ----------------------------------
   @Input() editMode: string = EditModeEnum.READ;
   @Input() article: Article;
 
@@ -27,7 +27,7 @@ export class ArticleComponent implements OnInit, OnChanges {
   articleStatus = articleStatus;
 
   // Properties
-  // ---------------------
+  // ----------------------------------
   get editModeEnum() { return EditModeEnum; } // Needed for template.
 
   // FormControl Getters
@@ -40,7 +40,7 @@ export class ArticleComponent implements OnInit, OnChanges {
 
 
   // Methods
-  // ------------------
+  // ----------------------------------
 
   constructor(
     private formBuilder: FormBuilder,
@@ -184,6 +184,13 @@ export class ArticleComponent implements OnInit, OnChanges {
     if (saveArticle.donee && !saveArticle.donee._id) {
       saveArticle.donee = null;
     }
+
+    // Trim strings
+    saveArticle.name = saveArticle.name.trim();
+    saveArticle.description = saveArticle.description.trim();
+    saveArticle.handover = saveArticle.handover.trim();
+    saveArticle.tags = saveArticle.tags.trim();
+
     return saveArticle;
   }
 

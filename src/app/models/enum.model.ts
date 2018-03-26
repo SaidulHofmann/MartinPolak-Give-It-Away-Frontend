@@ -18,5 +18,8 @@ export class EditModeEnum {
   }
 }
 
-
+export class IdNamePair {
+  _id = '';
+  name = '';
+}
 

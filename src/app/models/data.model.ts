@@ -1,6 +1,7 @@
 // Contains application data.
 
 import {Article, ArticleCategory, ArticleStatus, User, UserRef } from './index.model';
+import {IdNamePair} from './enum.model';
 
 export const testUserRef: UserRef = {
   _id: '5aa00063b382de1478501ccd',
@@ -27,10 +28,38 @@ export const articleCategories: ArticleCategory[] = [
   {_id: 'leisure', name: 'Freizeit'}
 ];
 
+export const articleCategoryFilter: ArticleCategory[] = [
+  {_id: 'undefined', name: 'Alle'},
+  {_id: 'others', name: 'Sonstiges'},
+  {_id: 'mobility', name: 'Mobilität'},
+  {_id: 'household', name: 'Haushalt'},
+  {_id: 'garden', name: 'Garten'},
+  {_id: 'nutrition', name: 'Ernährung'},
+  {_id: 'office', name: 'Bürobedarf'},
+  {_id: 'hygiene', name: 'Hygiene'},
+  {_id: 'health', name: 'Gesundheit'},
+  {_id: 'electronics', name: 'Elektronik'},
+  {_id: 'leisure', name: 'Freizeit'}
+];
+
 export const articleStatus: ArticleStatus[] = [
   {_id: 'available', name: 'Artikel verfügbar'},
   {_id: 'handoverPending', name: 'Übergabe pendent'},
   {_id: 'donated', name: 'Artikel verschenkt'}
+];
+
+export const articleStatusFilter: ArticleStatus[] = [
+  {_id: 'undefined', name: 'Alle'},
+  {_id: 'available', name: 'Artikel verfügbar'},
+  {_id: 'handoverPending', name: 'Übergabe pendent'},
+  {_id: 'donated', name: 'Artikel verschenkt'}
+];
+
+export const articleSortOptions: [IdNamePair] = [
+  { _id: 'undefined', name: 'Keine' },
+  { _id: 'option1', name: 'Option 1' },
+  { _id: 'option2', name: 'Option 2' },
+  { _id: 'option3', name: 'Option 3' }
 ];
 
 export const testUser: User = {

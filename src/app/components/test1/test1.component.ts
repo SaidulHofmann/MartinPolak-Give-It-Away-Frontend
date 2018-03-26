@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Article } from '../../models/article.model';
+import {Article, HttpResponseArticles} from '../../models/article.model';
 import { ArticleService } from '../../services/article.service';
 
 @Component({
@@ -23,7 +23,7 @@ export class Test1Component implements OnInit {
 
   getArticles(): void {
     this.articleService.getArticles()
-      .subscribe(articles => this.articles = articles);
+      .subscribe(res => this.articles = (res as HttpResponseArticles).data.docs);
   }
 
   add(name: string): void {

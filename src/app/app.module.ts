@@ -31,6 +31,7 @@ import {DateValueAccessorDirective} from './directives/dateValueAccessor.directi
 import { EditArticleComponent } from './components/articles/edit-article/edit-article.component';
 import { CreateArticleComponent } from './components/articles/create-article/create-article.component';
 import { ArticleDetailsComponent } from './components/articles/article-details/article-details.component';
+import {PagerService} from './services/pager.service';
 
 
 @NgModule({
@@ -76,7 +77,7 @@ import { ArticleDetailsComponent } from './components/articles/article-details/a
     //  InMemoryDataService, { dataEncapsulation: false }
     // )
   ],
-  providers: [ ArticleService, MessageService, UserService ],
+  providers: [ ArticleService, MessageService, UserService, PagerService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

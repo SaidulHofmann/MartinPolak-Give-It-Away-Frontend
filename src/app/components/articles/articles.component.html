@@ -1,18 +1,62 @@
 <h3 class="card-title">Artikel Übersicht</h3>
 <div class="card">
   <!-- Kategorie | Sortierung | Suchbegriff   [Filter button]   -->
-  <div class="card-body">
+  <form class="form pt-3 pb-0" #searchForm="ngForm">
+    <div class="form-row">
 
+      <div class="col-md-2 mb-2 mr-md-3">
+        <label for="articleCategory">Kategorie:</label>
+        <select id="articleCategory" class="form-control" [(ngModel)]="articleFilter.category" name="articleCategory" (change)="onSetFilter()">
+          <option *ngFor="let categoryEntry of articleCategories"
+                  [ngValue]="categoryEntry">{{categoryEntry.name}}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-md-2 mb-2 mr-md-3">
+        <label for="articleStatusEntry">Status:</label>
+        <select id="articleStatusEntry" class="form-control" [(ngModel)]="articleFilter.status" name="articleStatusEntry"  (change)="onSetFilter()">
+          <option *ngFor="let statusEntry of articleStatus"
+                  [ngValue]="statusEntry">{{statusEntry.name}}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-md-2 mb-2 mr-md-3">
+        <label for="sortOption">Sortierung:</label>
+        <select id="sortOption" class="form-control" [(ngModel)]="articleFilter.sort" name="sortOption"  (change)="onSetFilter()">
+          <option *ngFor="let sortOptionEntry of sortOptions"
+                  [ngValue]="sortOptionEntry">{{sortOptionEntry.name}}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-md-3 mb-2 mr-md-3">
+        <label for="inputTags">Suchbegriffe:</label>
+        <input id="inputTags" type="text" class="form-control" [(ngModel)]="articleFilter.tags" name="tags" (keyup.enter)="onSetFilter()">
+      </div>
+
+      <div class="col-md-2">
+        <br/>
+        <button id="buttonFilter" type="button" class="btn btn-info mt-md-2 mr-2" (click)="onSetFilter()"><i class="fa fa-filter mr-2"></i></button>
+        <button id="buttonReset" type="button" class="btn btn-info mt-md-2" (click)="onResetFilter()">
+          <i class="fa fa-filter"><i class="fa fa-times"></i></i></button>
+      </div>
+
+    </div>
+  </form>
+
+  <div class="card-body">
     <div class="card" *ngFor="let article of articles">
       <div class="card-body">
         <div class="row">
 
           <div class="col-md-6">
             <h4 class="card-title">{{ article.name }}</h4>
-            <img class="card-img" src="{{ article.pictureOverview }}" alt="Bild">
+            <img class="card-img" style="cursor: pointer" src="{{ article.pictureOverview }}" alt="Bild"  (click)="onArticleDetails(article)">
             <span>
-              <button class="btn btn-outline-info"  (click)="onDetails(article)"><i class="fa fa-info-circle fa-lg mr-1"></i>Details</button>
-              <button class="btn btn-outline-secondary" (click)="onEdit(article)"><i class="fa fa-edit fa-lg mr-1"></i>Bearbeiten</button>
+              <button class="btn btn-info mt-2 mr-3" (click)="onArticleDetails(article)"><i class="fa fa-info-circle fa-lg mr-2"></i>Details</button>
+              <button class="btn btn-outline-secondary mt-2" (click)="onEdit(article)"><i class="fa fa-edit fa-lg mr-1"></i>Bearbeiten</button>
             </span>
           </div>
 
@@ -22,16 +66,30 @@
               <div class="card-title">{{ article.description }}</div>
             </div>
           </div>
-<!--
-          <div class="col-md-2">
-            <button class="btn btn-outline-info mb-2"><i class="fa fa-info-circle fa-lg"></i>Details</button>
-            <button class="btn btn-outline-secondary"><i class="fa fa-edit fa-lg"></i>Bearbeiten</button>
-          </div>
--->
+
         </div>
       </div>
     </div>
-
   </div>
+
+  <nav aria-label="Article search pagination">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" [ngClass]="{disabled:pager.currentPage === 1}">
+        <a class="page-link" (click)="setPage(1)" title="Erste Seite"><i class="fa fa-step-backward"></i></a>
+      </li>
+      <li class="page-item" [ngClass]="{disabled:pager.currentPage === 1}">
+        <a class="page-link" (click)="setPage(pager.currentPage - 1)">Zurück</a>
+      </li>
+      <li class="page-item" *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
+        <a class="page-link" (click)="setPage(page)">{{page}}</a>
+      </li>
+      <li class="page-item" [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+        <a class="page-link" (click)="setPage(pager.currentPage + 1)">Weiter</a>
+      </li>
+      <li class="page-item" [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+        <a class="page-link" (click)="setPage(pager.totalPages)" title="Letzte Seite"><i class="fa fa-step-forward"></i></a>
+      </li>
+    </ul>
+  </nav>
 
 </div>
