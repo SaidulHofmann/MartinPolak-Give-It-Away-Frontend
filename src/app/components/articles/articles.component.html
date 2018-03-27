@@ -1,30 +1,30 @@
 <h3 class="card-title">Artikel Übersicht</h3>
 <div class="card">
   <!-- Kategorie | Sortierung | Suchbegriff   [Filter button]   -->
-  <form class="form pt-3 pb-0" #searchForm="ngForm">
+  <form class="form pt-3 pb-3 pr-3" #searchForm="ngForm" style="border: 3px solid #cfd8dc">
     <div class="form-row">
 
-      <div class="col-md-2 mb-2 mr-md-3">
+      <div class="col-md-3 mb-2 mr-md-3">
         <label for="articleCategory">Kategorie:</label>
-        <select id="articleCategory" class="form-control" [(ngModel)]="articleFilter.category" name="articleCategory" (change)="onSetFilter()">
+        <select id="articleCategory" class="form-control form-control-sm" [(ngModel)]="articleFilter.category" name="articleCategory" (change)="onSetFilter()">
           <option *ngFor="let categoryEntry of articleCategories"
                   [ngValue]="categoryEntry">{{categoryEntry.name}}
           </option>
         </select>
       </div>
 
-      <div class="col-md-2 mb-2 mr-md-3">
+      <div class="col-md-4 mb-2 mr-md-3">
         <label for="articleStatusEntry">Status:</label>
-        <select id="articleStatusEntry" class="form-control" [(ngModel)]="articleFilter.status" name="articleStatusEntry"  (change)="onSetFilter()">
+        <select id="articleStatusEntry" class="form-control form-control-sm" [(ngModel)]="articleFilter.status" name="articleStatusEntry"  (change)="onSetFilter()">
           <option *ngFor="let statusEntry of articleStatus"
                   [ngValue]="statusEntry">{{statusEntry.name}}
           </option>
         </select>
       </div>
 
-      <div class="col-md-2 mb-2 mr-md-3">
+      <div class="col-md-4 mb-2 mr-md-3">
         <label for="sortOption">Sortierung:</label>
-        <select id="sortOption" class="form-control" [(ngModel)]="articleFilter.sort" name="sortOption"  (change)="onSetFilter()">
+        <select id="sortOption" class="form-control form-control-sm" [(ngModel)]="articleFilter.sort" name="sortOption"  (change)="onSetFilter()">
           <option *ngFor="let sortOptionEntry of sortOptions"
                   [ngValue]="sortOptionEntry">{{sortOptionEntry.name}}
           </option>
@@ -33,14 +33,14 @@
 
       <div class="col-md-3 mb-2 mr-md-3">
         <label for="inputTags">Suchbegriffe:</label>
-        <input id="inputTags" type="text" class="form-control" [(ngModel)]="articleFilter.tags" name="tags" (keyup.enter)="onSetFilter()">
+        <input id="inputTags" type="text" class="form-control form-control-sm" [(ngModel)]="articleFilter.tags" name="tags" (keyup.enter)="onSetFilter()">
       </div>
 
-      <div class="col-md-2">
+      <div class="col-md-3">
         <br/>
-        <button id="buttonFilter" type="button" class="btn btn-info mt-md-2 mr-2" (click)="onSetFilter()"><i class="fa fa-filter mr-2"></i></button>
-        <button id="buttonReset" type="button" class="btn btn-info mt-md-2" (click)="onResetFilter()">
-          <i class="fa fa-filter"><i class="fa fa-times"></i></i></button>
+        <button id="buttonFilter" type="button" class="btn btn-info btn-sm mt-md-2 mr-2" (click)="onSetFilter()"><i class="fa fa-filter mr-2"></i>Filtern</button>
+        <button id="buttonReset" type="button" class="btn btn-outline-info btn-sm mt-md-2" (click)="onResetFilter()">
+          <i class="fa fa-filter mr-2"><i class="fa fa-times"></i></i>Reset</button>
       </div>
 
     </div>
@@ -55,8 +55,8 @@
             <h4 class="card-title">{{ article.name }}</h4>
             <img class="card-img" style="cursor: pointer" src="{{ article.pictureOverview }}" alt="Bild"  (click)="onArticleDetails(article)">
             <span>
-              <button class="btn btn-info mt-2 mr-3" (click)="onArticleDetails(article)"><i class="fa fa-info-circle fa-lg mr-2"></i>Details</button>
-              <button class="btn btn-outline-secondary mt-2" (click)="onEdit(article)"><i class="fa fa-edit fa-lg mr-1"></i>Bearbeiten</button>
+              <button class="btn btn-info btn-sm mt-2 mr-3" (click)="onArticleDetails(article)"><i class="fa fa-info-circle fa-lg mr-2"></i>Details</button>
+              <button class="btn btn-outline-secondary btn-sm mt-2" (click)="onEdit(article)"><i class="fa fa-edit fa-lg mr-1"></i>Bearbeiten</button>
             </span>
           </div>
 
