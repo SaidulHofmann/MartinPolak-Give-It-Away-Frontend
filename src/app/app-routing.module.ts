@@ -13,10 +13,11 @@ import { Test2Component } from './components/test2/test2.component';
 import { Test3Component } from './components/test3/test3.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { ArticleDetailsComponent } from './components/articles/article-details/article-details.component';
+import {ArticleResolver} from './services/article-resolver.service';
 
 const routes = [
   { path: 'articles', component: ArticlesComponent },
-  { path: 'articles/:id/details', component: ArticleDetailsComponent },
+  { path: 'articles/:id/details', component: ArticleDetailsComponent, resolve: { article: ArticleResolver }},
   { path: 'articles/create', component: CreateArticleComponent },
   { path: 'articles/:id/edit', component: EditArticleComponent },
   { path: 'register', component: RegisterComponent },

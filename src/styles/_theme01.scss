@@ -1,5 +1,6 @@
-/* Bootstrap Theme 01 */
+/* Theme 01 */
 
+@import 'variables';
 
 /* Bootstrap maps. */
 /*-------------------------*/
@@ -20,11 +21,11 @@ $navbar-dark-hover-color: rgba(255,255,255,.90);
 
 /* Bootstrap components */
 .card {
-  background-color: #f4f4f4;
+  background-color: $gia-card-bg-color;
 }
 
 .card-header {
-  background-color: #BBD8DC;
+  background-color: $gia-card-header-bg-color;
 }
 
 
@@ -34,13 +35,28 @@ $navbar-dark-hover-color: rgba(255,255,255,.90);
 // Forms
 form {
   padding: 2rem;
-  //background-color: #eee;
+  //background-color: $gia-bg-color;
 }
 
 .ng-valid[required], .ng-valid.required  {
-  border-left: 5px solid #42A948; /* green */
+  border-left: 5px solid $gia-valid-color; /* green */
 }
 
 .ng-invalid:not(form)  {
-  border-left: 5px solid #a94442; /* red */
+  border-left: 5px solid $gia-invalid-color; /* red */
+}
+
+// @import url('https://fonts.googleapis.com/css?family=Lobster');
+@font-face {
+  font-display: swap;
+  font-family: 'Dancing Script';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Dancing Script Regular'), local('DancingScript-Regular'), url(https://fonts.gstatic.com/s/dancingscript/v9/If2RXTr6YS-zF4S-kcSWSVi_szLgiuE.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+.gia-header {
+  font-family: 'Dancing Script';
+  font-weight: bold;
 }

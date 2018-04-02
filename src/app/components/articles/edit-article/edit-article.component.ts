@@ -19,7 +19,7 @@ export class EditArticleComponent implements OnInit {
     private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
-    const id = this.activatedRoute.snapshot.paramMap.get('id');
+    const id = this.activatedRoute.snapshot.paramMap['id'];
     this.articleService.getArticleById(id).subscribe(article => this.article = article);
   }
 

@@ -32,6 +32,7 @@ import { EditArticleComponent } from './components/articles/edit-article/edit-ar
 import { CreateArticleComponent } from './components/articles/create-article/create-article.component';
 import { ArticleDetailsComponent } from './components/articles/article-details/article-details.component';
 import {PagerService} from './services/pager.service';
+import {ArticleResolver} from './services/article-resolver.service';
 
 
 @NgModule({
@@ -77,7 +78,7 @@ import {PagerService} from './services/pager.service';
     //  InMemoryDataService, { dataEncapsulation: false }
     // )
   ],
-  providers: [ ArticleService, MessageService, UserService, PagerService ],
+  providers: [ ArticleService, MessageService, UserService, PagerService, ArticleResolver ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

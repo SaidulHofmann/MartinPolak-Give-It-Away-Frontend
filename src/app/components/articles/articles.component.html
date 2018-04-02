@@ -1,6 +1,5 @@
 <h3 class="card-title">Artikel Übersicht</h3>
 <div class="card">
-  <!-- Kategorie | Sortierung | Suchbegriff   [Filter button]   -->
   <form class="form pt-3 pb-3 pr-3" #searchForm="ngForm" style="border: 3px solid #cfd8dc">
     <div class="form-row">
 
@@ -51,16 +50,16 @@
       <div class="card-body">
         <div class="row">
 
-          <div class="col-md-6">
+          <div class="col-md-5">
             <h4 class="card-title">{{ article.name }}</h4>
-            <img class="card-img" style="cursor: pointer" src="{{ article.pictureOverview }}" alt="Bild"  (click)="onArticleDetails(article)">
-            <span>
+            <img class="card-img" style="height: 250px; width: auto; cursor: pointer" src="{{ article.pictureOverview }}" alt="Bild"  (click)="onArticleDetails(article)">
+            <div>
               <button class="btn btn-info btn-sm mt-2 mr-3" (click)="onArticleDetails(article)"><i class="fa fa-info-circle fa-lg mr-2"></i>Details</button>
               <button class="btn btn-outline-secondary btn-sm mt-2" (click)="onEdit(article)"><i class="fa fa-edit fa-lg mr-1"></i>Bearbeiten</button>
-            </span>
+            </div>
           </div>
 
-          <div class="col-md-6">
+          <div class="col-md-7">
             <div class="form-group">
               <div class="card-title">{{ article.status ? article.status.name : '' }}</div>
               <div class="card-title">{{ article.description }}</div>

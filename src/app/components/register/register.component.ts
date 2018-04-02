@@ -4,6 +4,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {UserService} from '../../services/user.service';
+import {User} from '../../models/user.model';
 
 @Component({
   selector: 'app-register',
@@ -11,7 +12,7 @@ import {UserService} from '../../services/user.service';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
-  model: any = {};
+  user: User = new User();
   loading = false;
 
   constructor(
@@ -20,7 +21,7 @@ export class RegisterComponent implements OnInit {
 
   register() {
     this.loading = true;
-    this.userService.register(this.model)
+    this.userService.register(this.user)
       .subscribe(
         data => {
           // set success message and pass true paramater to persist the message after redirecting to the login page

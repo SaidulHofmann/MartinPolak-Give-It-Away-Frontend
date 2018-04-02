@@ -1,14 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 
 /* Bootstrap style definitions */
-@import "../node_modules/bootstrap/scss/bootstrap.scss";
+@import "../../node_modules/bootstrap/scss/bootstrap";
 
 /* Theme01 can overwrite bootstrap definitions. */
-@import "styles/theme01";
+@import 'theme01';
 
 /* Font Awesome */
-$fa-font-path: "../node_modules/font-awesome/fonts";
-@import '~font-awesome/scss/font-awesome.scss';
+$fa-font-path: "../../node_modules/font-awesome/fonts";
+@import '../../node_modules/font-awesome/scss/font-awesome';
 
 body {
   //margin: 2rem;

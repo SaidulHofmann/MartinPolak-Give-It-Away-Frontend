@@ -75,8 +75,6 @@ export class ArticleComponent implements OnInit, OnChanges {
    * Creates the article form for displaying and editing articles.
    */
   createForm() {
-    console.log('@ArticleComponent.createForm()');
-    console.log('this.article: ', this.article);
     // Article
     this.articleForm =    this.formBuilder.group({
       _id:                this.article._id || null,
@@ -121,8 +119,6 @@ export class ArticleComponent implements OnInit, OnChanges {
   rebuildForm() {
     if (!this.article) { return; }
 
-    console.log('@ArticleComponent.rebuildForm()');
-    console.log('this.article: ', this.article);
     this.articleForm.reset({
       _id:                this.article._id || null,
       category:           this.getArticleCategory(this.article),
@@ -173,8 +169,6 @@ export class ArticleComponent implements OnInit, OnChanges {
    * Returns a new article object with formControl values.
    */
   prepareSaveArticle(): Article {
-    console.log('@ArticleComponent.prepareSaveArticle()');
-
     const saveArticle = Object.assign(new Article(), this.articleForm.value);
 
     // Change view-model properties to model properties.
@@ -224,8 +218,6 @@ export class ArticleComponent implements OnInit, OnChanges {
 
 
   onSubmit() {
-    console.log('@ArticleComponent.onSubmit()');
-
     const articleToSave = this.prepareSaveArticle();
 
     if (this.editMode === EditModeEnum.CREATE) {
