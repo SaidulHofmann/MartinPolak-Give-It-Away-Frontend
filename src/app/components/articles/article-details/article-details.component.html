@@ -1,24 +1,39 @@
 <h3>Artikel Details</h3>
-<button type="button" class="btn btn-primary" (click)="onGoBack()">Zurück</button>
-<div class="card">
+<div class="mb-3">
+  <button type="button" class="btn btn-primary" (click)="onGoBack()">Zurück</button>
+</div>
+  <div class="card">
   <div class="row">
     <div class="col-md-6">
 
       <div class="card">
         <div class="card-header">
-          Artikelbezeichnung
+          <h4>{{ article.name }}</h4>
         </div>
         <div class="card-body">
-          Bild(Video
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          Reservation
-        </div>
-        <div class="card-body">
-          Textbox / Button
+          Bild / Video
+          <div *ngIf="article.pictures">
+            <div id="picture-carousel" class="carousel slide" #pictureCarousel>
+              <ol class="carousel-indicators">
+                <div *ngFor="let picture of article.pictures; let i = index">
+                  <li  data-target="#picture-carousel" data-slide-to="i" [ngClass]="{'active': i===0}"></li>
+                </div>
+              </ol>
+              <div class="carousel-inner">
+                <div *ngFor="let picture of article.pictures; let i = index" class="carousel-item"  [ngClass]="{'active': i===0}">
+                  <img class="d-block w-100" [src]="picture" alt="Slide">
+                </div>
+              </div>
+              <a class="carousel-control-prev" href="#picture-carousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+              </a>
+              <a class="carousel-control-next" href="#picture-carousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -31,16 +46,7 @@
           Artikel Beschreibung
         </div>
         <div class="card-body">
-          Text
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          Zustand
-        </div>
-        <div class="card-body">
-          Text
+          {{ article.description }}
         </div>
       </div>
 
@@ -49,11 +55,18 @@
           Übergabe
         </div>
         <div class="card-body">
-          Text
+          {{ article.handover }}
         </div>
       </div>
 
-
+      <div class="card">
+        <div class="card-header">
+          Reservation
+        </div>
+        <div class="card-body">
+          Textbox / Button
+        </div>
+      </div>
 
     </div>
 

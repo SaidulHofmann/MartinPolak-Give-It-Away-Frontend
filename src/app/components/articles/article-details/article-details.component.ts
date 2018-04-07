@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Data} from '@angular/router';
 import {Location} from '@angular/common';
 import {Article} from '../../../models/article.model';
+import * as $ from 'jquery';
+
 
 @Component({
   selector: 'app-article-details',
@@ -10,6 +12,7 @@ import {Article} from '../../../models/article.model';
 })
 export class ArticleDetailsComponent implements OnInit {
   article: Article ;
+
 
   constructor(
     private location: Location,
