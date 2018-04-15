@@ -1,32 +1,38 @@
-<div class="row">
-<div class=" col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
-  <h2>Registrieren</h2>
-  <form name="form" (ngSubmit)="f.form.valid && register()" #f="ngForm" novalidate>
-    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !firstname.valid }">
-      <label for="firstname">Vorname</label>
-      <input type="text" class="form-control" name="firstName" [(ngModel)]="user.firstname" #firstname="ngModel" required />
-      <div *ngIf="f.submitted && !firstname.valid" class="help-block">Vorname ist ein Pflichtfeld</div>
-    </div>
-    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !lastname.valid }">
-      <label for="lastname">Nachname</label>
-      <input type="text" class="form-control" name="lastName" [(ngModel)]="user.lastname" #lastname="ngModel" required />
-      <div *ngIf="f.submitted && !lastname.valid" class="help-block">Nachname ist ein Pflichtfeld</div>
-    </div>
-    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !email.valid }">
-      <label for="email">E-Mail</label>
-      <input type="text" class="form-control" name="email" [(ngModel)]="user.email" #email="ngModel" required />
-      <div *ngIf="f.submitted && !email.valid" class="help-block">E-Mail ist ein Pflichfeld</div>
-    </div>
-    <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !password.valid }">
-      <label for="password">Passwort</label>
-      <input type="password" class="form-control" name="password" [(ngModel)]="user.password" #password="ngModel" required />
-      <div *ngIf="f.submitted && !password.valid" class="help-block">Passwort ist ein Pflichtfeld</div>
-    </div>
+<div class=" col-xs-12 col-sm-10 col-md-8 offset-sm-1 offset-md-2">
+  <h3>Registrieren</h3>
+  <form #registerForm="ngForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
-      <button [disabled]="loading" class="btn btn-primary">Registrieren</button>
-      <img *ngIf="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
-      <a [routerLink]="['/login']" class="btn btn-link">Abbrechen</a>
+      <label for="firstname">Vorname</label>
+      <input required type="text" class="form-control" id="firstname"
+             name="firstname" [(ngModel)]="user.firstname" #firstname="ngModel" autocomplete="given-name"/>
+      <div class="alert alert-danger" [hidden]="firstname.valid || firstname.pristine">Der Vorname ist ein Pflichtfeld</div>
     </div>
+
+    <div class="form-group">
+      <label for="lastname">Nachname</label>
+      <input required type="text" class="form-control" id="lastname"
+             name="lastname" [(ngModel)]="user.lastname" #lastname="ngModel" autocomplete="family-name"/>
+      <div class="alert alert-danger" [hidden]="lastname.valid || lastname.pristine">Der Nachname ist ein Pflichtfeld</div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">E-Mail</label>
+      <input required email type="email" class="form-control" id="email"
+             name="email" [(ngModel)]="user.email" #email="ngModel" autocomplete="email"/>
+      <div class="alert alert-danger" [hidden]="email.valid || email.pristine">Das E-Mail ist ungültig.</div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Passwort</label>
+      <input required type="password" class="form-control" id="password"
+             name="password" [(ngModel)]="user.password" #password="ngModel" autocomplete="off"/>
+      <div class="alert alert-danger" [hidden]="password.valid || password.pristine">Das Passwort ist ein Pflichtfeld</div>
+    </div>
+
+    <div class="form-group mt-5">
+      <button [disabled]="!registerForm.form.valid" class="btn btn-success mr-3">Registrieren</button>
+      <a [routerLink]="['/login']" class="btn btn-outline-primary">Abbrechen</a>
+    </div>
+
   </form>
-</div>
 </div>

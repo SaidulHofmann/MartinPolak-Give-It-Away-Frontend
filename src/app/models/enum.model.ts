@@ -1,25 +1,13 @@
-import {User, UserRef} from './user.model';
-import {Article} from './article.model';
-import {ArticleCategory} from './articleCategory.model';
-import {ArticleStatus} from './articleStatus.model';
 
-export class EditModeEnum {
-  static get CREATE() {
-    return 'CREATE';
-  }
-  static get READ() {
-    return 'READ';
-  }
-  static get UPDATE() {
-    return 'UPDATE';
-  }
-  static get DELETE() {
-    return 'DELETE';
-  }
+export enum EditModeEnum {
+  Create,
+  Read,
+  Update,
+  Delete
 }
 
-export class IdNamePair {
-  _id = '';
-  name = '';
+export enum ErrorCodes {
+  MongoDB_DuplicateKey = 'E11000',
+  Client_Side_Or_Network_Error = 'Client_Side_Or_Network_Error'
 }
 

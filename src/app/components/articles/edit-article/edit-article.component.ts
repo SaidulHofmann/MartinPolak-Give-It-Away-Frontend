@@ -10,15 +10,14 @@ import {ActivatedRoute} from '@angular/router';
   styleUrls: ['./edit-article.component.scss']
 })
 export class EditArticleComponent implements OnInit {
-  article: Article;
-
-  get editModeEnum() { return EditModeEnum; }
+  public article: Article;
+  public EditModeEnum = EditModeEnum;
 
   constructor(
     private articleService: ArticleService,
     private activatedRoute: ActivatedRoute) { }
 
-  ngOnInit() {
+  public ngOnInit() {
     const id = this.activatedRoute.snapshot.paramMap['id'];
     this.articleService.getArticleById(id).subscribe(article => this.article = article);
   }

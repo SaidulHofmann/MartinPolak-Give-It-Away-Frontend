@@ -1,4 +1,4 @@
-import { TestBed, async } from '@angular/core/testing';
+import {TestBed, async, ComponentFixture} from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import {AppNavbarComponent} from './components/app-navbar/app-navbar.component';
 import {HeaderComponent} from './components/header/header.component';
@@ -8,34 +8,33 @@ import { RouterTestingModule } from '@angular/router/testing';
 import {MessageService} from './message.service';
 
 describe('AppComponent', () => {
+  let component: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
 
-  beforeEach(async(() => {
+  beforeEach((() => {
     TestBed.configureTestingModule({
       declarations: [
         AppComponent, AppNavbarComponent, HeaderComponent, FooterComponent, MessagesComponent
       ],
       imports: [RouterTestingModule],
       providers: [MessageService]
-    }).compileComponents();
+    });
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
   }));
 
   it('should create the app', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
+    expect(component).toBeTruthy();
   }));
 
   it(`should have as title 'Give it Away'`, async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('Give it Away');
+    expect(component.title).toEqual('Give it Away');
   }));
 
   it('should render title in a h1 tag', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Give it Away');
+    fixture.detectChanges(); // performs data binding
+    const h1: HTMLElement = fixture.nativeElement.querySelector('h1');
+    expect(h1.textContent).toContain('Give it Away');
   }));
 
 });

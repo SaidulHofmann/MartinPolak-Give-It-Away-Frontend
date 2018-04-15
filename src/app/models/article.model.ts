@@ -1,6 +1,6 @@
 import {ArticleCategory, ArticleStatus, User, UserRef} from './index.model';
 import {articleCategories, articleCategoryFilter, articleStatus, articleStatusFilter, articleSortOptions} from './data.model';
-import {IdNamePair} from './enum.model';
+import {IdNamePair} from './core.model';
 
 export class Article {
 

@@ -19,24 +19,24 @@ export class ArticleComponent implements OnInit, OnChanges {
 
   // Constants, variables
   // ----------------------------------
-  @Input() editMode: string = EditModeEnum.READ;
-  @Input() article: Article;
+  public EditModeEnum = EditModeEnum;
+  @Input() public editMode: EditModeEnum = EditModeEnum.Read;
+  @Input() public article: Article;
 
-  articleForm: FormGroup;
-  articleCategories = articleCategories;
-  articleStatus = articleStatus;
+  public articleForm: FormGroup;
+  public articleCategories = articleCategories;
+  public articleStatus = articleStatus;
 
   // Properties
   // ----------------------------------
-  get editModeEnum() { return EditModeEnum; } // Needed for template.
 
   // FormControl Getters
-  get name() { return this.articleForm.get('name'); }
-  get description() { return this.articleForm.get('description'); }
-  get handover() { return this.articleForm.get('handover'); }
-  get pictureOverview() { return this.articleForm.get('pictureOverview'); }
-  get pictures(): FormArray { return this.articleForm.get('pictures') as FormArray; }
-  get videos(): FormArray { return this.articleForm.get('videos') as FormArray; }
+  public get name() { return this.articleForm.get('name'); }
+  public get description() { return this.articleForm.get('description'); }
+  public get handover() { return this.articleForm.get('handover'); }
+  public get pictureOverview() { return this.articleForm.get('pictureOverview'); }
+  public get pictures(): FormArray { return this.articleForm.get('pictures') as FormArray; }
+  public get videos(): FormArray { return this.articleForm.get('videos') as FormArray; }
 
 
   // Methods
@@ -54,17 +54,17 @@ export class ArticleComponent implements OnInit, OnChanges {
     this.createForm();
   }
 
-  ngOnInit() {
+  public ngOnInit() {
   }
 
   /**
    * Updates the article form on @Input() Property Change.
    */
-  ngOnChanges() {
+  public ngOnChanges() {
     this.rebuildForm();
   }
 
-  createArticle() {
+  private createArticle() {
     this.article = new Article();
     this.userService.getCurrentUser().subscribe(
       (user) => { this.article.publisher = user as UserRef; }
@@ -74,7 +74,7 @@ export class ArticleComponent implements OnInit, OnChanges {
   /**
    * Creates the article form for displaying and editing articles.
    */
-  createForm() {
+  private createForm() {
     // Article
     this.articleForm =    this.formBuilder.group({
       _id:                this.article._id || null,
@@ -116,7 +116,7 @@ export class ArticleComponent implements OnInit, OnChanges {
   /**
    * Sets the article values to the form controls.
    */
-  rebuildForm() {
+  private rebuildForm() {
     if (!this.article) { return; }
 
     this.articleForm.reset({
@@ -152,7 +152,7 @@ export class ArticleComponent implements OnInit, OnChanges {
   /**
    * Returns the ArticleCategory entry in the articleCategories selection list for displaying the correct entry.
    */
-  getArticleCategory(article: Article): ArticleCategory {
+  private getArticleCategory(article: Article): ArticleCategory {
     if (!article.category || !article.category._id) { return  this.articleCategories[0] ; } // default value
     return this.articleCategories.find(category => category._id === article.category._id);
   }
@@ -160,7 +160,7 @@ export class ArticleComponent implements OnInit, OnChanges {
   /**
    * Returns the ArticleStatus entry in the articleStatus selection list for displaying the correct entry.
    */
-  getArticleStatus(article: Article): ArticleStatus {
+  private getArticleStatus(article: Article): ArticleStatus {
     if (!article.status || !article.status._id) { return  this.articleStatus[0] ; } // default value
     return this.articleStatus.find(status => status._id === article.status._id);
   }
@@ -168,7 +168,7 @@ export class ArticleComponent implements OnInit, OnChanges {
   /**
    * Returns a new article object with formControl values.
    */
-  prepareSaveArticle(): Article {
+  private prepareSaveArticle(): Article {
     const saveArticle = Object.assign(new Article(), this.articleForm.value);
 
     // Change view-model properties to model properties.
@@ -190,45 +190,45 @@ export class ArticleComponent implements OnInit, OnChanges {
 
   // Handle pictures array
   // --------------------------------------------------------------------------
-  setPictures(pictures: string[]) {
+  private setPictures(pictures: string[]) {
     const pictureFCs = pictures.map(pictureUrl =>
       this.formBuilder.control(pictureUrl, Validators.required));
     this.articleForm.setControl('pictures', this.formBuilder.array(pictureFCs));
   }
-  onAddPicture() {
+  public onAddPicture() {
     this.pictures.push(this.formBuilder.control('', Validators.required));
   }
-  onDeletePicture(index: number) {
+  public onDeletePicture(index: number) {
     this.pictures.removeAt(index);
   }
 
   // Handle videos array
   // --------------------------------------------------------------------------
-  setVideos(videos: string[]) {
+  private setVideos(videos: string[]) {
     const videosFCs = videos.map(videoUrl =>
       this.formBuilder.control(videoUrl, Validators.required));
     this.articleForm.setControl('videos', this.formBuilder.array(videosFCs));
   }
-  onAddVideo() {
+  public onAddVideo() {
     this.videos.push(this.formBuilder.control('', Validators.required));
   }
-  onDeleteVideo(index: number) {
+  public onDeleteVideo(index: number) {
     this.videos.removeAt(index);
   }
 
 
-  onSubmit() {
+  public onSubmit() {
     const articleToSave = this.prepareSaveArticle();
 
-    if (this.editMode === EditModeEnum.CREATE) {
+    if (this.editMode === EditModeEnum.Create) {
       this.articleService.createArticle(articleToSave).subscribe(
         (savedArticle: Article) => {
           this.article = savedArticle;
-          this.editMode = EditModeEnum.UPDATE;
+          this.editMode = EditModeEnum.Update;
           this.rebuildForm();
         }
       );
-    } else if (this.editMode === EditModeEnum.UPDATE) {
+    } else if (this.editMode === EditModeEnum.Update) {
       this.articleService.updateArticle(articleToSave).subscribe(
         (savedArticle: Article) => {
           this.article = savedArticle;
@@ -238,11 +238,11 @@ export class ArticleComponent implements OnInit, OnChanges {
     }
   }
 
-  onRevert() {
+  public onRevert() {
     this.rebuildForm();
   }
 
-  onGoBack(): void {
+  public onGoBack(): void {
     this.location.back();
   }
 

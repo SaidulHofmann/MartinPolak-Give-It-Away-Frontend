@@ -7,11 +7,11 @@ import {EditModeEnum} from '../../../models/index.model';
   styleUrls: ['./create-article.component.scss']
 })
 export class CreateArticleComponent implements OnInit {
-  get editModeEnum() { return EditModeEnum; }
+  public EditModeEnum = EditModeEnum;
 
   constructor() { }
 
-  ngOnInit() {
+  public ngOnInit() {
   }
 
 }

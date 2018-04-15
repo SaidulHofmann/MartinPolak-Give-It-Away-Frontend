@@ -1,7 +1,7 @@
 // Contains application data.
 
 import {Article, ArticleCategory, ArticleStatus, User, UserRef } from './index.model';
-import {IdNamePair} from './enum.model';
+import {IdNamePair} from './core.model';
 
 export const testUserRef: UserRef = {
   _id: '5aa00063b382de1478501ccd',

@@ -1,11 +1,11 @@
   <form [formGroup]="articleForm" (ngSubmit)="onSubmit()" class="p-0 mt-3">
   <div class="mb-3">
-    <span *ngIf="editMode !== editModeEnum.READ">
+    <span *ngIf="editMode !== EditModeEnum.Read">
       <button type="submit" [disabled]="articleForm.pristine" class="btn btn-success">Speichern</button> &nbsp;
       <button type="button" [disabled]="articleForm.pristine" class="btn btn-secondary mr-2"
               (click)="onRevert()">Änderungen verwerfen</button>
     </span>
-    <button type="button" class="btn btn-primary" (click)="onGoBack()">Zurück</button>
+    <button type="button" class="btn btn-outline-primary" (click)="onGoBack()">Zurück</button>
   </div>
 
   <div class="card">

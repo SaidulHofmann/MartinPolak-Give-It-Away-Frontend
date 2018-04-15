@@ -1,1 +1,25 @@
-<h3>Anmelden</h3>
+<div class=" col-xs-12 col-sm-10 col-md-8 offset-sm-1 offset-md-2">
+  <h3>Anmelden</h3>
+  <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
+
+    <div class="form-group">
+      <label for="email">E-Mail</label>
+      <input required email type="email" class="form-control" id="email"
+             name="email" ngModel #email="ngModel" autocomplete="email"/>
+      <div class="alert alert-danger" [hidden]="email.valid || email.pristine">Das E-Mail ist ungültig.</div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Passwort</label>
+      <input required type="password" class="form-control" id="password"
+             name="password" ngModel #password="ngModel" autocomplete="off"/>
+      <div class="alert alert-danger" [hidden]="password.valid || password.pristine">Das Passwort ist ein Pflichtfeld</div>
+    </div>
+
+    <div class="form-group mt-5">
+      <button type="submit" [disabled]="!loginForm.form.valid" class="btn btn-success mr-3">Anmelden</button>
+      <a [routerLink]="['/']" class="btn btn-outline-primary">Abbrechen</a>
+    </div>
+
+  </form>
+</div>

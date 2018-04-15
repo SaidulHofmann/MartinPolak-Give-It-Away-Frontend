@@ -7,7 +7,7 @@ import {Article, ArticleFilter, HttpResponseArticles} from '../../models/article
 import {Router} from '@angular/router';
 import {PagerService} from '../../services/pager.service';
 import {articleCategories, articleCategoryFilter, articleSortOptions, articleStatus, articleStatusFilter} from '../../models/data.model';
-import {IdNamePair} from '../../models/enum.model';
+import {IdNamePair} from '../../models/core.model';
 import {ArticleCategory} from '../../models/articleCategory.model';
 
 @Component({
