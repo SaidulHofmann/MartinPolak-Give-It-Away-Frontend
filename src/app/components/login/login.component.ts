@@ -8,6 +8,7 @@ import {HttpErrorArgs} from '../../models/http-error-args.model';
 import {User} from '../../models/user.model';
 import {Router} from '@angular/router';
 import {NgForm} from '@angular/forms';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,7 @@ import {NgForm} from '@angular/forms';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
- //  user: User = new User();
+ public message = '';
 
   constructor(
     private router: Router,
@@ -26,16 +27,24 @@ export class LoginComponent implements OnInit {
 
   // ToDo: implement
   public onSubmit(form: NgForm) {
-    console.log('LoginComponent.onSubmit(): Not implemented!');
-
     const email = form.value.email;
     const password = form.value.password;
 
     this.userService.login(email, password)
       .subscribe(
-        (token) => console.log('LoginComponent.login(): received: ', token),
+        (user: User) => {
+          console.log('LoginComponent.login(): received: ', user);
+          this.gotoArticleOverviewPage();
+          },
         (error: HttpErrorArgs) => {
-          console.log('Bei der Anmeldung ist ein Fehler aufgetreten.');
+          if (error.errorCode === ErrorCodes.Authentication_Failed) {
+            this.message = 'Benutzername oder Passwort ungültig.';
+          }
+          setTimeout(() => this.message = '', 5000);
       });
+  }
+
+  gotoArticleOverviewPage() {
+    this.router.navigate(['/articles']);
   }
 }

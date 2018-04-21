@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {User} from '../models/user.model';
+import {HttpResponseUser, User} from '../models/user.model';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import {MessageService} from '../message.service';
@@ -9,6 +9,7 @@ import { testUser } from '../models/index.model';
 import {ErrorObservable} from 'rxjs/observable/ErrorObservable';
 import {ErrorCodes} from '../models/enum.model';
 import {HttpErrorArgs} from '../models/http-error-args.model';
+import {Router} from '@angular/router';
 
 
 const httpOptions = {
@@ -21,19 +22,25 @@ export class UserService {
   private usersUrl = `${this.api_url}/users`;
   private registerUrl = `${this.api_url}/register`;
   private loginUrl = `${this.api_url}/login`;
-  // private usersUrl = 'http://localhost:3003/users';
-
-  private currentUsersEmail = '';
+  private currentUser: User = null;
 
   constructor(
     private http: HttpClient,
-    private messageService: MessageService) { }
+    private router: Router,
+    private messageService: MessageService) {
+
+    // Temporary
+    this.loadCurrentUser();
+  }
 
   private getHttpOptions(token: string) {
+    if(!this.currentUser) {
+      throw Error('Benutzer nicht angemeldet.');
+    }
     return {
         headers: new HttpHeaders({
           'Content-Type': 'application/json',
-          authorization: 'Bearer ' + token
+          authorization: 'Bearer ' + this.currentUser.authToken
         })
     };
   }
@@ -47,37 +54,51 @@ export class UserService {
     );
   }
 
-  public login(strEmail, strPassword): Observable<string | HttpErrorResponse> {
-    console.log('UserService.login()');
-    console.log('strEmail: %s, strPassword: %s', strEmail, strPassword);
-
-    return this.http.post<string>(
+  public login(strEmail, strPassword): Observable<User | HttpErrorResponse> {
+    return this.http.post<User>(
       this.loginUrl, {email: strEmail, pwd: strPassword}, httpOptions).pipe(
-      tap((receivedToken) => this.log(`Token '${receivedToken}' für Benutzer ${strEmail} erhalten.`)),
+        map(res => res['data'] as User),
+        tap((user) => {
+        this.log(`Token für Benutzer '${user.firstname} ${user.lastname}' erhalten.`);
+        this.setCurrentUser(user);
+      }),
       catchError(this.handlePostError)
     );
 
   }
 
   public logout() {
-    console.log('UserService.logout(): not implemented!');
-  }
-
-  public isAuthenticated() {
-    console.log('UserService.isAuthenticated(): not implemented!');
+    this.currentUser = null;
+    this.router.navigate(['./login']);
   }
 
   private log(message: string) {
     this.messageService.add('User Service: ' + message);
   }
 
+  public getCurrentUser() {
+    return this.currentUser;
+  }
 
-  /**
-   * Returns the currently logged in User.
-   */
-  getCurrentUser(): Observable<User> {
-    // ToDo: Implement save/load from local storage.
-    return of(testUser);
+  public get isAuthenticated() {
+    return this.getCurrentUser() != null;
+  }
+
+  private getAuthToken() {
+    if (this.currentUser) {
+      return this.currentUser.authToken;
+    } else {
+      throw Error('Authentication Token nicht verfügbar weil Benutzer nicht angemeldet.');
+    }
+  }
+
+  private setCurrentUser(user) {
+    this.currentUser = user;
+    localStorage.setItem('currentUser', JSON.stringify(user));
+  }
+
+  private loadCurrentUser() {
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser') || null);
   }
 
   /**
@@ -101,23 +122,28 @@ export class UserService {
   }
 
   private handlePostError (error: HttpErrorResponse): Observable<HttpErrorResponse> {
+    console.log('UserService.handlePostError(): ', error);
     // Client-side or network errors.
     if(error.error instanceof ErrorEvent) {
-      console.error(error);
       this.log('Die Anforderung konnte nicht zum Server gesendet werden: ' + error.error.message);
       return new ErrorObservable(new HttpErrorArgs(error, ErrorCodes.Client_Side_Or_Network_Error));
 
       // Server-side errors.
     } else {
+      if(error.status === 401) {
+        return new ErrorObservable(new HttpErrorArgs(error, ErrorCodes.Authentication_Failed));
+      }
+
       if(error.error.message.includes(ErrorCodes.MongoDB_DuplicateKey)) {
         return new ErrorObservable(new HttpErrorArgs(error, ErrorCodes.MongoDB_DuplicateKey));
       }
 
-      console.error('UserService.handlePostError(): ', error);
-      this.log('Die Anforderung konnte serverseitig nicht bearbeitet werden: ' + error.error.message);
 
+      // this.log('Die Anforderung konnte serverseitig nicht bearbeitet werden: ' + error.error.message);
       return new ErrorObservable(new HttpErrorArgs(error));
     }
   }
+
+
 
 }

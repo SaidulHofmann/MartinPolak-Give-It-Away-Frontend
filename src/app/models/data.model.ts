@@ -72,7 +72,8 @@ export const testUser: User = {
   email: 'testuser1@testuser.com',
   password: 'pw',
   createdAt: new Date(2018, 3, 13),
-  updatedAt: new Date(2018, 3, 13)
+  updatedAt: new Date(2018, 3, 13),
+  authToken: ''
 };
 
 export const testArticle: Article = {

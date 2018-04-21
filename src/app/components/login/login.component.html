@@ -16,9 +16,12 @@
       <div class="alert alert-danger" [hidden]="password.valid || password.pristine">Das Passwort ist ein Pflichtfeld</div>
     </div>
 
+    <div class="alert alert-danger" [hidden]="!message">{{ message }}</div>
+
+
     <div class="form-group mt-5">
-      <button type="submit" [disabled]="!loginForm.form.valid" class="btn btn-success mr-3">Anmelden</button>
-      <a [routerLink]="['/']" class="btn btn-outline-primary">Abbrechen</a>
+      <button type="submit" [disabled]="!loginForm.form.valid" class="btn btn-primary mr-3">Anmelden</button>
+      <a [routerLink]="['/login']" class="btn btn-outline-primary">Abbrechen</a>
     </div>
 
   </form>

@@ -1,3 +1,4 @@
+import {Article} from './article.model';
 
 export class User {
   _id: string;
@@ -8,6 +9,8 @@ export class User {
 
   createdAt = null;
   updatedAt = null;
+
+  authToken = '';
 }
 
 export class UserRef {
@@ -15,3 +18,10 @@ export class UserRef {
   firstname: string;
   lastname: string;
 }
+
+export class HttpResponseUser {
+  status = '';
+  data: User = null;
+  message = '';
+}
+

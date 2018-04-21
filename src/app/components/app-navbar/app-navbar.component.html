@@ -12,26 +12,19 @@
       <li class="nav-item" routerLinkActive="active">
         <a class="nav-link" routerLink="articles/create"><i class="fa fa-gift mr-2"></i>Artikel verschenken</a>
       </li>
-      <li class="nav-item" routerLinkActive="active">
-        <a class="nav-link" routerLink="articles/5aaf89d64afc2721c068bfb4/edit"><i class="fa fa-gift mr-2"></i>Test Artikel editieren</a>
-      </li>
-      <li class="nav-item" routerLinkActive="active">
-        <a class="nav-link" routerLink="/dashboard">Tutorial-Dashboard</a>
-      </li>
-      <li class="nav-item" routerLinkActive="active">
-        <a class="nav-link" routerLink="/test1">Testseite 1</a>
-      </li>
-      <li class="nav-item" routerLinkActive="active">
-        <a class="nav-link" routerLink="/test1Detail/5a895e91524e732538104425">Testseite 1 - Details</a>
-      </li>
     </ul>
 
     <ul class="navbar-nav navbar-right">
+      <ng-template [ngIf]="!userService.isAuthenticated">
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" routerLink="/register"><i class="fa fa-user-plus mr-2"></i>Registrieren</a>
+        </li>
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" routerLink="/login"><i class="fa fa-sign-in mr-2"></i>Anmelden</a>
+        </li>
+      </ng-template>
       <li class="nav-item" routerLinkActive="active">
-        <a class="nav-link" routerLink="/register"><i class="fa fa-user-plus mr-2"></i>Registrieren</a>
-      </li>
-      <li class="nav-item" routerLinkActive="active">
-        <a class="nav-link" routerLink="/login"><i class="fa fa-sign-in mr-2"></i>Anmelden</a>
+        <a *ngIf="userService.isAuthenticated" class="nav-link" (click)="logout()"><i class="fa fa-sign-out mr-2"></i>Abmelden</a>
       </li>
     </ul>
 

@@ -66,9 +66,7 @@ export class ArticleComponent implements OnInit, OnChanges {
 
   private createArticle() {
     this.article = new Article();
-    this.userService.getCurrentUser().subscribe(
-      (user) => { this.article.publisher = user as UserRef; }
-    );
+    this.article.publisher = this.userService.getCurrentUser();
   }
 
   /**
