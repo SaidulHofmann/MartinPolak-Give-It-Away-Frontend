@@ -60,10 +60,27 @@
 
       <div class="card">
         <div class="card-header">
-          Reservation
+          Artikel Reservation
         </div>
+
         <div class="card-body">
-          Textbox / Button
+          <div *ngIf="article.userHasReservation" class="alert alert-success">
+            Der Artikel ist reserviert.
+          </div>
+          <div>Wieso sollen Sie diesen Artikel erhalten ?</div>
+          <textarea [(ngModel)]="article.usersReservation.commentApplicant" rows="4" class="form-control mt-1 mb-3"
+                    placeholder="Bitte eine kurze Begründung, falls Sie den Artikel geschenkt erhalten wollen.">
+            </textarea>
+          Kommentar des Publizierenden
+          <textarea readonly [(ngModel)]="article.usersReservation.commentPublisher" rows="4" class="form-control mt-1"></textarea>
+
+          <div *ngIf="!article.userHasReservation">
+            <button type="button" class="btn btn-info mt-3" (click)="onReserveArticle()">Artikel reservieren</button>
+          </div>
+          <div *ngIf="article.userHasReservation">
+            <button type="button" class="btn btn-info mt-3" (click)="onCancelReservation()">Reservierung aufheben</button>
+          </div>
+
         </div>
       </div>
 

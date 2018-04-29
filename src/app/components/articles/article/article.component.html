@@ -1,6 +1,6 @@
   <form [formGroup]="articleForm" (ngSubmit)="onSubmit()" class="p-0 mt-3">
   <div class="mb-3">
-    <span *ngIf="editMode !== EditModeEnum.Read">
+    <span *ngIf="editMode !== EditModeType.Read">
       <button type="submit" [disabled]="articleForm.pristine" class="btn btn-primary">Speichern</button> &nbsp;
       <button type="button" [disabled]="articleForm.pristine" class="btn btn-secondary mr-2"
               (click)="onRevert()">Änderungen verwerfen</button>

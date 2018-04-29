@@ -10,6 +10,6 @@ export class ArticleResolver implements Resolve<Article> {
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):
     Observable<Article> | Promise<Article> | Article {
-      return this.articleService.getArticleById(route.params.id);
+      return this.articleService.getArticleById(route.params.id, true);
   }
 }

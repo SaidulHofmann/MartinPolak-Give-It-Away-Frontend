@@ -44,7 +44,7 @@ export class ArticlesComponent implements OnInit {
     private pagerService: PagerService) { }
 
   ngOnInit() {
-    this.getArticles();
+    this.onResetFilter();
   }
 
   setPage(pageNumber: number) {
@@ -78,6 +78,7 @@ export class ArticlesComponent implements OnInit {
     this.articleFilter.status = articleStatusFilter[0];
     this.articleFilter.sort = articleSortOptions[0];
     this.articleFilter.tags = '';
+    this.articleFilter.includeUsersReservation = true;
     this.getArticles();
   }
 

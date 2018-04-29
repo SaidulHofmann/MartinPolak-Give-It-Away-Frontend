@@ -5,7 +5,7 @@ import {Location} from '@angular/common';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {forEach} from '@angular/router/src/utils/collection';
 
-import { Article, ArticleCategory, ArticleStatus, User, UserRef, EditModeEnum } from '../../../models/index.model';
+import { Article, ArticleCategory, ArticleStatus, User, UserRef, EditModeType } from '../../../models/index.model';
 import { articleCategories, articleStatus, testUserRef, defaultUserRef, testArticle } from '../../../models/data.model';
 import {ArticleService} from '../../../services/article.service';
 import {UserService} from '../../../services/user.service';
@@ -19,8 +19,8 @@ export class ArticleComponent implements OnInit, OnChanges {
 
   // Constants, variables
   // ----------------------------------
-  public EditModeEnum = EditModeEnum;
-  @Input() public editMode: EditModeEnum = EditModeEnum.Read;
+  public EditModeType = EditModeType;
+  @Input() public editMode: EditModeType = EditModeType.Read;
   @Input() public article: Article;
 
   public articleForm: FormGroup;
@@ -218,15 +218,15 @@ export class ArticleComponent implements OnInit, OnChanges {
   public onSubmit() {
     const articleToSave = this.prepareSaveArticle();
 
-    if (this.editMode === EditModeEnum.Create) {
+    if (this.editMode === EditModeType.Create) {
       this.articleService.createArticle(articleToSave).subscribe(
         (savedArticle: Article) => {
           this.article = savedArticle;
-          this.editMode = EditModeEnum.Update;
+          this.editMode = EditModeType.Update;
           this.rebuildForm();
         }
       );
-    } else if (this.editMode === EditModeEnum.Update) {
+    } else if (this.editMode === EditModeType.Update) {
       this.articleService.updateArticle(articleToSave).subscribe(
         (savedArticle: Article) => {
           this.article = savedArticle;

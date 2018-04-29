@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {EditModeEnum} from '../../../models/index.model';
+import {EditModeType} from '../../../models/index.model';
 
 @Component({
   selector: 'app-create-article',
@@ -7,7 +7,7 @@ import {EditModeEnum} from '../../../models/index.model';
   styleUrls: ['./create-article.component.scss']
 })
 export class CreateArticleComponent implements OnInit {
-  public EditModeEnum = EditModeEnum;
+  public EditModeType = EditModeType;
 
   constructor() { }
 

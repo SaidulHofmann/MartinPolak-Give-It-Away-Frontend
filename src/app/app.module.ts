@@ -1,11 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-import { InMemoryDataService } from './in-memory-data.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ArticleService } from './services/article.service';
-import { MessageService } from './message.service';
+import { MessageService } from './services/message.service';
 
 import { AppComponent } from './app.component';
 import { AppNavbarComponent } from './components/app-navbar/app-navbar.component';
@@ -16,8 +14,6 @@ import { Test1Component } from './components/test1/test1.component';
 import { Test1DetailComponent } from './components/test1-detail/test1-detail.component';
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
-import { Test2Component } from './components/test2/test2.component';
-import { Test3Component } from './components/test3/test3.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
@@ -33,6 +29,8 @@ import { CreateArticleComponent } from './components/articles/create-article/cre
 import { ArticleDetailsComponent } from './components/articles/article-details/article-details.component';
 import {PagerService} from './services/pager.service';
 import {ArticleResolver} from './services/article-resolver.service';
+import { MyArticlesComponent } from './components/articles/my-articles/my-articles.component';
+import { MyReservationsComponent } from './components/articles/my-reservations/my-reservations.component';
 
 
 @NgModule({
@@ -55,14 +53,14 @@ import {ArticleResolver} from './services/article-resolver.service';
     ArticleSearchComponent,
     PageNotFoundComponent,
 
-    Test2Component,
-    Test3Component,
     ArticleComponent,
     ArticleGiveawayComponent,
     DateValueAccessorDirective,
     EditArticleComponent,
     CreateArticleComponent,
-    ArticleDetailsComponent
+    ArticleDetailsComponent,
+    MyArticlesComponent,
+    MyReservationsComponent
   ],
   imports: [
     BrowserModule,
@@ -70,13 +68,6 @@ import {ArticleResolver} from './services/article-resolver.service';
     ReactiveFormsModule,
     AppRoutingModule,
     HttpClientModule,
-
-    // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
-    // and returns simulated server responses.
-    // Remove it when a real server is ready to receive requests.
-    // HttpClientInMemoryWebApiModule.forRoot(
-    //  InMemoryDataService, { dataEncapsulation: false }
-    // )
   ],
   providers: [ ArticleService, MessageService, UserService, PagerService, ArticleResolver ],
   bootstrap: [AppComponent]

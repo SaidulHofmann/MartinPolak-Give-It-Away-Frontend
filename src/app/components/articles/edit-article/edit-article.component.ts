@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {Article, EditModeEnum} from '../../../models/index.model';
+import {Article, EditModeType} from '../../../models/index.model';
 import {ArticleService} from '../../../services/article.service';
 import {ActivatedRoute} from '@angular/router';
 
@@ -11,7 +11,7 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class EditArticleComponent implements OnInit {
   public article: Article;
-  public EditModeEnum = EditModeEnum;
+  public EditModeType = EditModeType;
 
   constructor(
     private articleService: ArticleService,

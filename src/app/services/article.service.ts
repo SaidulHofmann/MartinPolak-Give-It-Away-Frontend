@@ -2,23 +2,30 @@ import { Injectable } from '@angular/core';
 import {Article, ArticleFilter, HttpResponseArticles} from '../models/article.model';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import { MessageService } from '../message.service';
+import { MessageService } from './message.service';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import {UserService} from './user.service';
+import {ErrorCodeType} from '../models/enum.model';
+import {ErrorObservable} from 'rxjs/observable/ErrorObservable';
+import {HttpErrorArgs} from '../models/http-error-args.model';
+import {Router} from '@angular/router';
+import {Reservation} from '../models/reservation.model';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json'})
-}
+};
 
 @Injectable()
 export class ArticleService {
 
   private api_url = 'http://localhost:3003';
   private articlesUrl = `${this.api_url}/api/articles`;
+  private reservationsUrl = `${this.api_url}/api/reservations`;
 
   constructor(
     private http: HttpClient,
+    private router: Router,
     private userService: UserService,
     private messageService: MessageService) { }
 
@@ -32,7 +39,7 @@ export class ArticleService {
     });
   }
 
-  /** GET articles from the server. */
+  /** GET articles. */
   getArticles(page: number = 1, limit: number = 10): Observable<any> {
     return this.http.get(`${this.articlesUrl}/?page=${page}&limit=${limit}`,
       { headers: this.getHttpHeaders() })
@@ -42,10 +49,10 @@ export class ArticleService {
       );
   }
 
-  /** GET articles from the server. */
+  /** GET articles filtered. */
   getArticlesByFilter(articleFilter: ArticleFilter): Observable<any> {
     let httpParams = {};
-    if(articleFilter) {
+    if (articleFilter) {
       httpParams = new HttpParams()
         .set('page', articleFilter.page.toString())
         .set('limit', articleFilter.limit.toString())
@@ -53,19 +60,23 @@ export class ArticleService {
         .set('category', articleFilter.category._id)
         .set('status', articleFilter.status._id)
         .set('sort', articleFilter.sort._id)
-        .set('tags', articleFilter.tags);
+        .set('tags', articleFilter.tags)
+        .set('includeUsersReservation', articleFilter.includeUsersReservation.toString());
     }
     return this.http.get(this.articlesUrl, { headers: this.getHttpHeaders(), params: httpParams })
       .pipe(
-        tap(res => this.log(`Artikel geladen.`)),
+        tap(res => { this.log(`Artikel geladen.`);
+          console.log('article res: ', res);
+        }),
         catchError(this.handleError('getArticles', []))
       );
   }
 
   /** GET article by id. Will 404 if id not found */
-  getArticleById(id: string): Observable<Article> {
+  getArticleById(id: string, includeUsersReservation: boolean = false): Observable<Article> {
     const url = `${this.articlesUrl}/${id}`;
-    return this.http.get<Article>(url, { headers: this.getHttpHeaders() }).pipe(
+    return this.http.get<Article>(url, {
+      headers: this.getHttpHeaders(), params: { 'includeUsersReservation': includeUsersReservation.toString() } }).pipe(
       map(res  => res['data'] as Article),
       tap(article => this.log(`Àrtikel mit name = '${article.name}' und id = '${article._id}' wurde geladen.`)),
       catchError(this.handleError<Article>(`getArticle id=${id}`))
@@ -74,7 +85,7 @@ export class ArticleService {
 
   /** GET articles whose name contains search term */
   searchArticles(term: string): Observable<Article[]> {
-    if(!term.trim()) {
+    if (!term.trim()) {
       return of([]);
     }
     return this.http.get<Article[]>(`${this.articlesUrl}/?name=${term}`,
@@ -85,7 +96,7 @@ export class ArticleService {
     );
   }
 
-  /** PUT: update the article on the server */
+  /** PUT: update an article. */
   updateArticle(article: Article): Observable<any> {
     return this.http.put(this.articlesUrl, article, { headers: this.getHttpHeaders() }).pipe(
       map(res  => res['data'] as Article),
@@ -94,7 +105,7 @@ export class ArticleService {
     );
   }
 
-  /** POST: add a new article in database. */
+  /** POST: add a new article. */
   createArticle(article: Article): Observable<Article> {
     return this.http.post<Article>(this.articlesUrl, article, { headers: this.getHttpHeaders() }).pipe(
       map(res  => res['data'] as Article),
@@ -133,16 +144,32 @@ export class ArticleService {
    */
   private handleError<T> (operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
+      console.error('ArticleService.handleError(): ', error);
 
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
       this.log(`${operation} failed: ${error.message}`);
+
+      if (error.status === 401) {
+        this.router.navigate(['/login']);
+        return;
+      }
 
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
+  }
+
+  // Reservations
+  // -----------------------------------------------------------------------------
+
+  /** POST: add a new reservation. */
+  createReservation(reservation: Reservation): Observable<Reservation> {
+    return this.http.post<Reservation>(this.reservationsUrl, reservation, { headers: this.getHttpHeaders() }).pipe(
+      map(res  => res['data'] as Reservation),
+      tap((resReservation: Reservation) => {
+        this.log(`Reservation für Benutzer: ${resReservation.user.firstname} ${resReservation.user.lastname}, id: '${resReservation._id}' wurde hinzugefügt.`);
+      }),
+      catchError(this.handleError<Reservation>('createReservation'))
+    );
   }
 
 }

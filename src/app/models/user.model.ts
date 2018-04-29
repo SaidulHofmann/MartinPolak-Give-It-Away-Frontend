@@ -14,9 +14,12 @@ export class User {
 }
 
 export class UserRef {
-  _id: string;
-  firstname: string;
-  lastname: string;
+  public firstname: string;
+  public lastname: string;
+
+  constructor(
+    public _id: string,
+  ) { }
 }
 
 export class HttpResponseUser {

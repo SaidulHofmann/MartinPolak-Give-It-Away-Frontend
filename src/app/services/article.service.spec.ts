@@ -1,28 +1,33 @@
 import { TestBed, inject, async, ComponentFixture } from '@angular/core/testing';
 import { ArticleService } from './article.service';
 import {HttpClient, HttpClientModule, HttpHandler } from '@angular/common/http';
-import {MessageService} from '../message.service';
+import {MessageService} from './message.service';
 import { testArticleResponse, testArticleObj } from '../models/data.model';
 import {defer} from 'rxjs/observable/defer';
 import { of } from 'rxjs/observable/of';
+import {UserService} from './user.service';
 
 describe('ArticleService', () => {
   let articleService: ArticleService;
   let httpClientSpy: { get: jasmine.Spy, put: jasmine.Spy, post: jasmine.Spy, delete: jasmine.Spy };
+  let userServiceSpy: jasmine.SpyObj<UserService>;
   let messageServiceSpy: jasmine.SpyObj<MessageService>;
+
 
 
   beforeEach(() => {
     // Create service mocks as spy objects.
     httpClientSpy = jasmine.createSpyObj(
       'HttpClient', ['get', 'put', 'post', 'delete']);
+    userServiceSpy = jasmine.createSpyObj(
+      'UserService', ['getCurrentUser']);
     messageServiceSpy = jasmine.createSpyObj(
       'MessageService', ['add']);
 
-    articleService = new ArticleService(<any> httpClientSpy, messageServiceSpy);
+    articleService = new ArticleService(<any> httpClientSpy, userServiceSpy, messageServiceSpy);
 
     TestBed.configureTestingModule({
-      providers: [ ArticleService, HttpClient, MessageService, HttpHandler ]
+      providers: [ ArticleService, HttpClient, UserService, MessageService, HttpHandler ]
     });
 
   });

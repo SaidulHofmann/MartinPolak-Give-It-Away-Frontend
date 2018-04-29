@@ -3,7 +3,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import {UserService} from '../../services/user.service';
-import {ErrorCodes} from '../../models/enum.model';
+import {ErrorCodeType} from '../../models/enum.model';
 import {HttpErrorArgs} from '../../models/http-error-args.model';
 import {User} from '../../models/user.model';
 import {Router} from '@angular/router';
@@ -32,12 +32,9 @@ export class LoginComponent implements OnInit {
 
     this.userService.login(email, password)
       .subscribe(
-        (user: User) => {
-          console.log('LoginComponent.login(): received: ', user);
-          this.gotoArticleOverviewPage();
-          },
+        (user: User) => { this.gotoArticleOverviewPage(); },
         (error: HttpErrorArgs) => {
-          if (error.errorCode === ErrorCodes.Authentication_Failed) {
+          if (error.errorCode === ErrorCodeType.Authentication_Failed) {
             this.message = 'Benutzername oder Passwort ungültig.';
           }
           setTimeout(() => this.message = '', 5000);

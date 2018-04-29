@@ -5,7 +5,7 @@ import {HeaderComponent} from './components/header/header.component';
 import {FooterComponent} from './components/footer/footer.component';
 import {MessagesComponent} from './components/messages/messages.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import {MessageService} from './message.service';
+import {MessageService} from './services/message.service';
 
 describe('AppComponent', () => {
   let component: AppComponent;
