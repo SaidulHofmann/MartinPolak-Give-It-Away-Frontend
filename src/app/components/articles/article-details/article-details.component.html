@@ -75,10 +75,11 @@
           <textarea readonly [(ngModel)]="article.usersReservation.commentPublisher" rows="4" class="form-control mt-1"></textarea>
 
           <div *ngIf="!article.userHasReservation">
-            <button type="button" class="btn btn-info mt-3" (click)="onReserveArticle()">Artikel reservieren</button>
+            <button type="button" class="btn btn-success mt-3" (click)="onCreateReservation()">Artikel reservieren</button>
           </div>
           <div *ngIf="article.userHasReservation">
-            <button type="button" class="btn btn-info mt-3" (click)="onCancelReservation()">Reservierung aufheben</button>
+            <button type="button" class="btn btn-success mt-3 mr-2" (click)="onUpdateReservation()">Änderungen speichern</button>
+            <button type="button" class="btn btn-danger mt-3" (click)="onDeleteReservation()">Reservation löschen</button>
           </div>
 
         </div>

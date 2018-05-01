@@ -66,7 +66,7 @@ export class ArticleComponent implements OnInit, OnChanges {
 
   private createArticle() {
     this.article = new Article();
-    this.article.publisher = this.userService.getCurrentUser();
+    this.article.publisher = this.userService.getCurrentUser() as UserRef;
   }
 
   /**
@@ -90,16 +90,14 @@ export class ArticleComponent implements OnInit, OnChanges {
       // Give away
       donee:              this.formBuilder.group({
         _id:              this.article.donee ? this.article.donee._id : null,
-        firstname:        this.article.donee ? this.article.donee.firstname : '',
-        lastname:         this.article.donee ? this.article.donee.lastname : ''
+        fullname:        this.article.donee ? this.article.donee.fullname : ''
       }),
       donationDate:       this.article.donationDate || null,
 
       // Publishing
       publisher:          this.formBuilder.group({
         _id:              [this.article.publisher ? this.article.publisher._id : null, Validators.required ],
-        firstname:        this.article.publisher ? this.article.publisher.firstname : '',
-        lastname:         this.article.publisher ? this.article.publisher.lastname : ''
+        fullname:        this.article.publisher ? this.article.publisher.fullname : ''
       }),
       createdAt:          this.article.createdAt || null,
       updatedAt:          this.article.updatedAt || null
@@ -129,15 +127,13 @@ export class ArticleComponent implements OnInit, OnChanges {
       status:             this.getArticleStatus(this.article),
       donee:              {
         _id:              this.article.donee ? this.article.donee._id : null,
-        firstname:        this.article.donee ? this.article.donee.firstname : '',
-        lastname:         this.article.donee ? this.article.donee.lastname : ''
+        fullname:        this.article.donee ? this.article.donee.fullname : ''
       },
       donationDate:       this.article.donationDate || null,
 
       publisher:          {
         _id:              this.article.publisher ? this.article.publisher._id : null,
-        firstname:        this.article.publisher ? this.article.publisher.firstname : '',
-        lastname:         this.article.publisher ? this.article.publisher.lastname : ''
+        fullname:        this.article.publisher ? this.article.publisher.fullname : ''
       },
       createdAt:          this.article.createdAt || null,
       updatedAt:          this.article.updatedAt || null,

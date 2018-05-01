@@ -6,6 +6,7 @@ export class User {
   password: string;
   firstname: string;
   lastname: string;
+  public fullname: string;
 
   createdAt = null;
   updatedAt = null;
@@ -16,6 +17,7 @@ export class User {
 export class UserRef {
   public firstname: string;
   public lastname: string;
+  public fullname: string;
 
   constructor(
     public _id: string,

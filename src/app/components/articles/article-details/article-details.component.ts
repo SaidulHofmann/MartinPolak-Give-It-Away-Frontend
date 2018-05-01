@@ -6,6 +6,8 @@ import * as $ from 'jquery';
 import {Reservation} from '../../../models/reservation.model';
 import {User, UserRef} from '../../../models/user.model';
 import {UserService} from '../../../services/user.service';
+import {EditModeType} from '../../../models/index.model';
+import {ArticleService} from '../../../services/article.service';
 
 
 @Component({
@@ -21,31 +23,55 @@ export class ArticleDetailsComponent implements OnInit {
   constructor(
     private location: Location,
     private route: ActivatedRoute,
-    private userService: UserService) { }
+    private userService: UserService,
+    private articleService: ArticleService) {
+  }
 
-  ngOnInit() {
+  public ngOnInit() {
     this.route.data.subscribe(
         (data: Data) => { this.article = data['article']; }
     );
+    if (!this.article.userHasReservation) {
+      this.assignDefaultReservation();
+    }
   }
 
-  onGoBack() {
+  public onGoBack() {
     this.location.back();
   }
 
-  // ToDo: implement
-  onReserveArticle() {
-    console.log('ArticleDetailsComponent.onReserveArticle(): implementing...');
-    let reservation: Reservation = new Reservation();
-    reservation.article = this.article._id;
-    reservation.user = new UserRef(this.userService.getCurrentUser()._id);
-    reservation.commentPublisher = this.article.usersReservation.commentPublisher;
-    reservation.commentApplicant = this.article.usersReservation.commentApplicant;
-
+  private assignDefaultReservation() {
+    this.article.usersReservation = {
+      article: this.article._id,
+      user: new UserRef(this.userService.getCurrentUser()._id),
+      commentPublisher: '',
+      commentApplicant: ''
+    } as Reservation;
   }
 
-  onCancelReservation() {
-    console.log('ArticleDetailsComponent.onCancelReservation(): not implemented.');
+  public onCreateReservation() {
+    this.articleService.createReservation(this.article.usersReservation).subscribe(
+      (savedReservation: Reservation) => {
+        this.article.usersReservation = savedReservation;
+        this.article.userHasReservation = true;
+      });
+  }
+
+  public onUpdateReservation() {
+    this.articleService.updateReservation(this.article.usersReservation).subscribe(
+      (savedReservation: Reservation) => {
+        this.article.usersReservation = savedReservation;
+      }
+    );
+  }
+
+  public onDeleteReservation(): void {
+    this.articleService.deleteReservation(this.article.usersReservation).subscribe(
+      (savedReservation: Reservation) => {
+        this.assignDefaultReservation();
+        this.article.userHasReservation = false;
+      }
+    );
   }
 
 }

@@ -31,12 +31,17 @@ export class ArticleService {
 
   private getHttpHeaders(): HttpHeaders {
     if (!this.userService.getCurrentUser()) {
-      throw Error('Server Anfrage nicht möglich weil Benutzer nicht angemeldet.');
+      console.error('Server Anfrage nicht möglich weil Benutzer nicht angemeldet.');
+      this.redirectToLoginPage();
     }
     return new HttpHeaders({
         'Content-Type': 'application/json',
         authorization: 'Bearer ' + this.userService.getCurrentUser().authToken
     });
+  }
+
+  private redirectToLoginPage() {
+    this.router.navigate(['/login']);
   }
 
   /** GET articles. */
@@ -96,21 +101,21 @@ export class ArticleService {
     );
   }
 
-  /** PUT: update an article. */
-  updateArticle(article: Article): Observable<any> {
-    return this.http.put(this.articlesUrl, article, { headers: this.getHttpHeaders() }).pipe(
-      map(res  => res['data'] as Article),
-      tap(_ => this.log(`Artikel mit name = '${article.name}' und id = '${article._id}' wurde aktualisiert.`)),
-      catchError(this.handleError<any>('updateArticle'))
-    );
-  }
-
   /** POST: add a new article. */
   createArticle(article: Article): Observable<Article> {
     return this.http.post<Article>(this.articlesUrl, article, { headers: this.getHttpHeaders() }).pipe(
       map(res  => res['data'] as Article),
       tap((resArticle: Article) => this.log(`Artikel mit name = '${resArticle.name}' und id = '${resArticle._id}' wurde hinzugefügt.`)),
       catchError(this.handleError<Article>('createArticle'))
+    );
+  }
+
+  /** PUT: update an article. */
+  updateArticle(article: Article): Observable<any> {
+    return this.http.put(this.articlesUrl, article, { headers: this.getHttpHeaders() }).pipe(
+      map(res  => res['data'] as Article),
+      tap(_ => this.log(`Artikel mit name = '${article.name}' und id = '${article._id}' wurde aktualisiert.`)),
+      catchError(this.handleError<any>('updateArticle'))
     );
   }
 
@@ -164,11 +169,42 @@ export class ArticleService {
   /** POST: add a new reservation. */
   createReservation(reservation: Reservation): Observable<Reservation> {
     return this.http.post<Reservation>(this.reservationsUrl, reservation, { headers: this.getHttpHeaders() }).pipe(
-      map(res  => res['data'] as Reservation),
+      map((res) => {
+        return res['data'] as Reservation;
+      }),
       tap((resReservation: Reservation) => {
-        this.log(`Reservation für Benutzer: ${resReservation.user.firstname} ${resReservation.user.lastname}, id: '${resReservation._id}' wurde hinzugefügt.`);
+        this.log(`Reservation für den Artikel '${reservation.article.name}' wurde hinzugefügt.`);
       }),
       catchError(this.handleError<Reservation>('createReservation'))
+    );
+  }
+
+  /** PUT: update a reservation. */
+  updateReservation(reservation: Reservation): Observable<Reservation> {
+    return this.http.put<Reservation>(this.reservationsUrl, reservation, { headers: this.getHttpHeaders() }).pipe(
+      map(res  => res['data'] as Reservation),
+      tap((resReservation: Reservation) => {
+        this.log(`Reservation für den Artikel '${reservation.article.name}', mit id = '${resReservation._id}' wurde aktualisiert.`);
+      }),
+      catchError(this.handleError<any>('updateReservation'))
+    );
+  }
+
+  /** DELETE: delete a reservation. */
+  deleteReservation(reservation: Reservation | string): Observable<Reservation> {
+    let id, articleName = '';
+    if (typeof reservation === 'string') {
+      id = reservation;
+    } else {
+      id = reservation._id;
+      articleName = reservation.article.name;
+    }
+    const url = `${this.reservationsUrl}/${id}`;
+
+    return this.http.delete<Reservation>(url, { headers: this.getHttpHeaders() }).pipe(
+      map(res  => res['data'] as Reservation),
+      tap(_ => this.log(`Reservation für den Artikel '${articleName}' mit id = '${id}' wurde gelöscht.`)),
+      catchError(this.handleError<Reservation>('deleteReservation'))
     );
   }
 

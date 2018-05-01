@@ -1,7 +1,7 @@
   <form [formGroup]="articleForm" (ngSubmit)="onSubmit()" class="p-0 mt-3">
   <div class="mb-3">
     <span *ngIf="editMode !== EditModeType.Read">
-      <button type="submit" [disabled]="articleForm.pristine" class="btn btn-primary">Speichern</button> &nbsp;
+      <button type="submit" [disabled]="articleForm.pristine" class="btn btn-success">Speichern</button> &nbsp;
       <button type="button" [disabled]="articleForm.pristine" class="btn btn-secondary mr-2"
               (click)="onRevert()">Änderungen verwerfen</button>
     </span>
@@ -104,7 +104,7 @@
         <div formGroupName="donee">
           <div class="form-group">
             <label for="inputDonee">Verschenkt an:</label>
-            <input id="inputDonee" readonly class="form-control" placeholder="{{ articleForm.get('donee.firstname').value }} {{ articleForm.get('donee.lastname').value }}">
+            <input id="inputDonee" readonly class="form-control" placeholder="{{ articleForm.get('donee.fullname').value }}">
           </div>
         </div>
       </div>
@@ -130,7 +130,7 @@
           <div formGroupName="publisher">
             <div class="form-group">
               <label for="inputPublisher">Publiziert von:</label>
-              <input id="inputPublisher" readonly class="form-control" placeholder="{{ articleForm.get('publisher.firstname').value }} {{ articleForm.get('publisher.lastname').value }}">
+              <input id="inputPublisher" readonly class="form-control" placeholder="{{ articleForm.get('publisher.fullname').value }}">
             </div>
           </div>
         </div>

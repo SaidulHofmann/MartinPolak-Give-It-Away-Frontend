@@ -6,13 +6,15 @@ import {IdNamePair} from './core.model';
 export const testUserRef: UserRef = {
   _id: '5aa00063b382de1478501ccd',
   firstname: 'Hans',
-  lastname: 'Muster'
+  lastname: 'Muster',
+  fullname: 'Hans Muster'
 };
 
 export const defaultUserRef: UserRef = {
   _id: null,
   firstname: '',
-  lastname: ''
+  lastname: '',
+  fullname: ''
 };
 
 export const articleCategories: ArticleCategory[] = [
@@ -69,6 +71,7 @@ export const testUser: User = {
   _id: '5aa00063b382de1478501ccd',
   firstname: 'Hans',
   lastname: 'Muster',
+  fullname: 'Hans Muster',
   email: 'testuser1@testuser.com',
   password: 'pw',
   createdAt: new Date(2018, 3, 13),
@@ -166,7 +169,8 @@ export const testArticleObj: Article = {
   'publisher': {
     '_id': '5abc0267d608821850991037',
     'firstname': 'Hans',
-    'lastname': 'Muster'
+    'lastname': 'Muster',
+    'fullname': 'Hans Muster'
   },
   'donee': null,
   'category': {

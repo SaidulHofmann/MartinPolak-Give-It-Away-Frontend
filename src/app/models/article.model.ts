@@ -26,6 +26,11 @@ export class Article {
   usersReservation?: Reservation = null; // Virtual property assigned by backend.
 }
 
+export class ArticleRef {
+  _id = null;
+  name = '';
+}
+
 export class HttpResponseArticles {
   status = '';
   data: HttpResponseArticleData = null;
