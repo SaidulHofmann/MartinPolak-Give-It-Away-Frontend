@@ -59,4 +59,6 @@ export class ArticleFilter {
   page = 1;
   limit = 10;
   includeUsersReservation = false;
+  selectReservedArticles = false;
+  selectPublishedArticles = false;
 }

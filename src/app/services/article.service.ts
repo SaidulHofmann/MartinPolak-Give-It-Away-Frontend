@@ -56,22 +56,27 @@ export class ArticleService {
 
   /** GET articles filtered. */
   getArticlesByFilter(articleFilter: ArticleFilter): Observable<any> {
-    let httpParams = {};
+    let httpParams: HttpParams = null;
     if (articleFilter) {
-      httpParams = new HttpParams()
-        .set('page', articleFilter.page.toString())
-        .set('limit', articleFilter.limit.toString())
-        .set('name', articleFilter.name)
-        .set('category', articleFilter.category._id)
-        .set('status', articleFilter.status._id)
-        .set('sort', articleFilter.sort._id)
-        .set('tags', articleFilter.tags)
-        .set('includeUsersReservation', articleFilter.includeUsersReservation.toString());
+      let httpParamsOject: any = {};
+      if (articleFilter.name) { httpParamsOject.name = articleFilter.name; }
+      if (articleFilter.category && articleFilter.category._id !== 'undefined') { httpParamsOject.category = articleFilter.category._id; }
+      if (articleFilter.status && articleFilter.status._id !== 'undefined') { httpParamsOject.status = articleFilter.status._id; }
+      if (articleFilter.sort && articleFilter.sort._id !== 'undefined') { httpParamsOject.sort = articleFilter.sort._id; }
+      if (articleFilter.tags) { httpParamsOject.tags = articleFilter.tags; }
+
+      if (articleFilter.page) { httpParamsOject.page = articleFilter.page.toString(); }
+      if (articleFilter.limit) { httpParamsOject.limit = articleFilter.limit.toString(); }
+      if (articleFilter.includeUsersReservation) { httpParamsOject.includeUsersReservation = articleFilter.includeUsersReservation.toString(); }
+      if (articleFilter.selectReservedArticles) { httpParamsOject.selectReservedArticles = articleFilter.selectReservedArticles.toString(); }
+      if (articleFilter.selectPublishedArticles) { httpParamsOject.selectPublishedArticles = articleFilter.selectPublishedArticles.toString(); }
+
+      httpParams = new HttpParams({fromObject: httpParamsOject});
     }
     return this.http.get(this.articlesUrl, { headers: this.getHttpHeaders(), params: httpParams })
       .pipe(
         tap(res => { this.log(`Artikel geladen.`);
-          console.log('article res: ', res);
+          // console.log('article res: ', res);
         }),
         catchError(this.handleError('getArticles', []))
       );

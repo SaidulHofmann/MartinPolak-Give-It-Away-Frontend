@@ -68,6 +68,20 @@ export class ArticlesComponent implements OnInit {
     this.router.navigate([`/articles/${article._id}/edit`]);
   }
 
+  onPublicationRervationCBChange(event) {
+    if (!event) { return; }
+    if (event.target.id === 'inputMyPublications') {
+      if (this.articleFilter.selectReservedArticles) {
+        this.articleFilter.selectReservedArticles = false;
+      }
+    } else if (event.target.id === 'inputMyReservations') {
+      if (this.articleFilter.selectPublishedArticles) {
+        this.articleFilter.selectPublishedArticles = false;
+      }
+    }
+    this.onSetFilter();
+  }
+
   onSetFilter() {
     this.articleFilter.page = 1;
     this.getArticles();
@@ -78,7 +92,11 @@ export class ArticlesComponent implements OnInit {
     this.articleFilter.status = articleStatusFilter[0];
     this.articleFilter.sort = articleSortOptions[0];
     this.articleFilter.tags = '';
+
     this.articleFilter.includeUsersReservation = true;
+    this.articleFilter.selectPublishedArticles = false;
+    this.articleFilter.selectReservedArticles = false;
+
     this.getArticles();
   }
 
