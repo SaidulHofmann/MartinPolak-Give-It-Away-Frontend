@@ -16,8 +16,23 @@ export class Reservation {
   updatedAt = new Date();
 }
 
+export class HttpResponseReservations {
+  status = '';
+  data: HttpResponseReservationData = null;
+  message = '';
+
+}
+
+export class HttpResponseReservationData {
+  docs: Reservation[] = [];
+  total = 0;
+  limit = 0;
+  page = 0;
+  pages = 0;
+}
+
 /**
- * Stores parameters for article queries.
+ * Stores parameters for reservation queries.
  */
 export class ReservationFilter {
   page = 1;

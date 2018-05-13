@@ -10,7 +10,7 @@ import {ErrorCodeType} from '../models/enum.model';
 import {ErrorObservable} from 'rxjs/observable/ErrorObservable';
 import {HttpErrorArgs} from '../models/http-error-args.model';
 import {Router} from '@angular/router';
-import {Reservation} from '../models/reservation.model';
+import {Reservation, ReservationFilter} from '../models/reservation.model';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json'})
@@ -78,7 +78,7 @@ export class ArticleService {
         tap(res => { this.log(`Artikel geladen.`);
           // console.log('article res: ', res);
         }),
-        catchError(this.handleError('getArticles', []))
+        catchError(this.handleError('getArticlesByFilter', []))
       );
   }
 
@@ -170,6 +170,24 @@ export class ArticleService {
 
   // Reservations
   // -----------------------------------------------------------------------------
+
+  /** GET reservations */
+  getReservations(reservationFilter: ReservationFilter): Observable<any> {
+    let httpParamsOject: any = {};
+    if (reservationFilter.user) { httpParamsOject.userId = reservationFilter.user._id; }
+    if (reservationFilter.article) { httpParamsOject.articleId = reservationFilter.article._id; }
+    if (reservationFilter.page) { httpParamsOject.page = reservationFilter.page.toString(); }
+    if (reservationFilter.limit) { httpParamsOject.limit = reservationFilter.limit.toString(); }
+    let httpParams = new HttpParams({fromObject: httpParamsOject});
+
+    return this.http.get(this.reservationsUrl, { headers: this.getHttpHeaders(), params: httpParams })
+      .pipe(
+        tap(response => { this.log(`Reservationen geladen.`);
+          // console.log('reservation response: ', response);
+        }),
+        catchError(this.handleError('getReservationsByFilter', []))
+      );
+  }
 
   /** POST: add a new reservation. */
   createReservation(reservation: Reservation): Observable<Reservation> {

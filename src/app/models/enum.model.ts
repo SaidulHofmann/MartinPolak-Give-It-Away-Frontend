@@ -12,3 +12,9 @@ export enum ErrorCodeType {
   Authentication_Failed = 'Authentication_Failed'
 }
 
+export enum ArticleStatusType {
+  available = 'available',
+  handoverPending = 'handoverPending',
+  donated = 'donated'
+}
+

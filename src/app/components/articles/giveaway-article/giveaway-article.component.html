@@ -1,0 +1,48 @@
+<h3 class="card-title">Reservationen für den Artikel '{{ article.name }}'</h3>
+<div class="mb-3">
+  <button type="button" class="btn btn-outline-primary" (click)="onGoBack()">Zurück</button>
+</div>
+<div class="card">
+
+  <div class="card-body">
+
+    <div class="card border-dark mb-5" *ngFor="let reservation of reservations">
+
+      <div class="card-header">
+        <h5 class="card-title">Reservation von: {{ reservation.user ? reservation.user.fullname: 'Benutzer nicht vorhanden' }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">Resertviert am: {{ reservation.createdAt | date:'dd.MM.yyyy' }}</h6>
+      </div>
+
+      <div class="card-body">
+        <div *ngIf="article.donee && reservation.user && article.donee._id === reservation.user._id && article.status._id === ArticleStatusType.handoverPending" class="alert alert-warning">
+          Der Artikel wird diesem Benutzer übergeben.
+        </div>
+        <div *ngIf="article.donee && reservation.user && article.donee._id === reservation.user._id && article.status._id === ArticleStatusType.donated" class="alert alert-success">
+          Der Artikel wurde diesem Benutzer verschenkt.
+        </div>
+        <p class="card-text">Kommentar des Interessenten</p>
+        <textarea readonly [(ngModel)]="reservation.commentApplicant" rows="4" class="form-control mt-1 mb-3"></textarea>
+        <p class="card-text">Kommentar des Publizierenden</p>
+        <textarea [(ngModel)]="reservation.commentPublisher" rows="4" class="form-control mt-1"></textarea>
+
+        <button *ngIf="article.status._id !== ArticleStatusType.donated"
+          type="button" class="btn btn-info mt-3 mr-2" (click)="onUpdateReservation(reservation)">
+          <i class="fa fa-commenting-o mr-2" aria-hidden="true"></i>Kommentar speichern
+        </button>
+        <button *ngIf="article.status._id == ArticleStatusType.available"
+          type="button" class="btn btn-warning mt-3 mr-2" (click)="onDonateProvisionally(reservation)">
+          <i class="fa fa-hand-paper-o fa-lg mr-2"></i>Artikel übergeben
+        </button>
+        <button *ngIf="article.status._id != ArticleStatusType.donated"
+                type="button" class="btn btn-success mt-3" (click)="onDonateDefinitely(reservation)">
+          <i class="fa fa-gift fa-lg mr-2"></i>Schenkung abschliessen
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+<!--Daignostics-->
+<!--<p>{{ reservations | json }}</p>-->

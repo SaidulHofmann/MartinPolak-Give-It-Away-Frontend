@@ -9,6 +9,9 @@ import {PagerService} from '../../services/pager.service';
 import {articleCategories, articleCategoryFilter, articleSortOptions, articleStatus, articleStatusFilter} from '../../models/data.model';
 import {IdNamePair} from '../../models/core.model';
 import {ArticleCategory} from '../../models/articleCategory.model';
+import {ArticleStatusType} from '../../models/enum.model';
+import {User} from '../../models/user.model';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-articles',
@@ -19,8 +22,9 @@ export class ArticlesComponent implements OnInit {
 
   // Constants, variables
   // ----------------------------------
-  articlesResponse: HttpResponseArticles = null;
-  pager: any = {};
+  ArticleStatusType = ArticleStatusType;
+  public articlesResponse: HttpResponseArticles = null;
+  public pager: any = {};
   articleCategories = articleCategoryFilter;
   articleStatus = articleStatusFilter;
   sortOptions = articleSortOptions;
@@ -35,11 +39,15 @@ export class ArticlesComponent implements OnInit {
     return this.articlesResponse.data.docs;
   }
 
+  public get currentUser(): User {
+    return this.userService.getCurrentUser();
+  }
+
   // Methods
   // ----------------------------------
   constructor(
-    private http: HttpClient,
     private router: Router,
+    private userService: UserService,
     private articleService: ArticleService,
     private pagerService: PagerService) { }
 
@@ -66,6 +74,10 @@ export class ArticlesComponent implements OnInit {
 
   onEdit(article: Article) {
     this.router.navigate([`/articles/${article._id}/edit`]);
+  }
+
+  onGiveAway(article: Article) {
+    this.router.navigate([`/articles/${article._id}/giveAway`]);
   }
 
   onPublicationRervationCBChange(event) {

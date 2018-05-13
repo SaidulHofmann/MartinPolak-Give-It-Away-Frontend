@@ -27,8 +27,9 @@ export class Article {
 }
 
 export class ArticleRef {
-  _id = null;
-  name = '';
+  constructor(
+    public _id = null,
+    public name = '') {}
 }
 
 export class HttpResponseArticles {

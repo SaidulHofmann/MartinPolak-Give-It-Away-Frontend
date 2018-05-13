@@ -20,7 +20,6 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { MessagesComponent } from './components/messages/messages.component';
 import { ArticleComponent } from './components/articles/article/article.component';
-import { ArticleGiveawayComponent } from './components/article-giveaway/article-giveaway.component';
 import { ArticleSearchComponent } from './components/article-search/article-search.component';
 import {UserService} from './services/user.service';
 import {DateValueAccessorDirective} from './directives/dateValueAccessor.directive';
@@ -29,9 +28,7 @@ import { CreateArticleComponent } from './components/articles/create-article/cre
 import { ArticleDetailsComponent } from './components/articles/article-details/article-details.component';
 import {PagerService} from './services/pager.service';
 import {ArticleResolver} from './services/article-resolver.service';
-import { MyArticlesComponent } from './components/articles/my-articles/my-articles.component';
-import { MyReservationsComponent } from './components/articles/my-reservations/my-reservations.component';
-
+import { GiveawayArticleComponent } from './components/articles/giveaway-article/giveaway-article.component';
 
 @NgModule({
   declarations: [
@@ -54,13 +51,11 @@ import { MyReservationsComponent } from './components/articles/my-reservations/m
     PageNotFoundComponent,
 
     ArticleComponent,
-    ArticleGiveawayComponent,
     DateValueAccessorDirective,
     EditArticleComponent,
     CreateArticleComponent,
     ArticleDetailsComponent,
-    MyArticlesComponent,
-    MyReservationsComponent
+    GiveawayArticleComponent
   ],
   imports: [
     BrowserModule,

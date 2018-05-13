@@ -1,5 +1,6 @@
 
 export class ArticleStatus {
-  _id = '';
-  name = '';
+  constructor(
+    public _id = null,
+    public name = '') {}
 }

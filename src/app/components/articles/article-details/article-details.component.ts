@@ -16,9 +16,11 @@ import {ArticleService} from '../../../services/article.service';
   styleUrls: ['./article-details.component.scss']
 })
 export class ArticleDetailsComponent implements OnInit {
-  currentUser = null;
-  article: Article;
+  public article: Article;
 
+  public get currentUser(): User {
+    return this.userService.getCurrentUser();
+  }
 
   constructor(
     private location: Location,
@@ -43,7 +45,7 @@ export class ArticleDetailsComponent implements OnInit {
   private assignDefaultReservation() {
     this.article.usersReservation = {
       article: this.article._id,
-      user: new UserRef(this.userService.getCurrentUser()._id),
+      user: new UserRef(this.currentUser._id),
       commentPublisher: '',
       commentApplicant: ''
     } as Reservation;

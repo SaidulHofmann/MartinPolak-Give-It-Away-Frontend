@@ -59,12 +59,12 @@ export const articleStatusFilter: ArticleStatus[] = [
 
 export const articleSortOptions: [IdNamePair] = [
   { _id: 'undefined', name: 'Keine' },
-  { _id: 'name', name: 'Artikelbezeichnung ▲'},
-  { _id: '-name', name: 'Artikelbezeichnung ▼' },
-  { _id: 'createdAt', name: 'Erstellungsdatum ▲' },
-  { _id: '-createdAt', name: 'Erstellungsdatum ▼' },
-  { _id: 'donationDate', name: 'Schenkungsdatum ▲' },
-  { _id: '-donationDate', name: 'Schenkungsdatum ▼' }
+  { _id: 'name', name: 'Artikelbezeichnung aufst. ▲'},
+  { _id: '-name', name: 'Artikelbezeichnung abst. ▼' },
+  { _id: 'createdAt', name: 'Erstellungsdatum aufst. ▲' },
+  { _id: '-createdAt', name: 'Erstellungsdatum abst. ▼' },
+  { _id: 'donationDate', name: 'Schenkungsdatum aufst. ▲' },
+  { _id: '-donationDate', name: 'Schenkungsdatum abst. ▼' }
 ];
 
 export const testUser: User = {

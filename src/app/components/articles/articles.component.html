@@ -43,11 +43,6 @@
         <label for="inputMyReservations" class="form-check-label">Meine Reservationen</label>
       </div>
 
-      <!--<div class="form-check">-->
-        <!--<input id="inputMyReservations" type="checkbox" class="form-check-input">-->
-        <!--<label for="inputMyReservations" class="form-check-label">Meine Reservationen</label>-->
-      <!--</div>-->
-
       <div class="col-md-3">
         <br/>
         <button id="buttonFilter" type="button" class="btn btn-info btn-sm mt-md-2 mr-2" (click)="onSetFilter()"><i class="fa fa-filter mr-2"></i>Filtern</button>
@@ -67,8 +62,11 @@
             <h4 class="card-title">{{ article.name }}</h4>
             <img class="card-img" style="height: 250px; width: auto; cursor: pointer" src="{{ article.pictureOverview }}" alt="Bild"  (click)="onArticleDetails(article)">
             <div>
-              <button class="btn btn-info btn-sm mt-2 mr-3" (click)="onArticleDetails(article)"><i class="fa fa-info-circle fa-lg mr-2"></i>Details</button>
-              <button class="btn btn-outline-secondary btn-sm mt-2" (click)="onEdit(article)"><i class="fa fa-edit fa-lg mr-1"></i>Bearbeiten</button>
+              <button class="btn btn-info btn-sm mt-2 mr-2" (click)="onArticleDetails(article)"><i class="fa fa-info-circle fa-lg mr-2"></i>Details</button>
+              <button *ngIf="article.publisher._id === currentUser._id && article.status._id !== ArticleStatusType.donated"
+                  class="btn btn-info btn-sm mt-2 mr-2" (click)="onGiveAway(article)"><i class="fa fa-gift fa-lg mr-2"></i>Verschenken</button>
+              <button *ngIf="article.publisher._id === currentUser._id"
+                  class="btn btn-outline-secondary btn-sm mt-2" (click)="onEdit(article)"><i class="fa fa-edit fa-lg mr-2"></i>Bearbeiten</button>
             </div>
           </div>
 
