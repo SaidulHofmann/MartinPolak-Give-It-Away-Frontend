@@ -1,9 +1,9 @@
 import {TestBed, async, ComponentFixture} from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import {AppNavbarComponent} from './components/app-navbar/app-navbar.component';
-import {HeaderComponent} from './components/header/header.component';
-import {FooterComponent} from './components/footer/footer.component';
-import {MessagesComponent} from './components/messages/messages.component';
+import {AppNavbarComponent} from './components/shared/app-navbar/app-navbar.component';
+import {HeaderComponent} from './components/shared/header/header.component';
+import {FooterComponent} from './components/shared/footer/footer.component';
+import {MessagesComponent} from './components/shared/messages/messages.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import {MessageService} from './services/message.service';
 

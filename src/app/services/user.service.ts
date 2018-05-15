@@ -1,12 +1,9 @@
-import { Injectable } from '@angular/core';
-import {HttpResponseUser, User} from '../models/user.model';
-import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs/observable/of';
+import {Injectable} from '@angular/core';
+import {User} from '../models/user.model';
+import { Observable, of, throwError } from 'rxjs';
+import {catchError, map, tap} from 'rxjs/operators';
 import {MessageService} from './message.service';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
-import { catchError, map, tap } from 'rxjs/operators';
-import { testUser } from '../models/index.model';
-import {ErrorObservable} from 'rxjs/observable/ErrorObservable';
 import {ErrorCodeType} from '../models/enum.model';
 import {HttpErrorArgs} from '../models/http-error-args.model';
 import {Router} from '@angular/router';
@@ -14,7 +11,7 @@ import {Router} from '@angular/router';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json'})
-}
+};
 
 @Injectable()
 export class UserService {
@@ -44,7 +41,6 @@ export class UserService {
         })
     };
   }
-
 
   /** POST: add a new user. */
   public registerUser(user: User): Observable<User | HttpErrorResponse> {
@@ -123,29 +119,27 @@ export class UserService {
     };
   }
 
-  private handlePostError (error: HttpErrorResponse): Observable<HttpErrorResponse> {
+  private handlePostError (error: HttpErrorResponse): Observable<never> {
     console.error('UserService.handlePostError(): ', error);
     // Client-side or network errors.
     if(error.error instanceof ErrorEvent) {
       this.log('Die Anforderung konnte nicht zum Server gesendet werden: ' + error.error.message);
-      return new ErrorObservable(new HttpErrorArgs(error, ErrorCodeType.Client_Side_Or_Network_Error));
+      return throwError(new HttpErrorArgs(error, ErrorCodeType.Client_Side_Or_Network_Error));
 
       // Server-side errors.
     } else {
       if(error.status === 401) {
-        return new ErrorObservable(new HttpErrorArgs(error, ErrorCodeType.Authentication_Failed));
+        return throwError(new HttpErrorArgs(error, ErrorCodeType.Authentication_Failed));
       }
 
       if(error.error.message.includes(ErrorCodeType.MongoDB_DuplicateKey)) {
-        return new ErrorObservable(new HttpErrorArgs(error, ErrorCodeType.MongoDB_DuplicateKey));
+        return throwError(new HttpErrorArgs(error, ErrorCodeType.MongoDB_DuplicateKey));
       }
 
-
       // this.log('Die Anforderung konnte serverseitig nicht bearbeitet werden: ' + error.error.message);
-      return new ErrorObservable(new HttpErrorArgs(error));
+      return throwError(new HttpErrorArgs(error));
     }
   }
-
 
 
 }

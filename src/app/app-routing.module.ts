@@ -4,15 +4,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { ArticlesComponent } from './components/articles/articles.component';
 import { CreateArticleComponent } from './components/articles/create-article/create-article.component';
 import { EditArticleComponent } from './components/articles/edit-article/edit-article.component';
-import { RegisterComponent } from './components/register/register.component';
-import { LoginComponent } from './components/login/login.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { Test1Component } from './components/test1/test1.component';
-import { Test1DetailComponent } from './components/test1-detail/test1-detail.component';
+import { RegisterComponent } from './components/users/register/register.component';
+import { LoginComponent } from './components/users/login/login.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { ArticleDetailsComponent } from './components/articles/article-details/article-details.component';
-import {ArticleResolver} from './services/article-resolver.service';
-import {GiveawayArticleComponent} from './components/articles/giveaway-article/giveaway-article.component';
+import { ArticleResolver } from './services/article-resolver.service';
+import { GiveawayArticleComponent } from './components/articles/giveaway-article/giveaway-article.component';
 
 const routes = [
   { path: 'articles', component: ArticlesComponent },
@@ -22,9 +19,6 @@ const routes = [
   { path: 'articles/:id/giveAway', component: GiveawayArticleComponent, resolve: { article: ArticleResolver } },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'test1', component: Test1Component },
-  { path: 'test1Detail/:id', component: Test1DetailComponent },
   { path: '', redirectTo: '/articles', pathMatch: 'full' },
   { path: '**', component: PageNotFoundComponent }
 ];

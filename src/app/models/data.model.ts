@@ -57,7 +57,7 @@ export const articleStatusFilter: ArticleStatus[] = [
   {_id: 'donated', name: 'Artikel verschenkt'}
 ];
 
-export const articleSortOptions: [IdNamePair] = [
+export const articleSortOptions: IdNamePair[] = [
   { _id: 'undefined', name: 'Keine' },
   { _id: 'name', name: 'Artikelbezeichnung aufst. ▲'},
   { _id: '-name', name: 'Artikelbezeichnung abst. ▼' },
@@ -102,8 +102,8 @@ export const testArticle: Article = {
   tags:  'Motorrad, Yamaha, Yamaha 5000ccm',
   donationDate: new Date(2018, 3, 15),
 
-  publisher: this.testUserRef,
-  donee: this.testUserRef,
+  publisher: testUserRef,
+  donee: testUserRef,
   category: articleCategories[0],
   status: articleStatus[0],
 
