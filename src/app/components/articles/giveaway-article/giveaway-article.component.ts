@@ -10,6 +10,7 @@ import {User, UserRef} from '../../../models/user.model';
 import {UserService} from '../../../services/user.service';
 import {ArticleStatus} from '../../../models/articleStatus.model';
 import {Location} from '@angular/common';
+import {Pager} from '../../../models/core.model';
 
 @Component({
   selector: 'app-giveaway-article',
@@ -22,9 +23,9 @@ export class GiveawayArticleComponent implements OnInit {
   // ----------------------------------
   ArticleStatusType = ArticleStatusType;
   public reservationsResponse: HttpResponseReservations = null;
-  private article: Article;
+  public article: Article;
   private reservationFilter: ReservationFilter = new ReservationFilter();
-  public pager: any = {};
+  public pager = new Pager();
 
   // Properties
   // ----------------------------------
@@ -55,7 +56,7 @@ export class GiveawayArticleComponent implements OnInit {
     this.location.back();
   }
 
-  setPage(pageNumber: number) {
+  onSetPage(pageNumber: number) {
     if (pageNumber < 1 || pageNumber > this.pager.totalPages) { return; }
     this.reservationFilter.page = pageNumber;
     this.getReservations();

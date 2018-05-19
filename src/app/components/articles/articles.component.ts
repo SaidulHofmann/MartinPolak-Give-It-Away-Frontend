@@ -2,12 +2,11 @@
 
 import {Component, OnInit} from '@angular/core';
 import {ArticleService} from '../../services/article.service';
-import {HttpClient} from '@angular/common/http';
 import {Article, ArticleFilter, HttpResponseArticles} from '../../models/article.model';
 import {Router} from '@angular/router';
 import {PagerService} from '../../services/pager.service';
 import {articleCategories, articleCategoryFilter, articleSortOptions, articleStatus, articleStatusFilter} from '../../models/data.model';
-import {IdNamePair} from '../../models/core.model';
+import {IdNamePair, Pager} from '../../models/core.model';
 import {ArticleCategory} from '../../models/articleCategory.model';
 import {ArticleStatusType} from '../../models/enum.model';
 import {User} from '../../models/user.model';
@@ -22,9 +21,9 @@ export class ArticlesComponent implements OnInit {
 
   // Constants, variables
   // ----------------------------------
-  ArticleStatusType = ArticleStatusType;
+  public ArticleStatusType = ArticleStatusType;
   public articlesResponse: HttpResponseArticles = null;
-  public pager: any = {};
+  public pager: Pager = new Pager();
   articleCategories = articleCategoryFilter;
   articleStatus = articleStatusFilter;
   sortOptions = articleSortOptions;
@@ -55,7 +54,7 @@ export class ArticlesComponent implements OnInit {
     this.onResetFilter();
   }
 
-  setPage(pageNumber: number) {
+  onSetPage(pageNumber: number) {
     if (pageNumber < 1 || pageNumber > this.pager.totalPages) { return; }
     this.articleFilter.page = pageNumber;
     this.getArticles();

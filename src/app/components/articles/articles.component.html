@@ -4,47 +4,55 @@
     <div class="form-row">
 
       <div class="col-md-4 mb-2 mr-md-3">
-        <label for="articleCategory">Kategorie:</label>
-        <select id="articleCategory" class="form-control form-control-sm" [(ngModel)]="articleFilter.category" name="articleCategory" (change)="onSetFilter()">
-          <option *ngFor="let categoryEntry of articleCategories"
-                  [ngValue]="categoryEntry">{{categoryEntry.name}}
-          </option>
-        </select>
-      </div>
-
-      <div class="col-md-4 mb-2 mr-md-3">
-        <label for="articleStatusEntry">Status:</label>
-        <select id="articleStatusEntry" class="form-control form-control-sm" [(ngModel)]="articleFilter.status" name="articleStatusEntry"  (change)="onSetFilter()">
-          <option *ngFor="let statusEntry of articleStatus"
-                  [ngValue]="statusEntry">{{statusEntry.name}}
-          </option>
-        </select>
+        <div class="form-row">
+          <label for="articleCategory" class="col-lg-4">Kategorie:</label>
+          <select id="articleCategory" class="col-lg-8 form-control form-control-sm" [(ngModel)]="articleFilter.category" name="articleCategory" (change)="onSetFilter()">
+            <option *ngFor="let categoryEntry of articleCategories"
+                    [ngValue]="categoryEntry">{{categoryEntry.name}}
+            </option>
+          </select>
+        </div>
       </div>
 
       <div class="col-md-3 mb-2 mr-md-3">
-        <label for="sortOption">Sortierung:</label>
-        <select id="sortOption" class="form-control form-control-sm" [(ngModel)]="articleFilter.sort" name="sortOption"  (change)="onSetFilter()">
-          <option *ngFor="let sortOptionEntry of sortOptions"
-                  [ngValue]="sortOptionEntry">{{sortOptionEntry.name}}
-          </option>
-        </select>
+        <div class="form-row">
+          <label for="articleStatusEntry" class="col-lg-4">Status:</label>
+          <select id="articleStatusEntry" class="col-lg-8 form-control form-control-sm" [(ngModel)]="articleFilter.status" name="articleStatusEntry"  (change)="onSetFilter()">
+            <option *ngFor="let statusEntry of articleStatus"
+                    [ngValue]="statusEntry">{{statusEntry.name}}
+            </option>
+          </select>
+        </div>
       </div>
 
       <div class="col-md-4 mb-2 mr-md-3">
-        <label for="inputTags">Suchbegriffe:</label>
-        <input id="inputTags" type="text" class="form-control form-control-sm" [(ngModel)]="articleFilter.tags" name="tags" (keyup.enter)="onSetFilter()">
+        <div class="form-row">
+          <label for="sortOption" class="col-lg-4">Sortierung:</label>
+          <select id="sortOption" class="col-lg-8 form-control form-control-sm" [(ngModel)]="articleFilter.sort" name="sortOption"  (change)="onSetFilter()">
+            <option *ngFor="let sortOptionEntry of sortOptions"
+                    [ngValue]="sortOptionEntry">{{sortOptionEntry.name}}
+            </option>
+          </select>
+        </div>
       </div>
 
-      <div class="col-md-4 form-check ml-md-3 mr-md-2">
-        <br/>
+      <div class="col-md-4 mb-2 mr-md-3">
+        <div class="form-row">
+          <label for="inputTags" class="col-lg-4">Suchbegriffe:</label>
+          <div class="col-lg-8">
+            <input id="inputTags" type="text" class="form-control form-control-sm" [(ngModel)]="articleFilter.tags" name="tags" (keyup.enter)="onSetFilter()">
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 form-check ml-md-3 mr-md-2">
         <input id="inputMyPublications" type="checkbox" [(ngModel)]="articleFilter.selectPublishedArticles" name="inputMyPublications" (change)="onPublicationRervationCBChange($event)" class="form-check-input">
         <label for="inputMyPublications" class="form-check-label">Meine Publikationen</label><br/>
         <input id="inputMyReservations" type="checkbox" [(ngModel)]="articleFilter.selectReservedArticles" name="inputMyReservations" (change)="onPublicationRervationCBChange($event)" class="form-check-input">
         <label for="inputMyReservations" class="form-check-label">Meine Reservationen</label>
       </div>
 
-      <div class="col-md-3">
-        <br/>
+      <div class="col-md-4">
         <button id="buttonFilter" type="button" class="btn btn-info btn-sm mt-md-2 mr-2" (click)="onSetFilter()"><i class="fa fa-filter mr-2"></i>Filtern</button>
         <button id="buttonReset" type="button" class="btn btn-outline-info btn-sm mt-md-2" (click)="onResetFilter()">
           <i class="fa fa-filter mr-2"><i class="fa fa-times"></i></i>Reset</button>
@@ -82,24 +90,7 @@
     </div>
   </div>
 
-  <nav aria-label="Article search pagination">
-    <ul class="pagination justify-content-center">
-      <li class="page-item" [ngClass]="{disabled:pager.currentPage === 1}">
-        <a class="page-link" (click)="setPage(1)" title="Erste Seite"><i class="fa fa-step-backward"></i></a>
-      </li>
-      <li class="page-item" [ngClass]="{disabled:pager.currentPage === 1}">
-        <a class="page-link" (click)="setPage(pager.currentPage - 1)">Zurück</a>
-      </li>
-      <li class="page-item" *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
-        <a class="page-link" (click)="setPage(page)">{{page}}</a>
-      </li>
-      <li class="page-item" [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
-        <a class="page-link" (click)="setPage(pager.currentPage + 1)">Weiter</a>
-      </li>
-      <li class="page-item" [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
-        <a class="page-link" (click)="setPage(pager.totalPages)" title="Letzte Seite"><i class="fa fa-step-forward"></i></a>
-      </li>
-    </ul>
-  </nav>
+  <app-pager [pager]="pager" (setPage)="onSetPage($event)"></app-pager>
 
 </div>
+

@@ -1,0 +1,19 @@
+<nav aria-label="Article search pagination">
+  <ul class="pagination justify-content-center">
+    <li class="page-item" [ngClass]="{disabled:pager.currentPage === 1}">
+      <a class="page-link" (click)="onSetPage(1)" title="Erste Seite"><i class="fa fa-step-backward"></i></a>
+    </li>
+    <li class="page-item" [ngClass]="{disabled:pager.currentPage === 1}">
+      <a class="page-link" (click)="onSetPage(pager.currentPage - 1)">Zurück</a>
+    </li>
+    <li class="page-item" *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
+      <a class="page-link" (click)="onSetPage(page)">{{page}}</a>
+    </li>
+    <li class="page-item" [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+      <a class="page-link" (click)="onSetPage(pager.currentPage + 1)">Weiter</a>
+    </li>
+    <li class="page-item" [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+      <a class="page-link" (click)="onSetPage(pager.totalPages)" title="Letzte Seite"><i class="fa fa-step-forward"></i></a>
+    </li>
+  </ul>
+</nav>

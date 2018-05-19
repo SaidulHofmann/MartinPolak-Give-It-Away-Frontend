@@ -24,6 +24,8 @@ import { ArticleDetailsComponent } from './components/articles/article-details/a
 import {PagerService} from './services/pager.service';
 import {ArticleResolver} from './services/article-resolver.service';
 import { GiveawayArticleComponent } from './components/articles/giveaway-article/giveaway-article.component';
+import { PagerComponent } from './components/shared/pager/pager.component';
+import { MessageboxComponent } from './components/shared/messagebox/messagebox.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +45,9 @@ import { GiveawayArticleComponent } from './components/articles/giveaway-article
     EditArticleComponent,
     CreateArticleComponent,
     ArticleDetailsComponent,
-    GiveawayArticleComponent
+    GiveawayArticleComponent,
+    PagerComponent,
+    MessageboxComponent
   ],
   imports: [
     BrowserModule,

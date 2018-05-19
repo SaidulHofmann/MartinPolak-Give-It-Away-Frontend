@@ -18,3 +18,19 @@ export enum ArticleStatusType {
   donated = 'donated'
 }
 
+export enum MessageBoxModes {
+  Info = 'Info',
+  Question = 'Question',
+  Error = 'Error',
+  Save = 'Save',
+  Delete = 'Delete',
+}
+
+export enum MessageBoxCommands {
+  Ok = 'Ok',
+  Yes = 'Yes',
+  No = 'No',
+  Save = 'Save',
+  Delete = 'Delete',
+  Cancel = 'Cancel'
+}
