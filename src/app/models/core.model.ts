@@ -1,3 +1,4 @@
+import {HttpErrorResponse} from '@angular/common/http';
 
 export class IdNamePair {
   _id = '';
@@ -14,4 +15,23 @@ export class Pager {
   startIndex:   number = 0;
   endIndex:     number = 0;
   pages:        number[] = [];
+}
+
+export class DialogConfig {
+  title: string;
+  message: string;
+
+  hasOkButton: boolean = false;
+  hasYesButton: boolean = false;
+  hasNoButton: boolean = false;
+  hasSaveButton: boolean = false;
+  hasDeleteButton: boolean = false;
+  hasCancelButton: boolean = false;
+}
+
+export class HttpErrorArgs {
+  constructor(
+    public error: HttpErrorResponse,
+    public errorCode: string = ''
+  ) { }
 }

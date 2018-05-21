@@ -1,11 +1,9 @@
 import {Injectable} from '@angular/core';
-import {User} from '../models/user.model';
 import { Observable, of, throwError } from 'rxjs';
 import {catchError, map, tap} from 'rxjs/operators';
 import {MessageService} from './message.service';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
-import {ErrorCodeType} from '../models/enum.model';
-import {HttpErrorArgs} from '../models/http-error-args.model';
+import {User, ErrorCodeType, HttpErrorArgs} from '../models/index.model';
 import {Router} from '@angular/router';
 
 

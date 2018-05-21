@@ -18,15 +18,7 @@ export enum ArticleStatusType {
   donated = 'donated'
 }
 
-export enum MessageBoxModes {
-  Info = 'Info',
-  Question = 'Question',
-  Error = 'Error',
-  Save = 'Save',
-  Delete = 'Delete',
-}
-
-export enum MessageBoxCommands {
+export enum DialogResultType {
   Ok = 'Ok',
   Yes = 'Yes',
   No = 'No',
@@ -34,3 +26,4 @@ export enum MessageBoxCommands {
   Delete = 'Delete',
   Cancel = 'Cancel'
 }
+

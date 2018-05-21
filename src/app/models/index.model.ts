@@ -3,6 +3,7 @@
 export * from './article.model';
 export * from './articleCategory.model';
 export * from './articleStatus.model';
+export * from './core.model';
 export * from './data.model';
 export * from './enum.model';
 export * from './reservation.model';

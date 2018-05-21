@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import {Article, ArticleFilter, HttpResponseArticles} from '../models/article.model';
+import {Article, ArticleFilter} from '../models/article.model';
+import {Reservation, ReservationFilter} from '../models/reservation.model';
 import { Observable ,  of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { MessageService } from './message.service';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {UserService} from './user.service';
-import {ErrorCodeType} from '../models/enum.model';
-import {HttpErrorArgs} from '../models/http-error-args.model';
+
 import {Router} from '@angular/router';
-import {Reservation, ReservationFilter} from '../models/reservation.model';
+
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json'})

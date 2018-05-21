@@ -1,5 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* Angular Material Style definitions. */
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
 /* Bootstrap style definitions */
 @import "../../node_modules/bootstrap/scss/bootstrap";
 
@@ -10,6 +13,7 @@
 $fa-font-path: "../../node_modules/font-awesome/fonts";
 @import '../../node_modules/font-awesome/scss/font-awesome';
 
+
 body {
   //margin: 2rem;
 }
@@ -17,6 +21,10 @@ body {
 body, input[text], button {
   color: #333;
   font-family: Cambria, Georgia;
+}
+
+.custom-dialog-container .mat-dialog-container {
+  padding: 5px;
 }
 
 

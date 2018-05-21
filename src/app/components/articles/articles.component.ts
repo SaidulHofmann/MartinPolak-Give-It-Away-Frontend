@@ -1,6 +1,6 @@
 // Implements UC04-Artikel anzeigen.
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ArticleService} from '../../services/article.service';
 import {Article, ArticleFilter, HttpResponseArticles} from '../../models/article.model';
 import {Router} from '@angular/router';
@@ -11,13 +11,14 @@ import {ArticleCategory} from '../../models/articleCategory.model';
 import {ArticleStatusType} from '../../models/enum.model';
 import {User} from '../../models/user.model';
 import {UserService} from '../../services/user.service';
+import {LocalDataService} from '../../services/local-data.service';
 
 @Component({
   selector: 'app-articles',
   templateUrl: './articles.component.html',
   styleUrls: ['./articles.component.scss']
 })
-export class ArticlesComponent implements OnInit {
+export class ArticlesComponent implements OnInit, OnDestroy {
 
   // Constants, variables
   // ----------------------------------
@@ -27,7 +28,7 @@ export class ArticlesComponent implements OnInit {
   articleCategories = articleCategoryFilter;
   articleStatus = articleStatusFilter;
   sortOptions = articleSortOptions;
-  articleFilter: ArticleFilter = new ArticleFilter();
+  articleFilter: ArticleFilter = null;
 
   // Properties
   // ----------------------------------
@@ -46,12 +47,33 @@ export class ArticlesComponent implements OnInit {
   // ----------------------------------
   constructor(
     private router: Router,
+    private localDataService: LocalDataService,
     private userService: UserService,
     private articleService: ArticleService,
     private pagerService: PagerService) { }
 
   ngOnInit() {
-    this.onResetFilter();
+    this.loadArticleFilter();
+    if (this.articleFilter != null) {
+      this.getArticles();
+    } else {
+      this.articleFilter = new ArticleFilter();
+      this.onResetFilter();
+    }
+  }
+
+  ngOnDestroy() {
+    this.localDataService.articleFilter = this.articleFilter;
+    this.localDataService.SaveArticleFilter();
+  }
+
+  private loadArticleFilter() {
+    this.articleFilter = this.localDataService.articleFilter;
+    if (this.articleFilter != null) {
+      this.articleFilter.category = articleCategoryFilter.find(c => c._id === this.articleFilter.category._id);
+      this.articleFilter.status = articleStatusFilter.find(s => s._id === this.articleFilter.status._id);
+      this.articleFilter.sort = articleSortOptions.find(s => s._id === this.articleFilter.sort._id);
+    }
   }
 
   onSetPage(pageNumber: number) {
@@ -96,6 +118,8 @@ export class ArticlesComponent implements OnInit {
   onSetFilter() {
     this.articleFilter.page = 1;
     this.getArticles();
+    this.localDataService.articleFilter = this.articleFilter;
+    this.localDataService.SaveArticleFilter();
   }
 
   onResetFilter() {

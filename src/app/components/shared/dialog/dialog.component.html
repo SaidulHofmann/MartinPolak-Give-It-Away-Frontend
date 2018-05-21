@@ -1,0 +1,14 @@
+<div class="card text-center">
+  <h5 class="card-header">{{config.title}}</h5>
+  <div class="card-body">
+    <p class="card-text">{{config.message}}</p>
+  </div>
+  <div class = card-footer mt-3>
+    <button *ngIf="config.hasOkButton" class="btn btn-primary mr-3" [mat-dialog-close]="DialogResultType.Ok">Ok</button>
+    <button *ngIf="config.hasYesButton" class="btn btn-primary mr-3" [mat-dialog-close]="DialogResultType.Yes">Ja</button>
+    <button *ngIf="config.hasNoButton" class="btn btn-primary mr-3" [mat-dialog-close]="DialogResultType.No">Nein</button>
+    <button *ngIf="config.hasSaveButton" class="btn btn-primary mr-3" [mat-dialog-close]="DialogResultType.Save">Speichern</button>
+    <button *ngIf="config.hasDeleteButton" class="btn btn-primary mr-3" [mat-dialog-close]="DialogResultType.Delete">Entfernen</button>
+    <button *ngIf="config.hasCancelButton" class="btn btn-outline-primary mr-3" [mat-dialog-close]="DialogResultType.Cancel">Abbrechen</button>
+  </div>
+</div>

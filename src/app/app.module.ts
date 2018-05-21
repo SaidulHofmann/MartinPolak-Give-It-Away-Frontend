@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -25,7 +26,9 @@ import {PagerService} from './services/pager.service';
 import {ArticleResolver} from './services/article-resolver.service';
 import { GiveawayArticleComponent } from './components/articles/giveaway-article/giveaway-article.component';
 import { PagerComponent } from './components/shared/pager/pager.component';
-import { MessageboxComponent } from './components/shared/messagebox/messagebox.component';
+import { MaterialModule } from './material.module';
+import { DialogComponent } from './components/shared/dialog/dialog.component';
+
 
 @NgModule({
   declarations: [
@@ -47,16 +50,27 @@ import { MessageboxComponent } from './components/shared/messagebox/messagebox.c
     ArticleDetailsComponent,
     GiveawayArticleComponent,
     PagerComponent,
-    MessageboxComponent
+    DialogComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
+    MaterialModule,
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
     HttpClientModule,
   ],
-  providers: [ ArticleService, MessageService, UserService, PagerService, ArticleResolver ],
+  providers: [
+    ArticleService,
+    MessageService,
+    UserService,
+    PagerService,
+    ArticleResolver
+  ],
+  entryComponents: [
+    DialogComponent
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -31,7 +31,7 @@ export const articleCategories: ArticleCategory[] = [
 ];
 
 export const articleCategoryFilter: ArticleCategory[] = [
-  {_id: 'undefined', name: 'Alle'},
+  {_id: 'undefined', name: 'Alle Kategorien'},
   {_id: 'others', name: 'Sonstiges'},
   {_id: 'mobility', name: 'Mobilität'},
   {_id: 'household', name: 'Haushalt'},
@@ -51,14 +51,14 @@ export const articleStatus: ArticleStatus[] = [
 ];
 
 export const articleStatusFilter: ArticleStatus[] = [
-  {_id: 'undefined', name: 'Alle'},
+  {_id: 'undefined', name: 'Alle Artikel Status'},
   {_id: 'available', name: 'Artikel verfügbar'},
   {_id: 'handoverPending', name: 'Übergabe pendent'},
   {_id: 'donated', name: 'Artikel verschenkt'}
 ];
 
 export const articleSortOptions: IdNamePair[] = [
-  { _id: 'undefined', name: 'Keine' },
+  { _id: 'undefined', name: 'Keine Sortierung' },
   { _id: 'name', name: 'Artikelbezeichnung aufst. ▲'},
   { _id: '-name', name: 'Artikelbezeichnung abst. ▼' },
   { _id: 'createdAt', name: 'Erstellungsdatum aufst. ▲' },
