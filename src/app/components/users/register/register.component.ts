@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import {UserService} from '../../../services/user.service';
 import {User} from '../../../models/user.model';
 import {ErrorCodeType} from '../../../models/enum.model';
-import {HttpErrorArgs} from '../../../models/http-error-args.model';
+import {HttpErrorArgs} from '../../../models/core.model';
 
 @Component({
   selector: 'app-register',
