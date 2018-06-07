@@ -1,9 +1,9 @@
 
 export enum EditModeType {
-  Create,
-  Read,
-  Update,
-  Delete
+  Create = 'Create',
+  Read = 'Read',
+  Update = 'Update',
+  Delete = 'Delete'
 }
 
 export enum ErrorCodeType {

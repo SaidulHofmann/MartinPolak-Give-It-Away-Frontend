@@ -1,4 +1,7 @@
 import {Article} from './article.model';
+import {articleCategoryFilter, articleSortOptions, articleStatusFilter} from './data.model';
+import {IdNamePair} from './core.model';
+import {ArticleCategory, ArticleStatus} from './index.model';
 
 export class User {
   _id: string;
@@ -6,7 +9,7 @@ export class User {
   password: string;
   firstname: string;
   lastname: string;
-  public fullname: string;
+  fullname: string;
 
   createdAt = null;
   updatedAt = null;
@@ -30,3 +33,29 @@ export class HttpResponseUser {
   message = '';
 }
 
+export class HttpResponseUsers {
+  status = '';
+  data: HttpResponseUserData = null;
+  message = '';
+}
+
+export class HttpResponseUserData {
+  docs: User[] = [];
+  total = 0;
+  limit = 0;
+  page = 0;
+  pages = 0;
+}
+
+export class UserFilter {
+  _id: string = '';
+  email: string = '';
+  firstname: string = '';
+  lastname: string = '';
+
+  filter: string = '';
+  sort: string = '';
+  page: number = 1;
+  limit: number = 10;
+  total: number = 1;
+}

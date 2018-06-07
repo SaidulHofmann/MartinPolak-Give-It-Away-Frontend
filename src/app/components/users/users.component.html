@@ -1,0 +1,41 @@
+<mat-form-field>
+  <input matInput placeholder="Benutzer suchen" #input>
+</mat-form-field>
+
+<div class="spinner-container" *ngIf="dataSource.loading$ | async">
+  <mat-spinner></mat-spinner>
+</div>
+<mat-table class="table mat-elevation-z8" [dataSource]="dataSource"
+           matSort matSortActive="lastname" matSortDirection="asc" matSortDisableClear>
+
+  <ng-container matColumnDef="_id">
+    <mat-header-cell *matHeaderCellDef>id</mat-header-cell>
+    <mat-cell *matCellDef="let user">{{user._id}}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="firstname">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Vorname</mat-header-cell>
+    <mat-cell class="description-cell"
+         *matCellDef="let user">{{user.firstname}}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="lastname">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Nachname</mat-header-cell>
+    <mat-cell class="duration-cell"
+         *matCellDef="let user">{{user.lastname}}</mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="email">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>E-Mail</mat-header-cell>
+    <mat-cell class="duration-cell"
+         *matCellDef="let user">{{user.email}}</mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+  <mat-row *matRowDef="let row; columns: displayedColumns" (click)="onRowClicked(row)"></mat-row>
+
+</mat-table>
+
+<mat-paginator [length]="userFilter.total" [pageSize]="userFilter.limit"
+               [pageSizeOptions]="[3, 5, 10]" showFirstLastButtons></mat-paginator>

@@ -10,6 +10,8 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { ArticleDetailsComponent } from './components/articles/article-details/article-details.component';
 import { ArticleResolver } from './services/article-resolver.service';
 import { GiveawayArticleComponent } from './components/articles/giveaway-article/giveaway-article.component';
+import {UsersComponent} from './components/users/users.component';
+import {RolesComponent} from './components/users/roles/roles.component';
 
 const routes = [
   { path: 'articles', component: ArticlesComponent },
@@ -17,8 +19,10 @@ const routes = [
   { path: 'articles/create', component: CreateArticleComponent },
   { path: 'articles/:id/edit', component: EditArticleComponent },
   { path: 'articles/:id/giveAway', component: GiveawayArticleComponent, resolve: { article: ArticleResolver } },
-  { path: 'register', component: RegisterComponent },
-  { path: 'login', component: LoginComponent },
+  { path: 'users', component: UsersComponent },
+  { path: 'users/register', component: RegisterComponent },
+  { path: 'users/login', component: LoginComponent },
+  { path: 'users/roles', component: RolesComponent },
   { path: '', redirectTo: '/articles', pathMatch: 'full' },
   { path: '**', component: PageNotFoundComponent }
 ];

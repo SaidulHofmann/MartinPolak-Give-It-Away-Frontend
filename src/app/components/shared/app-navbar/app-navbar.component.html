@@ -6,23 +6,29 @@
   <div class="collapse navbar-collapse" id="navbarsExampleDefault">
 
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item" routerLinkActive="active"  [routerLinkActiveOptions]="{exact: true}">
+      <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <a class="nav-link" routerLink="/articles"><i class="fa fa-home mr-2"></i>Artikel Übersicht</a>
       </li>
       <li class="nav-item" routerLinkActive="active">
-        <a class="nav-link" routerLink="articles/create"><i class="fa fa-gift mr-2"></i>Artikel verschenken</a>
+        <a class="nav-link" routerLink="articles/create"><i class="fa fa-gift mr-2"></i>Neuen Artikel erfassen</a>
       </li>
     </ul>
 
     <ul class="navbar-nav navbar-right">
       <ng-template [ngIf]="!userService.isAuthenticated">
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link" routerLink="/register"><i class="fa fa-user-plus mr-2"></i>Registrieren</a>
+          <a class="nav-link" routerLink="users/register"><i class="fa fa-user-plus mr-2"></i>Registrieren</a>
         </li>
         <li class="nav-item" routerLinkActive="active">
-          <a class="nav-link" routerLink="/login"><i class="fa fa-sign-in mr-2"></i>Anmelden</a>
+          <a class="nav-link" routerLink="users/login"><i class="fa fa-sign-in mr-2"></i>Anmelden</a>
         </li>
       </ng-template>
+      <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        <a *ngIf="userService.isAuthenticated" class="nav-link" routerLink="/users"><i class="fa fa-user mr-2" aria-hidden="true"></i>Benutzer</a>
+      </li>
+      <li class="nav-item" routerLinkActive="active">
+        <a *ngIf="userService.isAuthenticated" class="nav-link" routerLink="users/roles"><i class="fa fa-address-card-o mr-2" aria-hidden="true"></i>Rollen</a>
+      </li>
       <li class="nav-item" routerLinkActive="active">
         <a *ngIf="userService.isAuthenticated" class="nav-link" (click)="logout()"><i class="fa fa-sign-out mr-2"></i>Abmelden</a>
       </li>

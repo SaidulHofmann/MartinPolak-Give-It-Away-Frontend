@@ -39,7 +39,7 @@ export class ArticleService {
   }
 
   private redirectToLoginPage() {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/users/login']);
   }
 
   /** GET articles. */
@@ -157,7 +157,7 @@ export class ArticleService {
       this.log(`${operation} failed: ${error.message}`);
 
       if (error.status === 401) {
-        this.router.navigate(['/login']);
+        this.redirectToLoginPage();
         return;
       }
 

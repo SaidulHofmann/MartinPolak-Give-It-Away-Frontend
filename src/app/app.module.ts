@@ -28,6 +28,8 @@ import { GiveawayArticleComponent } from './components/articles/giveaway-article
 import { PagerComponent } from './components/shared/pager/pager.component';
 import { MaterialModule } from './material.module';
 import { DialogComponent } from './components/shared/dialog/dialog.component';
+import { RolesComponent } from './components/users/roles/roles.component';
+import { UsersComponent } from './components/users/users.component';
 
 
 @NgModule({
@@ -50,7 +52,9 @@ import { DialogComponent } from './components/shared/dialog/dialog.component';
     ArticleDetailsComponent,
     GiveawayArticleComponent,
     PagerComponent,
-    DialogComponent
+    DialogComponent,
+    RolesComponent,
+    UsersComponent
   ],
   imports: [
     BrowserModule,

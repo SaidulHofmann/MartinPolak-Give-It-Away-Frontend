@@ -2,9 +2,10 @@ import {Injectable} from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import {catchError, map, tap} from 'rxjs/operators';
 import {MessageService} from './message.service';
-import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
 import {User, ErrorCodeType, HttpErrorArgs} from '../models/index.model';
 import {Router} from '@angular/router';
+import {HttpResponseUsers, UserFilter} from '../models/user.model';
 
 
 const httpOptions = {
@@ -14,7 +15,7 @@ const httpOptions = {
 @Injectable()
 export class UserService {
   private api_url = 'http://localhost:3003';
-  private usersUrl = `${this.api_url}/users`;
+  private usersUrl = `${this.api_url}/api/users`;
   private registerUrl = `${this.api_url}/register`;
   private loginUrl = `${this.api_url}/login`;
   private currentUser: User = null;
@@ -26,6 +27,21 @@ export class UserService {
 
     // Temporary
     this.loadCurrentUser();
+  }
+
+  private getHttpHeaders(): HttpHeaders {
+    if (!this.getCurrentUser()) {
+      console.error('Server Anfrage nicht möglich weil Benutzer nicht angemeldet.');
+      this.redirectToLoginPage();
+    }
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      authorization: 'Bearer ' + this.getCurrentUser().authToken
+    });
+  }
+
+  private redirectToLoginPage() {
+    this.router.navigate(['/users/login']);
   }
 
   private getHttpOptions(token: string) {
@@ -40,6 +56,40 @@ export class UserService {
     };
   }
 
+  /** GET users. */
+  getUsers(page: number = 1, limit: number = 10): Observable<User[]> {
+    return this.http.get(`${this.usersUrl}?page=${page}&limit=${limit}`,
+      { headers: this.getHttpHeaders() }).pipe(
+      map( res => res['data']['docs'] as User[]),
+      tap(res => this.log(`Benutzer geladen.`)),
+      catchError(this.handleError('getUsers', []))
+    );
+  }
+
+  /** GET users. */
+  getUsersByFilter(userFilter: UserFilter): Observable<any> {
+    let httpParams: HttpParams = null;
+    if (userFilter) {
+      let httpParamsOject: any = {};
+      if (userFilter._id) { httpParamsOject._id = userFilter._id; }
+      if (userFilter.email) { httpParamsOject.email = userFilter.email; }
+      if (userFilter.firstname) { httpParamsOject.firstname = userFilter.firstname; }
+      if (userFilter.lastname) { httpParamsOject.lastname = userFilter.lastname; }
+
+      if (userFilter.filter) { httpParamsOject.filter = userFilter.filter; }
+      if (userFilter.sort) { httpParamsOject.sort = userFilter.sort; }
+      if (userFilter.limit) { httpParamsOject.limit = userFilter.limit.toString(); }
+      if (userFilter.page) { httpParamsOject.page = userFilter.page.toString(); }
+
+      httpParams = new HttpParams({fromObject: httpParamsOject});
+    }
+    return this.http.get(this.usersUrl, { headers: this.getHttpHeaders(), params: httpParams }).pipe(
+      map( res => res as HttpResponseUsers),
+      tap(res => this.log(`Benutzer geladen.`)),
+      catchError(this.handleError('getUsersByFilter', []))
+    );
+  }
+
   /** POST: add a new user. */
   public registerUser(user: User): Observable<User | HttpErrorResponse> {
     return this.http.post<User>(this.registerUrl, user, httpOptions).pipe(
@@ -48,6 +98,7 @@ export class UserService {
     );
   }
 
+  /** POST: login. */
   public login(strEmail, strPassword): Observable<User | HttpErrorResponse> {
     return this.http.post<User>(
       this.loginUrl, {email: strEmail, pwd: strPassword}, httpOptions).pipe(
@@ -55,12 +106,9 @@ export class UserService {
         tap((user) => {
         this.log(`Token für Benutzer '${user.firstname} ${user.lastname}' erhalten.`);
         this.setCurrentUser(user);
-        // ToDo: test - remove later.
-          console.log('Token: ', user.authToken);
       }),
       catchError(this.handlePostError)
     );
-
   }
 
   public logout() {
@@ -105,11 +153,7 @@ export class UserService {
    */
   private handleError<T> (operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
+      console.error(error);
       this.log(`${operation} failed: ${error.message}`);
 
       // Let the app keep running by returning an empty result.

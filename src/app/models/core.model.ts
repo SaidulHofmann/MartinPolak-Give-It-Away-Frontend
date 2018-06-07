@@ -1,4 +1,9 @@
 import {HttpErrorResponse} from '@angular/common/http';
+import {CollectionViewer, DataSource} from '@angular/cdk/collections';
+import {HttpResponseUsers, User, UserFilter} from './user.model';
+import {BehaviorSubject, Observable, of} from 'rxjs/index';
+import {UserService} from '../services/user.service';
+import {catchError, finalize, map} from 'rxjs/internal/operators';
 
 export class IdNamePair {
   _id = '';
@@ -34,4 +39,40 @@ export class HttpErrorArgs {
     public error: HttpErrorResponse,
     public errorCode: string = ''
   ) { }
+}
+
+export class UsersDataSource implements DataSource<User> {
+
+  private usersSubject = new BehaviorSubject<User[]>([]);
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+
+  public loading$ = this.loadingSubject.asObservable();
+
+  constructor(private userService: UserService) {
+  }
+
+  public connect(collectionViewer: CollectionViewer): Observable<User[]> {
+    return this.usersSubject.asObservable();
+  }
+
+  public disconnect(collectionViewer: CollectionViewer): void {
+    this.usersSubject.complete();
+    this.loadingSubject.complete();
+  }
+
+  public loadUsers(userFilter: UserFilter) {
+    this.loadingSubject.next(true);
+    this.userService.getUsersByFilter(userFilter).pipe(
+      map((res: HttpResponseUsers) => {
+        userFilter.total = res.data.total;
+        return res.data.docs;
+      }),
+      catchError(() => of([])),
+      finalize(() => this.loadingSubject.next(false))
+    )
+    .subscribe(users => this.usersSubject.next(users));
+
+  }
+
+
 }
