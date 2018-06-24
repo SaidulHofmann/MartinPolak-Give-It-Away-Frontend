@@ -5,12 +5,12 @@ import {ArticleService} from '../../../services/article.service';
 import {HttpResponseReservations, ReservationFilter, Reservation} from '../../../models/reservation.model';
 import {PagerService} from '../../../services/pager.service';
 import {ArticleRef} from '../../../models/article.model';
-import {ArticleStatusType} from '../../../models/enum.model';
+import {ArticleStatusType} from '../../../core/enums.core';
 import {User, UserRef} from '../../../models/user.model';
 import {UserService} from '../../../services/user.service';
 import {ArticleStatus} from '../../../models/articleStatus.model';
 import {Location} from '@angular/common';
-import {Pager} from '../../../models/core.model';
+import {Pager} from '../../../core/types.core';
 
 @Component({
   selector: 'app-giveaway-article',

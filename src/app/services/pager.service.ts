@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Pager} from '../models/core.model';
+import {Pager} from '../core/types.core';
 
 @Injectable()
 export class PagerService {

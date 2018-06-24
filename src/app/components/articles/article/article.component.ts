@@ -3,12 +3,11 @@
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
 import {Location} from '@angular/common';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {forEach} from '@angular/router/src/utils/collection';
-
-import { Article, ArticleCategory, ArticleStatus, User, UserRef, EditModeType } from '../../../models/index.model';
-import { articleCategories, articleStatus, testUserRef, defaultUserRef, testArticle } from '../../../models/data.model';
+import { Article, ArticleCategory, ArticleStatus, User, UserRef } from '../../../models/index.model';
+import { articleCategories, articleStatus } from '../../../core/data-providers.core';
 import {ArticleService} from '../../../services/article.service';
 import {UserService} from '../../../services/user.service';
+import {EditModeType} from '../../../core/enums.core';
 
 @Component({
   selector: 'app-article',
@@ -162,24 +161,24 @@ export class ArticleComponent implements OnInit, OnChanges {
   /**
    * Returns a new article object with formControl values.
    */
-  private prepareSaveArticle(): Article {
-    const saveArticle = Object.assign(new Article(), this.articleForm.value);
+  private getArticleToSave(): Article {
+    const articleToSave = Object.assign(new Article(), this.articleForm.value);
 
     // Change view-model properties to model properties.
-    if (saveArticle.publisher && !saveArticle.publisher._id) {
-      saveArticle.publisher = null;
+    if (articleToSave.publisher && !articleToSave.publisher._id) {
+      articleToSave.publisher = null;
     }
-    if (saveArticle.donee && !saveArticle.donee._id) {
-      saveArticle.donee = null;
+    if (articleToSave.donee && !articleToSave.donee._id) {
+      articleToSave.donee = null;
     }
 
     // Trim strings
-    saveArticle.name = saveArticle.name.trim();
-    saveArticle.description = saveArticle.description.trim();
-    saveArticle.handover = saveArticle.handover.trim();
-    saveArticle.tags = saveArticle.tags.trim();
+    articleToSave.name = articleToSave.name.trim();
+    articleToSave.description = articleToSave.description.trim();
+    articleToSave.handover = articleToSave.handover.trim();
+    articleToSave.tags = articleToSave.tags.trim();
 
-    return saveArticle;
+    return articleToSave;
   }
 
   // Handle pictures array
@@ -212,7 +211,7 @@ export class ArticleComponent implements OnInit, OnChanges {
 
 
   public onSubmit() {
-    const articleToSave = this.prepareSaveArticle();
+    const articleToSave = this.getArticleToSave();
 
     if (this.editMode === EditModeType.Create) {
       this.articleService.createArticle(articleToSave).subscribe(

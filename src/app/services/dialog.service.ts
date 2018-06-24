@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/index';
-import {DialogResultType} from '../models/enum.model';
+import {DialogResultType} from '../core/enums.core';
 import {DialogComponent} from '../components/shared/dialog/dialog.component';
-import {DialogConfig} from '../models/core.model';
+import {DialogConfig} from '../core/types.core';
 
 @Injectable({
   providedIn: 'root'
@@ -22,12 +22,14 @@ export class DialogService {
   }
 
   public inform(title: string, message: string): Observable<DialogResultType> {
+    if (! message || message.length < 1) { return; }
     let dialogConfig = new DialogConfig();
     dialogConfig.hasOkButton = true;
     return this.openDialog(title, message, dialogConfig);
   }
 
   public decide(title: string, message: string): Observable<DialogResultType> {
+    if (! message || message.length < 1) { return; }
     let dialogConfig = new DialogConfig();
     dialogConfig.hasYesButton = true;
     dialogConfig.hasNoButton = true;
@@ -35,6 +37,7 @@ export class DialogService {
   }
 
   public askForDelete(title: string, message: string): Observable<DialogResultType> {
+    if (! message || message.length < 1) { return; }
     let dialogConfig = new DialogConfig();
     dialogConfig.hasDeleteButton = true;
     dialogConfig.hasCancelButton = true;
@@ -42,6 +45,7 @@ export class DialogService {
   }
 
   public askForSave(title: string, message: string): Observable<DialogResultType> {
+    if (! message || message.length < 1) { return; }
     let dialogConfig = new DialogConfig();
     dialogConfig.hasSaveButton = true;
     dialogConfig.hasCancelButton = true;

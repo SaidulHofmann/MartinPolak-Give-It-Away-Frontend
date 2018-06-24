@@ -2,11 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Data} from '@angular/router';
 import {Location} from '@angular/common';
 import {Article} from '../../../models/article.model';
-import * as $ from 'jquery';
 import {Reservation} from '../../../models/reservation.model';
 import {User, UserRef} from '../../../models/user.model';
 import {UserService} from '../../../services/user.service';
-import {EditModeType} from '../../../models/index.model';
 import {ArticleService} from '../../../services/article.service';
 
 

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {Article, EditModeType} from '../../../models/index.model';
-import {ArticleService} from '../../../services/article.service';
 import {ActivatedRoute} from '@angular/router';
+import {EditModeType} from '../../../core/enums.core';
+import {Article} from '../../../models/index.model';
+import {ArticleService} from '../../../services/article.service';
 
 
 @Component({

@@ -3,8 +3,8 @@
 
 import { Component, OnInit } from '@angular/core';
 import {UserService} from '../../../services/user.service';
-import {ErrorCodeType} from '../../../models/enum.model';
-import {HttpErrorArgs} from '../../../models/core.model';
+import {ErrorCodeType} from '../../../core/enums.core';
+import {HttpErrorArgs} from '../../../core/types.core';
 import {User} from '../../../models/user.model';
 import {Router} from '@angular/router';
 import {NgForm} from '@angular/forms';

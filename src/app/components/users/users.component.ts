@@ -1,10 +1,11 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {UserService} from '../../services/user.service';
-import {UsersDataSource} from '../../models/core.model';
-import {UserFilter} from '../../models/user.model';
+import {User, UserFilter} from '../../models/user.model';
 import {MatPaginator, MatSort, Sort} from '@angular/material';
-import {debounceTime, distinctUntilChanged, tap} from 'rxjs/internal/operators';
+import {debounceTime, distinctUntilChanged, tap, first} from 'rxjs/internal/operators';
 import {fromEvent, merge} from 'rxjs/index';
+import {DialogService} from '../../services/dialog.service';
+import {UserDataSource} from '../../core/data-sources.core';
 
 
 @Component({
@@ -14,24 +15,28 @@ import {fromEvent, merge} from 'rxjs/index';
 })
 export class UsersComponent implements OnInit, AfterViewInit {
 
-  public dataSource: UsersDataSource;
-  public displayedColumns = ['lastname', 'firstname', 'email', '_id'];
+  public dataSource: UserDataSource;
+  public displayedColumns = ['_id', 'lastname', 'firstname', 'email'];
   public userFilter: UserFilter = new UserFilter();
+  public selectedUser: User = new User();
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild('input') input: ElementRef;
+  @ViewChild('filterInput') filterInput: ElementRef;
 
-  constructor(private userService: UserService) { }
+  constructor(
+    public userService: UserService,
+    private dialogService: DialogService) { }
+
 
   public ngOnInit() {
-    this.dataSource = new UsersDataSource(this.userService);
+    this.dataSource = new UserDataSource(this.userService);
     this.dataSource.loadUsers(this.userFilter);
   }
 
   public ngAfterViewInit() {
-    // server-side search
-    fromEvent(this.input.nativeElement, 'keyup').pipe(
+    // server-side search (observable from keyup event).
+    fromEvent(this.filterInput.nativeElement, 'keyup').pipe(
       debounceTime(150),
       distinctUntilChanged(),
       tap(() => {
@@ -53,17 +58,27 @@ export class UsersComponent implements OnInit, AfterViewInit {
     ).subscribe();
   }
 
-  private loadUsersPage() {
-    // Define sort and filter.
-    this.userFilter.filter = this.input.nativeElement.value;
-    this.userFilter.page = this.paginator.pageIndex + 1;
-    this.userFilter.limit = this.paginator.pageSize;
+  public onRowClicked(user: User) {
+    this.selectedUser = user;
+  }
 
+  public onDataChanged() {
+    this.loadUsersPage();
+  }
+
+  private loadUsersPage() {
+    this.setUserFilter();
     this.dataSource.loadUsers(this.userFilter);
   }
 
-  public setSort(sort: Sort) {
-    if(!sort.active) {
+  private setUserFilter() {
+    this.userFilter.filter = this.filterInput.nativeElement.value;
+    this.userFilter.page = this.paginator.pageIndex + 1;
+    this.userFilter.limit = this.paginator.pageSize;
+  }
+
+  private setSort(sort: Sort) {
+    if (!sort.active) {
       this.userFilter.sort = '';
       return;
     }
@@ -72,10 +87,6 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
   private setSortField(sortField: string, isSortDirAscending: boolean) {
     this.userFilter.sort = isSortDirAscending ? sortField : '-' + sortField;
-  }
-
-  public onRowClicked(row) {
-    console.log('Row clicked: ', row);
   }
 
 }

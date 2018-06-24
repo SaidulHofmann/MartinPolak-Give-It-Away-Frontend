@@ -21,11 +21,12 @@ $navbar-dark-hover-color: rgba(255,255,255,.90);
 
 /* Bootstrap components */
 .card {
-  background-color: $gia-card-bg-color;
+  // background-color: $gia-card-bg-color;
 }
 
 .card-header {
   background-color: $gia-card-header-bg-color;
+  padding: 5px 10px;
   font-weight: bold;
 }
 

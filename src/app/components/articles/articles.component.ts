@@ -5,10 +5,10 @@ import {ArticleService} from '../../services/article.service';
 import {Article, ArticleFilter, HttpResponseArticles} from '../../models/article.model';
 import {Router} from '@angular/router';
 import {PagerService} from '../../services/pager.service';
-import {articleCategories, articleCategoryFilter, articleSortOptions, articleStatus, articleStatusFilter} from '../../models/data.model';
-import {IdNamePair, Pager} from '../../models/core.model';
-import {ArticleCategory} from '../../models/articleCategory.model';
-import {ArticleStatusType} from '../../models/enum.model';
+import {articleCategories, articleCategoryFilter, articleSortOptions,
+  articleStatus, articleStatusFilter} from '../../core/data-providers.core';
+import {Pager} from '../../core/types.core';
+import {ArticleStatusType} from '../../core/enums.core';
 import {User} from '../../models/user.model';
 import {UserService} from '../../services/user.service';
 import {LocalDataService} from '../../services/local-data.service';

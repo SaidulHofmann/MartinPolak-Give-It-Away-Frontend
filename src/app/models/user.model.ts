@@ -1,7 +1,3 @@
-import {Article} from './article.model';
-import {articleCategoryFilter, articleSortOptions, articleStatusFilter} from './data.model';
-import {IdNamePair} from './core.model';
-import {ArticleCategory, ArticleStatus} from './index.model';
 
 export class User {
   _id: string;

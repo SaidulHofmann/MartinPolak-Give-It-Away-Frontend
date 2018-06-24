@@ -1,9 +1,6 @@
-import {User, UserRef} from './user.model';
-import {Article, ArticleRef} from './article.model';
-import { ArticleCategory } from './articleCategory.model';
-import { ArticleStatus } from './articleStatus.model';
-import {IdNamePair} from './core.model';
-import {articleCategoryFilter, articleSortOptions, articleStatusFilter} from './data.model';
+import {UserRef} from './user.model';
+import {ArticleRef} from './article.model';
+import {IdNamePair} from '../core/types.core';
 
 export class Reservation {
   _id = undefined;

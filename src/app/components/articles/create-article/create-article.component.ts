@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {EditModeType} from '../../../models/index.model';
+import {EditModeType} from '../../../core/enums.core';
 
 @Component({
   selector: 'app-create-article',

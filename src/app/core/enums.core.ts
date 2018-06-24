@@ -7,7 +7,7 @@ export enum EditModeType {
 }
 
 export enum ErrorCodeType {
-  MongoDB_DuplicateKey = 'E11000',
+  DuplicateKeyError = 'DuplicateKeyError',
   Client_Side_Or_Network_Error = 'Client_Side_Or_Network_Error',
   Authentication_Failed = 'Authentication_Failed'
 }

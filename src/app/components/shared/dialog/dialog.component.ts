@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import {DialogResultType} from '../../../models/enum.model';
+import {DialogResultType} from '../../../core/enums.core';
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
-import {DialogConfig} from '../../../models/core.model';
+import {DialogConfig} from '../../../core/types.core';
 
 @Component({
   selector: 'app-dialog',

@@ -30,6 +30,10 @@ import { MaterialModule } from './material.module';
 import { DialogComponent } from './components/shared/dialog/dialog.component';
 import { RolesComponent } from './components/users/roles/roles.component';
 import { UsersComponent } from './components/users/users.component';
+import {MatPaginatorIntl} from '@angular/material';
+import {MatPaginatorIntlDe} from './core/types.core';
+import { UserNavbarComponent } from './components/shared/user-navbar/user-navbar.component';
+import { UserComponent } from './components/users/user/user.component';
 
 
 @NgModule({
@@ -54,7 +58,9 @@ import { UsersComponent } from './components/users/users.component';
     PagerComponent,
     DialogComponent,
     RolesComponent,
-    UsersComponent
+    UsersComponent,
+    UserNavbarComponent,
+    UserComponent
   ],
   imports: [
     BrowserModule,
@@ -70,7 +76,8 @@ import { UsersComponent } from './components/users/users.component';
     MessageService,
     UserService,
     PagerService,
-    ArticleResolver
+    ArticleResolver,
+    { provide: MatPaginatorIntl, useClass: MatPaginatorIntlDe}
   ],
   entryComponents: [
     DialogComponent

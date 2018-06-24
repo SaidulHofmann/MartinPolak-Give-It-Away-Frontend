@@ -3,9 +3,12 @@ import { Observable, of, throwError } from 'rxjs';
 import {catchError, map, tap} from 'rxjs/operators';
 import {MessageService} from './message.service';
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
-import {User, ErrorCodeType, HttpErrorArgs} from '../models/index.model';
+import {User} from '../models/index.model';
 import {Router} from '@angular/router';
 import {HttpResponseUsers, UserFilter} from '../models/user.model';
+import {HttpErrorArgs} from '../core/types.core';
+import {ErrorCodeType} from '../core/enums.core';
+import {Article} from '../models/article.model';
 
 
 const httpOptions = {
@@ -93,6 +96,7 @@ export class UserService {
   /** POST: add a new user. */
   public registerUser(user: User): Observable<User | HttpErrorResponse> {
     return this.http.post<User>(this.registerUrl, user, httpOptions).pipe(
+      map(res  => res['data'] as User),
       tap((registeredUser: User) => this.log(`User ${registeredUser.lastname} hinzugefügt.`)),
       catchError(this.handlePostError)
     );
@@ -114,6 +118,31 @@ export class UserService {
   public logout() {
     this.currentUser = null;
     this.router.navigate(['./login']);
+  }
+
+  /** PUT: update an user. */
+  updateUser(user: User): Observable<User | HttpErrorResponse> {
+    return this.http.put(this.usersUrl, user, { headers: this.getHttpHeaders() }).pipe(
+      map(res  => res['data'] as User),
+      tap((userRes: User) => this.log(`Benutzer mit name = '${userRes.fullname}' und id = '${userRes._id}' wurde aktualisiert.`))
+    );
+  }
+
+  /** DELETE: delete an user in database. */
+  deleteUser(user: User | string): Observable<User | HttpErrorResponse> {
+    let id, fullname = '';
+    if (typeof user === 'string') {
+      id = user;
+    } else {
+      id = user._id;
+      fullname = user.fullname;
+    }
+    const url = `${this.usersUrl}/${id}`;
+
+    return this.http.delete<User>(url, { headers: this.getHttpHeaders() }).pipe(
+      map(res  => res['data'] as User),
+      tap(_ => this.log(`Benutzer mit name = '${fullname}' und id = '${id}' wurde gelöscht.`))
+    );
   }
 
   private log(message: string) {
@@ -174,8 +203,8 @@ export class UserService {
         return throwError(new HttpErrorArgs(error, ErrorCodeType.Authentication_Failed));
       }
 
-      if(error.error.message.includes(ErrorCodeType.MongoDB_DuplicateKey)) {
-        return throwError(new HttpErrorArgs(error, ErrorCodeType.MongoDB_DuplicateKey));
+      if(error.error.message.includes(ErrorCodeType.DuplicateKeyError)) {
+        return throwError(new HttpErrorArgs(error, ErrorCodeType.DuplicateKeyError));
       }
 
       // this.log('Die Anforderung konnte serverseitig nicht bearbeitet werden: ' + error.error.message);

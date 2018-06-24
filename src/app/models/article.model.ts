@@ -1,6 +1,7 @@
 import {ArticleCategory, ArticleStatus, User, UserRef, Reservation} from './index.model';
-import {articleCategories, articleCategoryFilter, articleStatus, articleStatusFilter, articleSortOptions} from './data.model';
-import {IdNamePair} from './core.model';
+import {articleCategories, articleCategoryFilter, articleSortOptions,
+  articleStatus, articleStatusFilter } from '../core/data-providers.core';
+import {IdNamePair} from '../core/types.core';
 
 export class Article {
 

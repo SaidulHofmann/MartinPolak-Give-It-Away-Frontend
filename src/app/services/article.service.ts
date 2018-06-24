@@ -29,13 +29,14 @@ export class ArticleService {
 
   private getHttpHeaders(): HttpHeaders {
     if (!this.userService.getCurrentUser()) {
-      console.error('Server Anfrage nicht möglich weil Benutzer nicht angemeldet.');
+      console.error('Zugriff auf Server Ressourcen nicht möglich weil Benutzer nicht angemeldet.');
       this.redirectToLoginPage();
-    }
-    return new HttpHeaders({
+    } else {
+      return new HttpHeaders({
         'Content-Type': 'application/json',
         authorization: 'Bearer ' + this.userService.getCurrentUser().authToken
-    });
+      });
+    }
   }
 
   private redirectToLoginPage() {
