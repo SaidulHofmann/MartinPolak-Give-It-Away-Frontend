@@ -8,6 +8,8 @@ import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {UserService} from './user.service';
 
 import {Router} from '@angular/router';
+import {NavigationService} from './navigation.service';
+import {DialogService} from './dialog.service';
 
 
 const httpOptions = {
@@ -23,14 +25,15 @@ export class ArticleService {
 
   constructor(
     private http: HttpClient,
-    private router: Router,
+    private navService: NavigationService,
     private userService: UserService,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private dialogService: DialogService) { }
 
   private getHttpHeaders(): HttpHeaders {
     if (!this.userService.getCurrentUser()) {
-      console.error('Zugriff auf Server Ressourcen nicht möglich weil Benutzer nicht angemeldet.');
-      this.redirectToLoginPage();
+      this.showAccessDeniedMessage();
+      this.navService.loginPage();
     } else {
       return new HttpHeaders({
         'Content-Type': 'application/json',
@@ -39,12 +42,8 @@ export class ArticleService {
     }
   }
 
-  private redirectToLoginPage() {
-    this.router.navigate(['/users/login']);
-  }
-
   /** GET articles. */
-  getArticles(page: number = 1, limit: number = 10): Observable<any> {
+  public getArticles(page: number = 1, limit: number = 10): Observable<any> {
     return this.http.get(`${this.articlesUrl}/?page=${page}&limit=${limit}`,
       { headers: this.getHttpHeaders() })
       .pipe(
@@ -54,22 +53,10 @@ export class ArticleService {
   }
 
   /** GET articles filtered. */
-  getArticlesByFilter(articleFilter: ArticleFilter): Observable<any> {
+  public getArticlesByFilter(articleFilter: ArticleFilter): Observable<any> {
     let httpParams: HttpParams = null;
     if (articleFilter) {
-      let httpParamsOject: any = {};
-      if (articleFilter.name) { httpParamsOject.name = articleFilter.name; }
-      if (articleFilter.category && articleFilter.category._id !== 'undefined') { httpParamsOject.category = articleFilter.category._id; }
-      if (articleFilter.status && articleFilter.status._id !== 'undefined') { httpParamsOject.status = articleFilter.status._id; }
-      if (articleFilter.sort && articleFilter.sort._id !== 'undefined') { httpParamsOject.sort = articleFilter.sort._id; }
-      if (articleFilter.tags) { httpParamsOject.tags = articleFilter.tags; }
-
-      if (articleFilter.page) { httpParamsOject.page = articleFilter.page.toString(); }
-      if (articleFilter.limit) { httpParamsOject.limit = articleFilter.limit.toString(); }
-      if (articleFilter.includeUsersReservation) { httpParamsOject.includeUsersReservation = articleFilter.includeUsersReservation.toString(); }
-      if (articleFilter.selectReservedArticles) { httpParamsOject.selectReservedArticles = articleFilter.selectReservedArticles.toString(); }
-      if (articleFilter.selectPublishedArticles) { httpParamsOject.selectPublishedArticles = articleFilter.selectPublishedArticles.toString(); }
-
+      let httpParamsOject = this.getArticleFilterStringObject(articleFilter);
       httpParams = new HttpParams({fromObject: httpParamsOject});
     }
     return this.http.get(this.articlesUrl, { headers: this.getHttpHeaders(), params: httpParams })
@@ -81,8 +68,25 @@ export class ArticleService {
       );
   }
 
+  private getArticleFilterStringObject(articleFilter: ArticleFilter) {
+    let stringObject: any = {};
+    if (articleFilter.name) { stringObject.name = articleFilter.name; }
+    if (articleFilter.category && articleFilter.category._id !== 'undefined') { stringObject.category = articleFilter.category._id; }
+    if (articleFilter.status && articleFilter.status._id !== 'undefined') { stringObject.status = articleFilter.status._id; }
+    if (articleFilter.sort && articleFilter.sort._id !== 'undefined') { stringObject.sort = articleFilter.sort._id; }
+    if (articleFilter.tags) { stringObject.tags = articleFilter.tags; }
+
+    if (articleFilter.page) { stringObject.page = articleFilter.page.toString(); }
+    if (articleFilter.limit) { stringObject.limit = articleFilter.limit.toString(); }
+    if (articleFilter.includeUsersReservation) {stringObject.includeUsersReservation = articleFilter.includeUsersReservation.toString(); }
+    if (articleFilter.selectReservedArticles) { stringObject.selectReservedArticles = articleFilter.selectReservedArticles.toString(); }
+    if (articleFilter.selectPublishedArticles) {stringObject.selectPublishedArticles = articleFilter.selectPublishedArticles.toString(); }
+
+    return stringObject;
+  }
+
   /** GET article by id. Will 404 if id not found */
-  getArticleById(id: string, includeUsersReservation: boolean = false): Observable<Article> {
+  public getArticleById(id: string, includeUsersReservation: boolean = false): Observable<Article> {
     const url = `${this.articlesUrl}/${id}`;
     return this.http.get<Article>(url, {
       headers: this.getHttpHeaders(), params: { 'includeUsersReservation': includeUsersReservation.toString() } }).pipe(
@@ -93,7 +97,7 @@ export class ArticleService {
   }
 
   /** GET articles whose name contains search term */
-  searchArticles(term: string): Observable<Article[]> {
+  public searchArticles(term: string): Observable<Article[]> {
     if (!term.trim()) {
       return of([]);
     }
@@ -106,7 +110,7 @@ export class ArticleService {
   }
 
   /** POST: add a new article. */
-  createArticle(article: Article): Observable<Article> {
+  public createArticle(article: Article): Observable<Article> {
     return this.http.post<Article>(this.articlesUrl, article, { headers: this.getHttpHeaders() }).pipe(
       map(res  => res['data'] as Article),
       tap((resArticle: Article) => this.log(`Artikel mit name = '${resArticle.name}' und id = '${resArticle._id}' wurde hinzugefügt.`)),
@@ -115,7 +119,7 @@ export class ArticleService {
   }
 
   /** PUT: update an article. */
-  updateArticle(article: Article): Observable<any> {
+  public updateArticle(article: Article): Observable<any> {
     return this.http.put(this.articlesUrl, article, { headers: this.getHttpHeaders() }).pipe(
       map(res  => res['data'] as Article),
       tap(_ => this.log(`Artikel mit name = '${article.name}' und id = '${article._id}' wurde aktualisiert.`)),
@@ -124,7 +128,7 @@ export class ArticleService {
   }
 
   /** DELETE: delete an article in database. */
-  deleteArticle(article: Article | string): Observable<Article> {
+  public deleteArticle(article: Article | string): Observable<Article> {
     let id, name = '';
     if (typeof article === 'string') {
       id = article;
@@ -145,6 +149,11 @@ export class ArticleService {
     this.messageService.add('Artikel Service: ' + message);
   }
 
+  private showAccessDeniedMessage() {
+    this.dialogService.inform('Server Anforderung',
+      'Der Zugriff auf Server Ressourcen ist nicht möglich weil der Benutzer nicht angemeldet ist.');
+  }
+
   /**
    * Handle Http operation that failed.
    * Let the app continue.
@@ -158,8 +167,8 @@ export class ArticleService {
       this.log(`${operation} failed: ${error.message}`);
 
       if (error.status === 401) {
-        this.redirectToLoginPage();
-        return;
+        this.showAccessDeniedMessage();
+        return of(result as T);
       }
 
       // Let the app keep running by returning an empty result.
@@ -171,13 +180,13 @@ export class ArticleService {
   // -----------------------------------------------------------------------------
 
   /** GET reservations */
-  getReservations(reservationFilter: ReservationFilter): Observable<any> {
-    let httpParamsOject: any = {};
-    if (reservationFilter.user) { httpParamsOject.userId = reservationFilter.user._id; }
-    if (reservationFilter.article) { httpParamsOject.articleId = reservationFilter.article._id; }
-    if (reservationFilter.page) { httpParamsOject.page = reservationFilter.page.toString(); }
-    if (reservationFilter.limit) { httpParamsOject.limit = reservationFilter.limit.toString(); }
-    let httpParams = new HttpParams({fromObject: httpParamsOject});
+  public getReservations(reservationFilter: ReservationFilter): Observable<any> {
+    let httpParamsObject: any = {};
+    if (reservationFilter.user) { httpParamsObject.userId = reservationFilter.user._id; }
+    if (reservationFilter.article) { httpParamsObject.articleId = reservationFilter.article._id; }
+    if (reservationFilter.page) { httpParamsObject.page = reservationFilter.page.toString(); }
+    if (reservationFilter.limit) { httpParamsObject.limit = reservationFilter.limit.toString(); }
+    let httpParams = new HttpParams({fromObject: httpParamsObject});
 
     return this.http.get(this.reservationsUrl, { headers: this.getHttpHeaders(), params: httpParams })
       .pipe(
@@ -189,7 +198,7 @@ export class ArticleService {
   }
 
   /** POST: add a new reservation. */
-  createReservation(reservation: Reservation): Observable<Reservation> {
+  public createReservation(reservation: Reservation): Observable<Reservation> {
     return this.http.post<Reservation>(this.reservationsUrl, reservation, { headers: this.getHttpHeaders() }).pipe(
       map((res) => {
         return res['data'] as Reservation;
@@ -202,7 +211,7 @@ export class ArticleService {
   }
 
   /** PUT: update a reservation. */
-  updateReservation(reservation: Reservation): Observable<Reservation> {
+  public updateReservation(reservation: Reservation): Observable<Reservation> {
     return this.http.put<Reservation>(this.reservationsUrl, reservation, { headers: this.getHttpHeaders() }).pipe(
       map(res  => res['data'] as Reservation),
       tap((resReservation: Reservation) => {
@@ -213,7 +222,7 @@ export class ArticleService {
   }
 
   /** DELETE: delete a reservation. */
-  deleteReservation(reservation: Reservation | string): Observable<Reservation> {
+  public deleteReservation(reservation: Reservation | string): Observable<Reservation> {
     let id, articleName = '';
     if (typeof reservation === 'string') {
       id = reservation;

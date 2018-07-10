@@ -1,0 +1,181 @@
+<div class="card p-3 border border-secondary mat-elevation-z8">
+
+  <div class="card-header">
+    <h5>Berechtigungs - Details</h5>
+  </div>
+
+  <div class="mt-3">
+    <button (click)="onEditPermission()" [disabled]="!editingPermission || ! editingPermission._id" class="btn btn-sm btn-primary crud-button mr-3 mb-2" title="Bearbeiten">
+      <i class="fa fa-pencil mx-3 mx-sm-1" aria-hidden="true"></i><span class="d-none d-sm-inline-block">Bearbeiten</span></button>
+
+    <button (click)="onAddPermission()" class="btn btn-sm btn-success crud-button mr-3 mb-2" title="Benutzer hinzufügen">
+      <i class="fa fa-plus mx-3 mx-sm-1"></i><span class="d-none d-sm-inline-block">Neu</span></button>
+
+    <button (click)="onDeletePermission()" [disabled]="!editingPermission || ! editingPermission._id" class="btn btn-sm btn-danger crud-button mr-3 mr-md-5 mb-2" title="Benutzer Entfernen">
+      <i class="fa fa-trash mx-3 mx-sm-1" aria-hidden="true"></i><span class="d-none d-sm-inline-block">Entfernen</span></button>
+
+    <button (click)="onSavePermission()" [disabled]="!permissionForm.form.valid || permissionForm.form.pristine"  class="btn btn-sm btn-dark crud-button mr-3 mb-2" title="Speichern">
+      <i class="fa fa-floppy-o mx-3 mx-sm-1" aria-hidden="true"></i><span class="d-none d-sm-inline-block">Speichern</span></button>
+
+    <button (click)="onCancelEdit()" [disabled]="editMode === EditModeType.Read" class="btn btn-sm btn-secondary crud-button mr-3 mb-2" title="Änderungen verwerfen">
+      <i class="fa fa-times mx-3 mx-sm-1" aria-hidden="true"></i><span class="d-none d-sm-inline-block">Abbrechen</span></button>
+  </div>
+
+  <hr>
+
+  <div class="card-body p-0">
+
+    <form #permissionForm="ngForm" class="p-2" autocomplete="off">
+
+      <div class="form-group row">
+        <label for="name" class="col-sm-4 col-form-label">Bezeichnung</label>
+        <div class="col-sm-8">
+          <input required type="text" class="form-control form-control-sm" id="name" placeholder="Berechtigungs-Bezeichnung" [readonly]="editMode === EditModeType.Read"
+                 name="name" [(ngModel)]="editingPermission.name" #name="ngModel" autocomplete="given-name"/>
+          <div class="alert alert-danger" [hidden]="name.valid || name.pristine">Die Berechtigungs-Bezeichnung ist ein Pflichtfeld</div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-4">Berechtigung</div>
+          <div class="col-sm-8">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="isPredefined" [disabled]="editMode === EditModeType.Read"
+                     name="isPredefined" [(ngModel)]="editingPermission.isPredefined"/>
+              <label for="isPredefined" class="form-check-label">Ist vordefiniert</label>
+            </div>
+          </div>
+      </div>
+
+      <fieldset class="form-group">
+        <div class="row">
+
+          <legend class="col-form-label col-sm-4 pt-0">Eigene Artikel</legend>
+          <div class="col-sm-8">
+
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="articleOwnCreate" [disabled]="editMode === EditModeType.Read"
+                     name="articleOwnCreate" [(ngModel)]="editingPermission.articleOwnCreate"/>
+              <label for="articleOwnCreate" class="form-check-label">Artikel erstellen</label>
+            </div>
+
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="articleOwnUpdate" [disabled]="editMode === EditModeType.Read"
+                     name="articleOwnUpdate" [(ngModel)]="editingPermission.articleOwnUpdate"/>
+              <label for="articleOwnUpdate" class="form-check-label">Eigene Artikel ändern</label>
+            </div>
+
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="articleOwnDelete" [disabled]="editMode === EditModeType.Read"
+                     name="articleOwnDelete" [(ngModel)]="editingPermission.articleOwnDelete"/>
+              <label for="articleOwnDelete" class="form-check-label">Eigene Artikel löschen</label>
+            </div>
+
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="articleOwnDonate" [disabled]="editMode === EditModeType.Read"
+                     name="articleOwnDonate" [(ngModel)]="editingPermission.articleOwnDonate"/>
+              <label for="articleOwnDonate" class="form-check-label">Eigene Artikel verschenken</label>
+            </div>
+
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-group">
+        <div class="row">
+
+          <legend class="col-form-label col-sm-4 pt-0">Andere Artikel</legend>
+          <div class="col-sm-8">
+
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="articleOtherUpdate" [disabled]="editMode === EditModeType.Read"
+                     name="articleOtherUpdate" [(ngModel)]="editingPermission.articleOtherUpdate"/>
+              <label for="articleOtherUpdate" class="form-check-label">Andere Artikel ändern</label>
+            </div>
+
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="articleOtherDelete" [disabled]="editMode === EditModeType.Read"
+                     name="articleOtherDelete" [(ngModel)]="editingPermission.articleOtherDelete"/>
+              <label for="articleOtherDelete" class="form-check-label">Andere Artikel löschen</label>
+            </div>
+
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="articleOtherDonate" [disabled]="editMode === EditModeType.Read"
+                   name="articleOtherDonate" [(ngModel)]="editingPermission.articleOtherDonate"/>
+            <label for="articleOtherDonate" class="form-check-label">Andere Artikel verschenken</label>
+          </div>
+
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-group">
+        <div class="row">
+
+          <legend class="col-form-label col-sm-4 pt-0">Benutzer</legend>
+          <div class="col-sm-8">
+
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="userCreate" [disabled]="editMode === EditModeType.Read"
+                     name="userCreate" [(ngModel)]="editingPermission.userCreate"/>
+              <label for="userCreate" class="form-check-label">Benutzer erstellen</label>
+            </div>
+
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="userRead" [disabled]="editMode === EditModeType.Read"
+                     name="userRead" [(ngModel)]="editingPermission.userRead"/>
+              <label for="userRead" class="form-check-label">Benutzer anzeigen</label>
+            </div>
+
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="userUpdate" [disabled]="editMode === EditModeType.Read"
+                     name="userUpdate" [(ngModel)]="editingPermission.userUpdate"/>
+              <label for="userUpdate" class="form-check-label">Benutzer ändern</label>
+            </div>
+
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="userDelete" [disabled]="editMode === EditModeType.Read"
+                     name="userDelete" [(ngModel)]="editingPermission.userDelete"/>
+              <label for="userDelete" class="form-check-label">Benutzer löschen</label>
+            </div>
+
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="form-group row">
+        <label for="createdAt" class="col-sm-4 col-form-label">createdAt</label>
+        <div class="col-sm-8">
+          <input readonly required type="text" class="form-control form-control-sm" id="createdAt"
+                 value="{{editingPermission.createdAt | date:'dd.MM.yyyy  HH:mm:ss'}}"/>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="updatedAt" class="col-sm-4 col-form-label">updatedAt</label>
+        <div class="col-sm-8">
+          <input readonly required type="text" class="form-control form-control-sm" id="updatedAt"
+                 value="{{editingPermission.updatedAt | date:'dd.MM.yyyy  HH:mm:ss'}}"/>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="id" class="col-sm-4 col-form-label">Id</label>
+        <div class="col-sm-8">
+          <input readonly required type="text" class="form-control form-control-sm" id="id"
+                 value="{{editingPermission._id}}"/>
+        </div>
+      </div>
+
+      <p>Debug info</p>
+      <p>EditMode: {{ editMode }}</p>
+
+      <p>permissionForm.form.pristine: {{ permissionForm.form.pristine }}</p>
+      <p>permissionForm.form.valid: {{ permissionForm.form.valid }}</p>
+
+    </form>
+
+  </div>
+
+</div>
+

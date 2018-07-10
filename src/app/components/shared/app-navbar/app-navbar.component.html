@@ -24,7 +24,10 @@
         </li>
       </ng-template>
       <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
-        <a *ngIf="userService.isAuthenticated" class="nav-link" routerLink="/users"><i class="fa fa-user mr-2" aria-hidden="true"></i>Benutzerverwaltung</a>
+        <a *ngIf="userService.isAuthenticated" class="nav-link" routerLink="/users"><i class="fa fa-user mr-2" aria-hidden="true"></i>Benutzer</a>
+      </li>
+      <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
+        <a *ngIf="userService.isAuthenticated" class="nav-link" routerLink="/permissions"><i class="fa fa-user mr-2" aria-hidden="true"></i>Berechtigungen</a>
       </li>
       <li class="nav-item" routerLinkActive="active">
         <a *ngIf="userService.isAuthenticated" class="nav-link" (click)="logout()"><i class="fa fa-sign-out mr-2"></i>Abmelden</a>
@@ -34,6 +37,6 @@
   </div>
 </nav>
 
-<div *ngIf="currentUrl.startsWith('/users')">
-  <app-user-navbar></app-user-navbar>
-</div>
+<!--<div *ngIf="currentUrl.startsWith('/users')">-->
+  <!--<app-user-navbar></app-user-navbar>-->
+<!--</div>-->

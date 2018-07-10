@@ -13,6 +13,7 @@ import {User} from '../../models/user.model';
 import {UserService} from '../../services/user.service';
 import {LocalDataService} from '../../services/local-data.service';
 
+
 @Component({
   selector: 'app-articles',
   templateUrl: './articles.component.html',
@@ -50,7 +51,19 @@ export class ArticlesComponent implements OnInit, OnDestroy {
     private localDataService: LocalDataService,
     private userService: UserService,
     private articleService: ArticleService,
-    private pagerService: PagerService) { }
+    private pagerService: PagerService) {
+
+    // test
+    this.localDataService.getPermissionRefList()
+      .then( (permissionList) => {
+        console.log('permissionList: ', permissionList);
+        permissionList.forEach((p) => {
+          console.log(`Permission name: ${p.name}, Id: ${p._id}.`);
+        });
+      }).catch( (error) => {
+      console.log('error: ', error);
+    });
+  }
 
   ngOnInit() {
     this.loadArticleFilter();

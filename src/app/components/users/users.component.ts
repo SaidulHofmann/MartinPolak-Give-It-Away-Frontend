@@ -35,7 +35,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   public ngAfterViewInit() {
-    // server-side search (observable from keyup event).
+    // Server-side search (observable from keyup event).
     fromEvent(this.filterInput.nativeElement, 'keyup').pipe(
       debounceTime(150),
       distinctUntilChanged(),
@@ -45,14 +45,14 @@ export class UsersComponent implements OnInit, AfterViewInit {
       })
     ).subscribe();
 
-    // reset the paginator after sorting
+    // Reset the paginator after sorting.
     this.sort.sortChange.subscribe(() => {
       this.setSort(this.sort);
       this.paginator.pageIndex = 0;
       this.userFilter.page = 1;
     });
 
-    // on sort or paginate events, load a new page
+    // On sort or paginate events, load a new page.
     merge(this.sort.sortChange, this.paginator.page).pipe(
       tap(() => this.loadUsersPage())
     ).subscribe();

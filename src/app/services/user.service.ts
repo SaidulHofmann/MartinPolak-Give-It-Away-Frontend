@@ -3,12 +3,14 @@ import { Observable, of, throwError } from 'rxjs';
 import {catchError, map, tap} from 'rxjs/operators';
 import {MessageService} from './message.service';
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
-import {User} from '../models/index.model';
+import {HttpResponsePermissions, Permission, PermissionFilter, User} from '../models/index.model';
 import {Router} from '@angular/router';
 import {HttpResponseUsers, UserFilter} from '../models/user.model';
 import {HttpErrorArgs} from '../core/types.core';
 import {ErrorCodeType} from '../core/enums.core';
 import {Article} from '../models/article.model';
+import {DialogService} from './dialog.service';
+import {NavigationService} from './navigation.service';
 
 
 const httpOptions = {
@@ -19,6 +21,7 @@ const httpOptions = {
 export class UserService {
   private api_url = 'http://localhost:3003';
   private usersUrl = `${this.api_url}/api/users`;
+  private permissionsUrl = `${this.api_url}/api/permissions`;
   private registerUrl = `${this.api_url}/register`;
   private loginUrl = `${this.api_url}/login`;
   private currentUser: User = null;
@@ -26,38 +29,32 @@ export class UserService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private messageService: MessageService) {
+    private messageService: MessageService,
+    private navService: NavigationService,
+    private dialogService: DialogService) {
 
     // Temporary
     this.loadCurrentUser();
   }
 
-  private getHttpHeaders(): HttpHeaders {
+  public getHttpHeaders(): HttpHeaders {
     if (!this.getCurrentUser()) {
-      console.error('Server Anfrage nicht möglich weil Benutzer nicht angemeldet.');
-      this.redirectToLoginPage();
+      this.showAccessDeniedMessage();
+      this.navService.loginPage();
+    } else {
+      return new HttpHeaders({
+        'Content-Type': 'application/json',
+        authorization: 'Bearer ' + this.getCurrentUser().authToken
+      });
     }
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      authorization: 'Bearer ' + this.getCurrentUser().authToken
-    });
   }
 
-  private redirectToLoginPage() {
-    this.router.navigate(['/users/login']);
+  private showAccessDeniedMessage() {
+    this.dialogService.inform('Server Anforderung',
+      'Der Zugriff auf Server Ressourcen ist nicht möglich weil der Benutzer nicht angemeldet ist.');
   }
 
-  private getHttpOptions(token: string) {
-    if(!this.currentUser) {
-      throw Error('Benutzer nicht angemeldet.');
-    }
-    return {
-        headers: new HttpHeaders({
-          'Content-Type': 'application/json',
-          authorization: 'Bearer ' + this.currentUser.authToken
-        })
-    };
-  }
+
 
   /** GET users. */
   getUsers(page: number = 1, limit: number = 10): Observable<User[]> {
@@ -73,18 +70,18 @@ export class UserService {
   getUsersByFilter(userFilter: UserFilter): Observable<any> {
     let httpParams: HttpParams = null;
     if (userFilter) {
-      let httpParamsOject: any = {};
-      if (userFilter._id) { httpParamsOject._id = userFilter._id; }
-      if (userFilter.email) { httpParamsOject.email = userFilter.email; }
-      if (userFilter.firstname) { httpParamsOject.firstname = userFilter.firstname; }
-      if (userFilter.lastname) { httpParamsOject.lastname = userFilter.lastname; }
+      let httpParamsObject: any = {};
+      if (userFilter._id) { httpParamsObject._id = userFilter._id; }
+      if (userFilter.email) { httpParamsObject.email = userFilter.email; }
+      if (userFilter.firstname) { httpParamsObject.firstname = userFilter.firstname; }
+      if (userFilter.lastname) { httpParamsObject.lastname = userFilter.lastname; }
 
-      if (userFilter.filter) { httpParamsOject.filter = userFilter.filter; }
-      if (userFilter.sort) { httpParamsOject.sort = userFilter.sort; }
-      if (userFilter.limit) { httpParamsOject.limit = userFilter.limit.toString(); }
-      if (userFilter.page) { httpParamsOject.page = userFilter.page.toString(); }
+      if (userFilter.filter) { httpParamsObject.filter = userFilter.filter; }
+      if (userFilter.sort) { httpParamsObject.sort = userFilter.sort; }
+      if (userFilter.limit) { httpParamsObject.limit = userFilter.limit.toString(); }
+      if (userFilter.page) { httpParamsObject.page = userFilter.page.toString(); }
 
-      httpParams = new HttpParams({fromObject: httpParamsOject});
+      httpParams = new HttpParams({fromObject: httpParamsObject});
     }
     return this.http.get(this.usersUrl, { headers: this.getHttpHeaders(), params: httpParams }).pipe(
       map( res => res as HttpResponseUsers),
@@ -97,8 +94,7 @@ export class UserService {
   public registerUser(user: User): Observable<User | HttpErrorResponse> {
     return this.http.post<User>(this.registerUrl, user, httpOptions).pipe(
       map(res  => res['data'] as User),
-      tap((registeredUser: User) => this.log(`User ${registeredUser.lastname} hinzugefügt.`)),
-      catchError(this.handlePostError)
+      tap((registeredUser: User) => this.log(`User ${registeredUser.lastname} hinzugefügt.`))
     );
   }
 
@@ -107,11 +103,10 @@ export class UserService {
     return this.http.post<User>(
       this.loginUrl, {email: strEmail, pwd: strPassword}, httpOptions).pipe(
         map(res => res['data'] as User),
-        tap((user) => {
+        tap((user: User) => {
         this.log(`Token für Benutzer '${user.firstname} ${user.lastname}' erhalten.`);
         this.setCurrentUser(user);
-      }),
-      catchError(this.handlePostError)
+      })
     );
   }
 
@@ -210,6 +205,60 @@ export class UserService {
       // this.log('Die Anforderung konnte serverseitig nicht bearbeitet werden: ' + error.error.message);
       return throwError(new HttpErrorArgs(error));
     }
+  }
+
+  // Permissions
+  // -----------------------------------------------------------------------------
+
+  /** GET permissions. */
+  getPermissionsByFilter(permissionFilter: PermissionFilter): Observable<any> {
+    let httpParams: HttpParams = null;
+    if (permissionFilter) {
+      let httpParamsObject: any = {};
+      if (permissionFilter._id) { httpParamsObject._id = permissionFilter._id; }
+      if (permissionFilter.name) { httpParamsObject.name = permissionFilter.name; }
+      if (permissionFilter.isPredefined) { httpParamsObject.isPredefined = permissionFilter.isPredefined.toString(); }
+
+      if (permissionFilter.filter) { httpParamsObject.filter = permissionFilter.filter; }
+      if (permissionFilter.sort) { httpParamsObject.sort = permissionFilter.sort; }
+      if (permissionFilter.limit) { httpParamsObject.limit = permissionFilter.limit.toString(); }
+      if (permissionFilter.page) { httpParamsObject.page = permissionFilter.page.toString(); }
+
+      httpParams = new HttpParams({fromObject: httpParamsObject});
+    }
+    return this.http.get(this.permissionsUrl, { headers: this.getHttpHeaders(), params: httpParams }).pipe(
+      map( res => res as HttpResponsePermissions),
+      tap(res => this.log(`Berechtigungs-Einträge geladen.`)),
+      catchError(this.handleError('getPermissionsByFilter', []))
+    );
+  }
+
+  /** POST: create a new permission entry. */
+  public createPermission(permission: Permission): Observable<Permission | HttpErrorResponse> {
+    return this.http.post<Permission>(this.permissionsUrl, permission, { headers: this.getHttpHeaders() }).pipe(
+      map(res  => res['data'] as Permission),
+      tap((createdPermission: Permission) => this.log(`Berechtigungs-Eintrag ${createdPermission.name} hinzugefügt.`))
+    );
+  }
+
+  /** PUT: update a permission entry. */
+  updatePermission(permission: Permission): Observable<Permission | HttpErrorResponse> {
+    return this.http.put<Permission>(this.permissionsUrl, permission, { headers: this.getHttpHeaders() }).pipe(
+      map(res  => res['data'] as Permission),
+      tap((updatedPermission: Permission) =>
+        this.log(`Berechtigungs-Eintrag mit name = '${updatedPermission.name}' und id = '${updatedPermission._id}' wurde aktualisiert.`))
+    );
+  }
+
+  /** DELETE: delete a permission entry in database. */
+  deletePermission(permission: Permission): Observable<Permission | HttpErrorResponse> {
+    let { id, name } = { id: permission._id, name: permission.name };
+    const url = `${this.permissionsUrl}/${id}`;
+
+    return this.http.delete<Permission>(url, { headers: this.getHttpHeaders() }).pipe(
+      map(res  => res['data'] as Permission),
+      tap(_ => this.log(`Berechtigungs-Eintrag mit name = '${name}' und id = '${id}' wurde gelöscht.`))
+    );
   }
 
 

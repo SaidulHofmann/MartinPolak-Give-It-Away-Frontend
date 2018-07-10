@@ -3,6 +3,7 @@ import {CollectionViewer, DataSource} from '@angular/cdk/collections';
 import {BehaviorSubject, Observable, of} from 'rxjs/index';
 import {UserService} from '../services/user.service';
 import {catchError, finalize, map} from 'rxjs/internal/operators';
+import {HttpResponsePermissions, Permission, PermissionFilter} from '../models/permission.model';
 
 /**
  * Data source for User entities that can be used for crud operations with Angular datatable.
@@ -35,15 +36,43 @@ export class UserDataSource implements DataSource<User> {
       }),
       catchError(() => of([])),
       finalize(() => this.loadingSubject.next(false))
-    )
-      .subscribe(users => this.usersSubject.next(users));
 
+    ).subscribe(users => this.usersSubject.next(users));
+  }
+}
+
+/**
+ * Data source for Permission entities.
+ */
+export class PermissionDataSource implements DataSource<Permission> {
+
+  private permissionsSubject = new BehaviorSubject<Permission[]>([]);
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+
+  public loading$ = this.loadingSubject.asObservable();
+
+  constructor(private userService: UserService) {
   }
 
-  public addRow(): User {
-    let user = new User();
-    this.usersSubject.next([user]);
-    return user;
+  public connect(collectionViewer: CollectionViewer): Observable<Permission[]> {
+    return this.permissionsSubject.asObservable();
   }
 
+  public disconnect(collectionViewer: CollectionViewer): void {
+    this.permissionsSubject.complete();
+    this.loadingSubject.complete();
+  }
+
+  public loadPermissions(permissionFilter: PermissionFilter) {
+    this.loadingSubject.next(true);
+    this.userService.getPermissionsByFilter(permissionFilter).pipe(
+      map((res: HttpResponsePermissions) => {
+        permissionFilter.total = res.data.total;
+        return res.data.docs;
+      }),
+      catchError(() => of([])),
+      finalize(() => this.loadingSubject.next(false))
+
+    ).subscribe(permissions => this.permissionsSubject.next(permissions));
+  }
 }

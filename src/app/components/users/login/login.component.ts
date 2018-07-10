@@ -10,6 +10,8 @@ import {Router} from '@angular/router';
 import {NgForm} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {DialogService} from '../../../services/dialog.service';
+import {getErrorJSON} from '../../../core/errors.core';
+import {NavigationService} from '../../../services/navigation.service';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +22,7 @@ export class LoginComponent implements OnInit {
  public message = '';
 
   constructor(
-    private router: Router,
+    public navService: NavigationService,
     private userService: UserService,
     private dialogService: DialogService) { }
 
@@ -33,17 +35,18 @@ export class LoginComponent implements OnInit {
 
     this.userService.login(email, password)
       .subscribe(
-        (user: User) => { this.gotoArticleOverviewPage(); },
-        (error: HttpErrorArgs) => {
-          if (error.errorCode === ErrorCodeType.Authentication_Failed) {
-            this.dialogService.inform('Fehler bei der Anmeldung', 'Der Benutzername oder das Passwort ist ungültig.');
+        (user: User) => { this.navService.articleOverviewPage(); },
+        (errorResponse: HttpErrorResponse) => {
+          let errorJson = getErrorJSON(errorResponse);
+          if (errorResponse.status === 401) {
+            this.dialogService.inform('Anmelden',
+              errorJson.message || 'E-Mail oder Passwort ungültig.');
           } else {
-            this.dialogService.inform('Fehler bei der Anmeldung', 'Bei der Anmeldung ist ein Fehler aufgetreten.');
+            this.dialogService.inform('Anmelden',
+              errorJson.message || 'Bei der Anmeldung ist ein Fehler aufgetreten.');
           }
-      });
+        }
+      );
   }
 
-  gotoArticleOverviewPage() {
-    this.router.navigate(['/articles']);
-  }
 }

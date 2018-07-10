@@ -12,6 +12,7 @@ import { ArticleResolver } from './services/article-resolver.service';
 import { GiveawayArticleComponent } from './components/articles/giveaway-article/giveaway-article.component';
 import {UsersComponent} from './components/users/users.component';
 import {RolesComponent} from './components/users/roles/roles.component';
+import {PermissionsComponent} from './components/permissions/permissions.component';
 
 const routes = [
   { path: 'articles', component: ArticlesComponent },
@@ -22,7 +23,7 @@ const routes = [
   { path: 'users', component: UsersComponent },
   { path: 'users/register', component: RegisterComponent },
   { path: 'users/login', component: LoginComponent },
-  { path: 'users/roles', component: RolesComponent },
+  { path: 'permissions', component: PermissionsComponent },
   { path: '', redirectTo: '/articles', pathMatch: 'full' },
   { path: '**', component: PageNotFoundComponent }
 ];

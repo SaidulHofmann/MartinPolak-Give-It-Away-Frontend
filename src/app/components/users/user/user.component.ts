@@ -5,6 +5,9 @@ import {getErrorJSON} from '../../../core/errors.core';
 import {UserService} from '../../../services/user.service';
 import {DialogService} from '../../../services/dialog.service';
 import {NgForm} from '@angular/forms';
+import {Permission, PermissionRef} from '../../../models/permission.model';
+import {LocalDataService} from '../../../services/local-data.service';
+import {Article, ArticleCategory} from '../../../models/index.model';
 
 @Component({
   selector: 'app-user',
@@ -17,10 +20,19 @@ export class UserComponent implements OnInit {
   // --------------------------------------------------------------------------
   public EditModeType = EditModeType;
   public editMode: EditModeType = EditModeType.Read;
-  public editingUser: User = new User();
+  public permissions: Permission[] = [];
+  private defaultPermission: Permission = null;
 
-  @ViewChild('userForm') userForm: NgForm;
-  @ViewChild('firstname', { read: ElementRef }) firstnameInput: ElementRef;
+  @ViewChild('userForm') private userForm: NgForm;
+  @ViewChild('firstname', { read: ElementRef }) private firstnameInput: ElementRef;
+
+  private _editingUser: User = new User();
+  public set editingUser(user: User) {
+    this.editMode = EditModeType.Read;
+    this._editingUser = user;
+    this.setPermissionFromSelector();
+  }
+  public get editingUser() { return this._editingUser; }
 
   private _selectedUser = new User();
   @Input()
@@ -39,13 +51,25 @@ export class UserComponent implements OnInit {
 
   constructor(
     public userService: UserService,
-    private dialogService: DialogService) { }
+    private dialogService: DialogService,
+    private localDataService: LocalDataService) {
+
+    localDataService.getPermissionList().then(permissions => {
+      this.permissions = permissions;
+      this.defaultPermission = this.permissions.find(permission => permission.name === 'Standardbenutzer');
+    });
+  }
 
   public ngOnInit() {
   }
 
   private onDataChanged() {
     this.dataChanged.emit();
+  }
+
+  private setPermissionFromSelector() {
+    if (!this.editingUser.permission || !this.editingUser.permission._id) { return this.defaultPermission ; }
+    this.editingUser.permission = this.permissions.find(permission => permission._id === this.editingUser.permission._id);
   }
 
   // User events.
@@ -144,7 +168,7 @@ export class UserComponent implements OnInit {
     this.dialogService.askForDelete('Benutzerkonto entfernen', `Soll der Benutzer '${userName}' wirklich entfernt werden ?`)
       .subscribe((dialogResult: DialogResultType) => {
 
-        if(dialogResult === DialogResultType.Delete) {
+        if (dialogResult === DialogResultType.Delete) {
           let userName = this.selectedUser.fullname;
           this.userService.deleteUser(this.selectedUser).subscribe(
             (user: User) => {

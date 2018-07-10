@@ -28,8 +28,8 @@
   <form #userForm="ngForm" class="p-2" autocomplete="off">
 
       <div class="form-group row">
-        <label for="firstname" class="col-sm-3 col-form-label">Vorname</label>
-        <div class="col-sm-9">
+        <label for="firstname" class="col-sm-4 col-form-label">Vorname</label>
+        <div class="col-sm-8">
           <input required type="text" class="form-control form-control-sm" id="firstname" placeholder="Vorname" [readonly]="editMode === EditModeType.Read"
                  name="firstname" [(ngModel)]="editingUser.firstname" #firstname="ngModel" autocomplete="given-name"/>
           <div class="alert alert-danger" [hidden]="firstname.valid || firstname.pristine">Der Vorname ist ein Pflichtfeld</div>
@@ -37,8 +37,8 @@
       </div>
 
       <div class="form-group row">
-        <label for="lastname" class="col-sm-3 col-form-label">Nachname</label>
-        <div class="col-sm-9">
+        <label for="lastname" class="col-sm-4 col-form-label">Nachname</label>
+        <div class="col-sm-8">
           <input required type="text" class="form-control form-control-sm" id="lastname" placeholder="Nachname" [readonly]="editMode === EditModeType.Read"
                  name="lastname" [(ngModel)]="editingUser.lastname" #lastname="ngModel" autocomplete="family-name"/>
           <div class="alert alert-danger" [hidden]="lastname.valid || lastname.pristine">Der Nachname ist ein Pflichtfeld</div>
@@ -46,8 +46,8 @@
       </div>
 
       <div class="form-group row">
-        <label for="email" class="col-sm-3 col-form-label">E-Mail</label>
-        <div class="col-sm-9">
+        <label for="email" class="col-sm-4 col-form-label">E-Mail</label>
+        <div class="col-sm-8">
           <input required email type="email" class="form-control form-control-sm" id="email" placeholder="E-Mail" [readonly]="editMode === EditModeType.Read"
                  name="email" [(ngModel)]="editingUser.email" #email="ngModel" autocomplete="email"/>
           <div class="alert alert-danger" [hidden]="email.valid || email.pristine">Das E-Mail ist ungültig.</div>
@@ -55,8 +55,8 @@
       </div>
 
       <div class="form-group row">
-        <label for="password" class="col-sm-3 col-form-label">Passwort</label>
-        <div class="col-sm-9">
+        <label for="password" class="col-sm-4 col-form-label">Passwort</label>
+        <div class="col-sm-8">
           <input required type="password" class="form-control form-control-sm" id="password" placeholder="Passwort" [readonly]="editMode === EditModeType.Read"
                  name="password" [(ngModel)]="editingUser.password" #password="ngModel" autocomplete="off"/>
           <div class="alert alert-danger" [hidden]="password.valid || password.pristine">Das Passwort ist ein Pflichtfeld</div>
@@ -64,25 +64,45 @@
       </div>
 
       <div class="form-group row">
-        <label for="role" class="col-sm-3 col-form-label">Rolle</label>
-        <div class="col-sm-9">
-          <input type="text" class="form-control form-control-sm" id="role"  [readonly]="editMode === EditModeType.Read"/>
+        <label for="role" class="col-sm-4 col-form-label">Berechtigung</label>
+        <div class="col-sm-8">
+          <select id="role" name="role" [(ngModel)]="editingUser.permission" class="form-control form-control-sm" [disabled]="editMode === EditModeType.Read">
+            <option *ngFor="let permissionEntry of permissions"
+                    [ngValue]="permissionEntry">{{permissionEntry.name}}
+            </option>
+          </select>
         </div>
       </div>
 
+    <div class="form-group row">
+      <label for="createdAt" class="col-sm-4 col-form-label mt-3">createdAt</label>
+      <div class="col-sm-8 mt-3">
+        <input readonly required type="text" class="form-control form-control-sm" id="createdAt"
+               value="{{editingUser.createdAt | date:'dd.MM.yyyy  HH:mm:ss'}}"/>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="updatedAt" class="col-sm-4 col-form-label">updatedAt</label>
+      <div class="col-sm-8">
+        <input readonly required type="text" class="form-control form-control-sm" id="updatedAt"
+               value="{{editingUser.updatedAt | date:'dd.MM.yyyy  HH:mm:ss'}}"/>
+      </div>
+    </div>
+
       <div class="form-group row">
-        <label for="id" class="col-sm-3 col-form-label">Id</label>
-        <div class="col-sm-9">
+        <label for="id" class="col-sm-4 col-form-label">Id</label>
+        <div class="col-sm-8">
           <input readonly required type="text" class="form-control form-control-sm" id="id"
                  value="{{editingUser._id}}"/>
         </div>
       </div>
 
     <p>Debug info</p>
-    <p>EditMode: {{editMode}}</p>
+    <p>EditMode: {{ editMode }}</p>
 
-    <p>userForm.form.pristine: {{userForm.form.pristine}}</p>
-    <p>userForm.form.valid: {{userForm.form.valid}}</p>
+    <p>userForm.form.pristine: {{ userForm.form.pristine }}</p>
+    <p>userForm.form.valid: {{ userForm.form.valid }}</p>
 
   </form>
 

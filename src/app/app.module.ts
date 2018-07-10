@@ -34,6 +34,8 @@ import {MatPaginatorIntl} from '@angular/material';
 import {MatPaginatorIntlDe} from './core/types.core';
 import { UserNavbarComponent } from './components/shared/user-navbar/user-navbar.component';
 import { UserComponent } from './components/users/user/user.component';
+import { PermissionsComponent } from './components/permissions/permissions.component';
+import { PermissionComponent } from './components/permissions/permission/permission.component';
 
 
 @NgModule({
@@ -60,7 +62,9 @@ import { UserComponent } from './components/users/user/user.component';
     RolesComponent,
     UsersComponent,
     UserNavbarComponent,
-    UserComponent
+    UserComponent,
+    PermissionsComponent,
+    PermissionComponent
   ],
   imports: [
     BrowserModule,

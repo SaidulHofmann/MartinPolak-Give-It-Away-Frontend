@@ -1,7 +1,30 @@
 // Contains application data.
 
-import {Article, ArticleCategory, ArticleStatus, User, UserRef } from '../models/index.model';
+import {Article, ArticleCategory, ArticleStatus, Permission, User, UserRef} from '../models/index.model';
 import {IdNamePair} from './types.core';
+
+export const permissionStandardbenutzer: Permission = {
+  _id: '5b35430567dfb9160c2532bf',
+  name: 'Standardbenutzer',
+  isPredefined: true,
+
+  articleOwnCreate: true,
+  articleOwnUpdate: true,
+  articleOwnDelete: true,
+  articleOwnDonate: true,
+
+  articleOtherUpdate: false,
+  articleOtherDelete: false,
+  articleOtherDonate: false,
+
+  userCreate: false,
+  userRead: false,
+  userUpdate: false,
+  userDelete: false,
+
+  createdAt: new Date(2018, 3, 13),
+  updatedAt: new Date(2018, 3, 13)
+};
 
 export const testUserRef: UserRef = {
   _id: '5aa00063b382de1478501ccd',
@@ -76,7 +99,8 @@ export const testUser: User = {
   password: 'pw',
   createdAt: new Date(2018, 3, 13),
   updatedAt: new Date(2018, 3, 13),
-  authToken: ''
+  authToken: '',
+  permission: permissionStandardbenutzer
 };
 
 export const testArticle: Article = {

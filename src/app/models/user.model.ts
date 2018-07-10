@@ -1,3 +1,4 @@
+import {Permission} from './permission.model';
 
 export class User {
   _id: string;
@@ -11,6 +12,7 @@ export class User {
   updatedAt = null;
 
   authToken = '';
+  permission: Permission = null;
 }
 
 export class UserRef {
