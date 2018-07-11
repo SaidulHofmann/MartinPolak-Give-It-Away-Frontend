@@ -33,7 +33,7 @@ export class ArticleService {
   private getHttpHeaders(): HttpHeaders {
     if (!this.userService.getCurrentUser()) {
       this.showAccessDeniedMessage();
-      this.navService.loginPage();
+      this.userService.logout();
     } else {
       return new HttpHeaders({
         'Content-Type': 'application/json',

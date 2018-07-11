@@ -32,7 +32,7 @@ export class RegisterComponent implements OnInit {
       (savedUser: User) => {
         this.dialogService.inform('Registrieren',
           'Das Benutzerkonto wurde erfolgreich erstellt.');
-        this.navService.loginPage();
+        this.navService.gotoLoginPage();
       },
       (errorResponse) => {
         let errorJson = getErrorJSON(errorResponse);

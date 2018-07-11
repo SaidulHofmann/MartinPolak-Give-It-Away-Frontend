@@ -40,7 +40,7 @@ export class UserService {
   public getHttpHeaders(): HttpHeaders {
     if (!this.getCurrentUser()) {
       this.showAccessDeniedMessage();
-      this.navService.loginPage();
+      this.navService.gotoLoginPage();
     } else {
       return new HttpHeaders({
         'Content-Type': 'application/json',

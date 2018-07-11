@@ -8,15 +8,15 @@ export class NavigationService {
 
   constructor( private router: Router) { }
 
-  public loginPage() {
+  public gotoLoginPage() {
     this.router.navigate(['/users/login']);
   }
 
-  public registerPage() {
+  public gotoRegisterPage() {
     this.router.navigate(['/users/register']);
   }
 
-  public articleOverviewPage() {
+  public gotoArticleOverviewPage() {
     this.router.navigate(['/articles']);
   }
 }

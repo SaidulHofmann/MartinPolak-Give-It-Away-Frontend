@@ -8,8 +8,8 @@ export class User {
   lastname: string;
   fullname: string;
 
-  createdAt = null;
-  updatedAt = null;
+  createdAt = new Date();
+  updatedAt = new Date();
 
   authToken = '';
   permission: Permission = null;

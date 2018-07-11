@@ -7,7 +7,6 @@ import {DialogService} from '../../../services/dialog.service';
 import {NgForm} from '@angular/forms';
 import {Permission, PermissionRef} from '../../../models/permission.model';
 import {LocalDataService} from '../../../services/local-data.service';
-import {Article, ArticleCategory} from '../../../models/index.model';
 
 @Component({
   selector: 'app-user',
@@ -28,7 +27,6 @@ export class UserComponent implements OnInit {
 
   private _editingUser: User = new User();
   public set editingUser(user: User) {
-    this.editMode = EditModeType.Read;
     this._editingUser = user;
     this.setPermissionFromSelector();
   }
@@ -39,6 +37,7 @@ export class UserComponent implements OnInit {
   public set selectedUser(user: User) {
     this._selectedUser = user;
     this.editingUser = Object.assign({}, user);
+    this.editMode = EditModeType.Read;
   }
   public get selectedUser() { return this._selectedUser; }
 

@@ -27,7 +27,6 @@ export class PermissionComponent implements OnInit {
 
   private _editingPermission: Permission = new Permission();
   public set editingPermission(permission: Permission) {
-    this.editMode = EditModeType.Read;
     this._editingPermission = permission;
   }
   public get editingPermission() { return this._editingPermission; }
@@ -37,6 +36,7 @@ export class PermissionComponent implements OnInit {
   public set selectedPermission(permission: Permission) {
     this._selectedPermission = permission;
     this.editingPermission = Object.assign({}, permission);
+    this.editMode = EditModeType.Read;
   }
   public get selectedPermission() { return this._selectedPermission; }
 

@@ -11,7 +11,7 @@
     <button (click)="onAddUser()" class="btn btn-sm btn-success crud-button mr-3 mb-2" title="Benutzer hinzufügen">
       <i class="fa fa-plus mx-3 mx-sm-1"></i><span class="d-none d-sm-inline-block">Neu</span></button>
 
-    <button (click)="onDeleteUser()" [disabled]="!editingUser || ! editingUser._id" class="btn btn-sm btn-danger crud-button mr-3 mr-md-5 mb-2" title="Benutzer Entfernen">
+    <button (click)="onDeleteUser()" [disabled]="!editingUser || ! editingUser._id" class="btn btn-sm btn-danger crud-button mr-3 mr-md-5 mb-2" title="Benutzer entfernen">
       <i class="fa fa-trash mx-3 mx-sm-1" aria-hidden="true"></i><span class="d-none d-sm-inline-block">Entfernen</span></button>
 
     <button (click)="onSaveUser()" [disabled]="!userForm.form.valid || userForm.form.pristine"  class="btn btn-sm btn-dark crud-button mr-3 mb-2" title="Speichern">

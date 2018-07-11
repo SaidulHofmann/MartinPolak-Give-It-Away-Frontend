@@ -28,13 +28,15 @@
           </ng-container>
 
           <ng-container matColumnDef="name">
-            <th *matHeaderCellDef mat-sort-header>Berechtigungs-Bezeichnung</th>
+            <th *matHeaderCellDef mat-sort-header>Bezeichnung</th>
             <td *matCellDef="let permission">{{permission.name}}</td>
           </ng-container>
 
           <ng-container matColumnDef="isPredefined">
             <th *matHeaderCellDef mat-sort-header>Vordefiniert</th>
-            <td *matCellDef="let permission">{{permission.isPredefined}}</td>
+            <td *matCellDef="let permission">
+              <input disabled type="checkbox" [(ngModel)]="permission.isPredefined"/>
+            </td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns" class="thead-light"></tr>

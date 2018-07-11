@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
 
     this.userService.login(email, password)
       .subscribe(
-        (user: User) => { this.navService.articleOverviewPage(); },
+        (user: User) => { this.navService.gotoArticleOverviewPage(); },
         (errorResponse: HttpErrorResponse) => {
           let errorJson = getErrorJSON(errorResponse);
           if (errorResponse.status === 401) {
