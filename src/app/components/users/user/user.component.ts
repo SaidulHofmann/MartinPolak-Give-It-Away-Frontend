@@ -28,7 +28,7 @@ export class UserComponent implements OnInit {
   private _editingUser: User = new User();
   public set editingUser(user: User) {
     this._editingUser = user;
-    this.setPermissionFromSelector();
+    this.setPermissionFromSelector(this._editingUser);
   }
   public get editingUser() { return this._editingUser; }
 
@@ -53,7 +53,7 @@ export class UserComponent implements OnInit {
     private dialogService: DialogService,
     private localDataService: LocalDataService) {
 
-    localDataService.getPermissionList().then(permissions => {
+    localDataService.getPermissionList(true).then(permissions => {
       this.permissions = permissions;
       this.defaultPermission = this.permissions.find(permission => permission.name === 'Standardbenutzer');
     });
@@ -66,9 +66,13 @@ export class UserComponent implements OnInit {
     this.dataChanged.emit();
   }
 
-  private setPermissionFromSelector() {
-    if (!this.editingUser.permission || !this.editingUser.permission._id) { return this.defaultPermission ; }
-    this.editingUser.permission = this.permissions.find(permission => permission._id === this.editingUser.permission._id);
+  private setPermissionFromSelector(user: User) {
+    if (!user) { return; }
+    if (!user.permission || !user.permission._id) {
+      user.permission = this.defaultPermission ;
+    } else  {
+      user.permission = this.permissions.find(permission => permission._id === user.permission._id);
+    }
   }
 
   // User events.
@@ -82,6 +86,7 @@ export class UserComponent implements OnInit {
   public onAddUser() {
     this.editMode = EditModeType.Create;
     this.editingUser = new User();
+    this.setPermissionFromSelector(this.editingUser);
     this.firstnameInput.nativeElement.focus();
   }
 
@@ -163,12 +168,11 @@ export class UserComponent implements OnInit {
   }
 
   private deleteUser() {
-    let userName = this.editingUser.firstname + ' ' + this.editingUser.lastname;
+    let userName = this.selectedUser.fullname;
     this.dialogService.askForDelete('Benutzerkonto entfernen', `Soll der Benutzer '${userName}' wirklich entfernt werden ?`)
       .subscribe((dialogResult: DialogResultType) => {
 
         if (dialogResult === DialogResultType.Delete) {
-          let userName = this.selectedUser.fullname;
           this.userService.deleteUser(this.selectedUser).subscribe(
             (user: User) => {
               this.onDataChanged();

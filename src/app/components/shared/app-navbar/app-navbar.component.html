@@ -15,6 +15,18 @@
     </ul>
 
     <ul class="navbar-nav navbar-right">
+
+      <ng-template [ngIf]="userService.canReadUserSettings()">
+        <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
+          <a *ngIf="userService.isAuthenticated" class="nav-link" routerLink="/users"><i class="fa fa-user mr-2" aria-hidden="true"></i>Benutzer</a>
+        </li>
+      </ng-template>
+      <ng-template [ngIf]="userService.canReadPermissionSettings()">
+        <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
+          <a *ngIf="userService.isAuthenticated" class="nav-link" routerLink="/permissions"><i class="fa fa-user mr-2" aria-hidden="true"></i>Berechtigungen</a>
+        </li>
+      </ng-template>
+
       <ng-template [ngIf]="!userService.isAuthenticated">
         <li class="nav-item" routerLinkActive="active">
           <a class="nav-link" routerLink="users/register"><i class="fa fa-user-plus mr-2"></i>Registrieren</a>
@@ -23,14 +35,11 @@
           <a class="nav-link" routerLink="users/login"><i class="fa fa-sign-in mr-2"></i>Anmelden</a>
         </li>
       </ng-template>
-      <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
-        <a *ngIf="userService.isAuthenticated" class="nav-link" routerLink="/users"><i class="fa fa-user mr-2" aria-hidden="true"></i>Benutzer</a>
-      </li>
-      <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
-        <a *ngIf="userService.isAuthenticated" class="nav-link" routerLink="/permissions"><i class="fa fa-user mr-2" aria-hidden="true"></i>Berechtigungen</a>
-      </li>
+
       <li class="nav-item" routerLinkActive="active">
-        <a *ngIf="userService.isAuthenticated" class="nav-link" (click)="logout()"><i class="fa fa-sign-out mr-2"></i>Abmelden</a>
+        <a *ngIf="userService.isAuthenticated" class="nav-link" (click)="logout()"
+           title="{{userService.getCurrentUser() ? userService.getCurrentUser().fullname
+           + ' | ' + userService.getCurrentUser().permission.name : ''}}"><i class="fa fa-sign-out mr-2"></i>Abmelden</a>
       </li>
     </ul>
 

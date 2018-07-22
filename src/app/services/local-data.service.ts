@@ -57,8 +57,8 @@ export class LocalDataService implements OnDestroy {
 
   private _permissionList: Permission[] = [];
 
-  public async getPermissionList(): Promise<Permission[]> {
-    if (!this._permissionList || this._permissionList.length === 0) {
+  public async getPermissionList(reload: boolean = false): Promise<Permission[]> {
+    if (reload || !this._permissionList || this._permissionList.length === 0) {
       await this.loadPermissionList();
     }
     return this._permissionList;

@@ -22,6 +22,11 @@ export const permissionStandardbenutzer: Permission = {
   userUpdate: false,
   userDelete: false,
 
+  permissionCreate: false,
+  permissionRead: false,
+  permissionUpdate: false,
+  permissionDelete: false,
+
   createdAt: new Date(2018, 3, 13),
   updatedAt: new Date(2018, 3, 13)
 };

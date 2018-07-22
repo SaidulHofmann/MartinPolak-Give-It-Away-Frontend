@@ -168,6 +168,7 @@ export class ArticleService {
 
       if (error.status === 401) {
         this.showAccessDeniedMessage();
+        this.userService.logout();
         return of(result as T);
       }
 

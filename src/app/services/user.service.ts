@@ -57,7 +57,7 @@ export class UserService {
 
 
   /** GET users. */
-  getUsers(page: number = 1, limit: number = 10): Observable<User[]> {
+  public getUsers(page: number = 1, limit: number = 10): Observable<User[]> {
     return this.http.get(`${this.usersUrl}?page=${page}&limit=${limit}`,
       { headers: this.getHttpHeaders() }).pipe(
       map( res => res['data']['docs'] as User[]),
@@ -67,7 +67,7 @@ export class UserService {
   }
 
   /** GET users. */
-  getUsersByFilter(userFilter: UserFilter): Observable<any> {
+  public getUsersByFilter(userFilter: UserFilter): Observable<any> {
     let httpParams: HttpParams = null;
     if (userFilter) {
       let httpParamsObject: any = {};
@@ -112,11 +112,11 @@ export class UserService {
 
   public logout() {
     this.currentUser = null;
-    this.router.navigate(['./login']);
+    this.navService.gotoLoginPage();
   }
 
   /** PUT: update an user. */
-  updateUser(user: User): Observable<User | HttpErrorResponse> {
+  public updateUser(user: User): Observable<User | HttpErrorResponse> {
     return this.http.put(this.usersUrl, user, { headers: this.getHttpHeaders() }).pipe(
       map(res  => res['data'] as User),
       tap((userRes: User) => this.log(`Benutzer mit name = '${userRes.fullname}' und id = '${userRes._id}' wurde aktualisiert.`))
@@ -124,7 +124,7 @@ export class UserService {
   }
 
   /** DELETE: delete an user in database. */
-  deleteUser(user: User | string): Observable<User | HttpErrorResponse> {
+  public deleteUser(user: User | string): Observable<User | HttpErrorResponse> {
     let id, fullname = '';
     if (typeof user === 'string') {
       id = user;
@@ -169,6 +169,45 @@ export class UserService {
     this.currentUser = JSON.parse(localStorage.getItem('currentUser') || null);
   }
 
+  public canReadUserSettings(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) {
+      return false;
+    }
+    if (this.currentUser.permission.userCreate
+      || this.currentUser.permission.userRead
+      || this.currentUser.permission.userUpdate
+      || this.currentUser.permission.userDelete) {
+      return true;
+    }
+    return false;
+  }
+
+  public canCreateUser(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return this.currentUser.permission.userCreate;
+  }
+
+  public canReadUser(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return this.currentUser.permission.userRead;
+  }
+
+  public canUpdateUser(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return this.currentUser.permission.userUpdate;
+  }
+
+  public canDeleteUser(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return this.currentUser.permission.userDelete;
+  }
+
+  public canSaveUser(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return (this.currentUser.permission.userCreate || this.currentUser.permission.userUpdate || this.currentUser.permission.userDelete);
+  }
+
+
   /**
    * Handle Http operation that failed.
    * Let the app continue.
@@ -211,7 +250,7 @@ export class UserService {
   // -----------------------------------------------------------------------------
 
   /** GET permissions. */
-  getPermissionsByFilter(permissionFilter: PermissionFilter): Observable<any> {
+  public getPermissionsByFilter(permissionFilter: PermissionFilter): Observable<any> {
     let httpParams: HttpParams = null;
     if (permissionFilter) {
       let httpParamsObject: any = {};
@@ -242,7 +281,7 @@ export class UserService {
   }
 
   /** PUT: update a permission entry. */
-  updatePermission(permission: Permission): Observable<Permission | HttpErrorResponse> {
+  public updatePermission(permission: Permission): Observable<Permission | HttpErrorResponse> {
     return this.http.put<Permission>(this.permissionsUrl, permission, { headers: this.getHttpHeaders() }).pipe(
       map(res  => res['data'] as Permission),
       tap((updatedPermission: Permission) =>
@@ -251,7 +290,7 @@ export class UserService {
   }
 
   /** DELETE: delete a permission entry in database. */
-  deletePermission(permission: Permission): Observable<Permission | HttpErrorResponse> {
+  public deletePermission(permission: Permission): Observable<Permission | HttpErrorResponse> {
     let { id, name } = { id: permission._id, name: permission.name };
     const url = `${this.permissionsUrl}/${id}`;
 
@@ -260,6 +299,56 @@ export class UserService {
       tap(_ => this.log(`Berechtigungs-Eintrag mit name = '${name}' und id = '${id}' wurde gelöscht.`))
     );
   }
+
+  public canReadPermissionSettings(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) {
+      return false;
+    }
+    if (this.currentUser.permission.permissionCreate
+      || this.currentUser.permission.permissionRead
+      || this.currentUser.permission.permissionUpdate
+      || this.currentUser.permission.permissionDelete) {
+      return true;
+    }
+    return false;
+  }
+
+  public canCreatePermission(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return this.currentUser.permission.permissionCreate;
+  }
+
+  public canReadPermission(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return this.currentUser.permission.permissionRead;
+  }
+
+  public canUpdatePermission(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return this.currentUser.permission.permissionUpdate;
+  }
+
+  public canDeletePermission(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return this.currentUser.permission.permissionDelete;
+  }
+
+  public canDonateOtherArticle(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return this.currentUser.permission.articleOtherDonate;
+  }
+
+  public canUpdateOtherArticle(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return this.currentUser.permission.articleOtherUpdate;
+  }
+
+  public canSavePermission(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return (this.currentUser.permission.permissionCreate ||
+      this.currentUser.permission.permissionUpdate || this.currentUser.permission.permissionDelete);
+  }
+
 
 
 }

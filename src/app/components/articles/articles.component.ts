@@ -12,6 +12,7 @@ import {ArticleStatusType} from '../../core/enums.core';
 import {User} from '../../models/user.model';
 import {UserService} from '../../services/user.service';
 import {LocalDataService} from '../../services/local-data.service';
+import {NavigationService} from '../../services/navigation.service';
 
 
 @Component({
@@ -47,9 +48,9 @@ export class ArticlesComponent implements OnInit, OnDestroy {
   // Methods
   // ----------------------------------
   constructor(
-    private router: Router,
+    public navService: NavigationService,
     private localDataService: LocalDataService,
-    private userService: UserService,
+    public userService: UserService,
     private articleService: ArticleService,
     private pagerService: PagerService) {
 
@@ -100,18 +101,6 @@ export class ArticlesComponent implements OnInit, OnDestroy {
       this.articlesResponse = httpResponseArticles;
       this.pager = this.pagerService.getPager(this.articlesResponse.data.total, this.articleFilter.page);
     });
-  }
-
-  onArticleDetails(article: Article) {
-    this.router.navigate([`/articles/${article._id}/details`]);
-  }
-
-  onEdit(article: Article) {
-    this.router.navigate([`/articles/${article._id}/edit`]);
-  }
-
-  onGiveAway(article: Article) {
-    this.router.navigate([`/articles/${article._id}/giveAway`]);
   }
 
   onPublicationRervationCBChange(event) {

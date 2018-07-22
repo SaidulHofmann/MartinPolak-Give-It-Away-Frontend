@@ -5,16 +5,16 @@
   </div>
 
   <div class="mt-3">
-    <button (click)="onEditUser()" [disabled]="!editingUser || ! editingUser._id" class="btn btn-sm btn-primary crud-button mr-3 mb-2" title="Bearbeiten">
+    <button (click)="onEditUser()" [disabled]="!userService.canUpdateUser() || !editingUser || ! editingUser._id" class="btn btn-sm btn-primary crud-button mr-3 mb-2" title="Bearbeiten">
       <i class="fa fa-pencil mx-3 mx-sm-1" aria-hidden="true"></i><span class="d-none d-sm-inline-block">Bearbeiten</span></button>
 
-    <button (click)="onAddUser()" class="btn btn-sm btn-success crud-button mr-3 mb-2" title="Benutzer hinzufügen">
+    <button (click)="onAddUser()" [disabled]="!userService.canCreateUser()" class="btn btn-sm btn-success crud-button mr-3 mb-2" title="Benutzer hinzufügen">
       <i class="fa fa-plus mx-3 mx-sm-1"></i><span class="d-none d-sm-inline-block">Neu</span></button>
 
-    <button (click)="onDeleteUser()" [disabled]="!editingUser || ! editingUser._id" class="btn btn-sm btn-danger crud-button mr-3 mr-md-5 mb-2" title="Benutzer entfernen">
+    <button (click)="onDeleteUser()" [disabled]="!userService.canDeleteUser() || !editingUser || ! editingUser._id" class="btn btn-sm btn-danger crud-button mr-3 mr-md-5 mb-2" title="Benutzer entfernen">
       <i class="fa fa-trash mx-3 mx-sm-1" aria-hidden="true"></i><span class="d-none d-sm-inline-block">Entfernen</span></button>
 
-    <button (click)="onSaveUser()" [disabled]="!userForm.form.valid || userForm.form.pristine"  class="btn btn-sm btn-dark crud-button mr-3 mb-2" title="Speichern">
+    <button (click)="onSaveUser()" [disabled]="!userService.canSaveUser() || !userForm.form.valid || userForm.form.pristine"  class="btn btn-sm btn-dark crud-button mr-3 mb-2" title="Speichern">
       <i class="fa fa-floppy-o mx-3 mx-sm-1" aria-hidden="true"></i><span class="d-none d-sm-inline-block">Speichern</span></button>
 
     <button (click)="onCancelEdit()" [disabled]="editMode === EditModeType.Read" class="btn btn-sm btn-secondary crud-button mr-3 mb-2" title="Änderungen verwerfen">
@@ -66,7 +66,7 @@
       <div class="form-group row">
         <label for="role" class="col-sm-4 col-form-label">Berechtigung</label>
         <div class="col-sm-8">
-          <select id="role" name="role" [(ngModel)]="editingUser.permission" class="form-control form-control-sm" [disabled]="editMode === EditModeType.Read">
+          <select id="role" name="role" [(ngModel)]="editingUser.permission" class="form-control form-control-sm" [disabled]="!userService.canUpdatePermission() || editMode === EditModeType.Read">
             <option *ngFor="let permissionEntry of permissions"
                     [ngValue]="permissionEntry">{{permissionEntry.name}}
             </option>
@@ -74,18 +74,18 @@
         </div>
       </div>
 
-    <div class="form-group row">
+    <div class="form-group row mb-0">
       <label for="createdAt" class="col-sm-4 col-form-label mt-3">createdAt</label>
       <div class="col-sm-8 mt-3">
-        <input readonly required type="text" class="form-control form-control-sm" id="createdAt"
+        <input readonly required type="text" class="form-control-plaintext form-control-sm" id="createdAt"
                value="{{editingUser.createdAt | date:'dd.MM.yyyy  HH:mm:ss'}}"/>
       </div>
     </div>
 
-    <div class="form-group row">
+    <div class="form-group row mb-0">
       <label for="updatedAt" class="col-sm-4 col-form-label">updatedAt</label>
       <div class="col-sm-8">
-        <input readonly required type="text" class="form-control form-control-sm" id="updatedAt"
+        <input readonly required type="text" class="form-control-plaintext form-control-sm" id="updatedAt"
                value="{{editingUser.updatedAt | date:'dd.MM.yyyy  HH:mm:ss'}}"/>
       </div>
     </div>
@@ -93,7 +93,7 @@
       <div class="form-group row">
         <label for="id" class="col-sm-4 col-form-label">Id</label>
         <div class="col-sm-8">
-          <input readonly required type="text" class="form-control form-control-sm" id="id"
+          <input readonly required type="text" class="form-control-plaintext form-control-sm" id="id"
                  value="{{editingUser._id}}"/>
         </div>
       </div>

@@ -18,6 +18,11 @@ export class Permission {
   userUpdate = false;
   userDelete = false;
 
+  permissionCreate = false;
+  permissionRead = false;
+  permissionUpdate = false;
+  permissionDelete = false;
+
   createdAt = new Date();
   updatedAt = new Date();
 }

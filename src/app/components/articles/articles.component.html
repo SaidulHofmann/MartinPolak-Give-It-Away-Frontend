@@ -88,13 +88,13 @@
 
           <div class="col-md-5">
             <h4 class="card-title">{{ article.name }}</h4>
-            <img class="card-img" style="height: 250px; width: auto; cursor: pointer" src="{{ article.pictureOverview }}" alt="Bild"  (click)="onArticleDetails(article)">
+            <img class="card-img" style="height: 250px; width: auto; cursor: pointer" src="{{ article.pictureOverview }}" alt="Bild"  (click)="navService.gotoArticleDetailsPage(article._id)">
             <div>
-              <button class="btn btn-info btn-sm mt-2 mr-2" (click)="onArticleDetails(article)"><i class="fa fa-info-circle fa-lg mr-2"></i>Details</button>
-              <button *ngIf="article.publisher._id === currentUser._id && article.status._id !== ArticleStatusType.donated"
-                  class="btn btn-info btn-sm mt-2 mr-2" (click)="onGiveAway(article)"><i class="fa fa-gift fa-lg mr-2"></i>Verschenken</button>
-              <button *ngIf="article.publisher._id === currentUser._id"
-                  class="btn btn-outline-secondary btn-sm mt-2" (click)="onEdit(article)"><i class="fa fa-edit fa-lg mr-2"></i>Bearbeiten</button>
+              <button class="btn btn-info btn-sm mt-2 mr-2" (click)="navService.gotoArticleDetailsPage(article._id)"><i class="fa fa-info-circle fa-lg mr-2"></i>Details</button>
+              <button *ngIf="article.status._id !== ArticleStatusType.donated && (article.publisher._id === currentUser._id || userService.canDonateOtherArticle()) "
+                  class="btn btn-info btn-sm mt-2 mr-2" (click)="navService.gotoArticleGiveAwayPage(article._id)"><i class="fa fa-gift fa-lg mr-2"></i>Verschenken</button>
+              <button *ngIf="article.publisher._id === currentUser._id || userService.canUpdateOtherArticle()"
+                  class="btn btn-outline-secondary btn-sm mt-2" (click)="navService.gotoArticleEditPage(article._id)"><i class="fa fa-edit fa-lg mr-2"></i>Bearbeiten</button>
             </div>
           </div>
 
