@@ -17,7 +17,7 @@
       </div>
       <div class="table-responsive">
         <table mat-table [dataSource]="dataSource" class="table table-hover mat-elevation-z8"
-               matSort matSortActive="name" matSortDirection="asc" matSortDisableClear>
+               matSort matSortDisableClear>
           <caption>List of permissions</caption>
 
           <ng-container matColumnDef="_id">
@@ -41,7 +41,8 @@
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns" class="thead-light"></tr>
 
-          <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="onRowClicked(row)" [ngClass] = "{'highlight' : selectedPermission.name == row.name}"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="onRowClicked(row)"
+              [ngClass] = "{'highlight' : (selectedPermission ? selectedPermission._id == row._id: false)}"></tr>
 
         </table>
       </div>

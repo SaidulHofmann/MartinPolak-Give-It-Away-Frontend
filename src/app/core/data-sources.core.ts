@@ -14,6 +14,9 @@ export class UserDataSource implements DataSource<User> {
   private loadingSubject = new BehaviorSubject<boolean>(false);
 
   public loading$ = this.loadingSubject.asObservable();
+  public get users(): User[] {
+    return this.usersSubject.getValue();
+  }
 
   constructor(private userService: UserService) {
   }
@@ -47,9 +50,12 @@ export class UserDataSource implements DataSource<User> {
 export class PermissionDataSource implements DataSource<Permission> {
 
   private permissionsSubject = new BehaviorSubject<Permission[]>([]);
-  private loadingSubject = new BehaviorSubject<boolean>(false);
+  public loadingSubject = new BehaviorSubject<boolean>(false);
 
   public loading$ = this.loadingSubject.asObservable();
+  public get permissions(): Permission[] {
+    return this.permissionsSubject.getValue();
+  }
 
   constructor(private userService: UserService) {
   }
@@ -73,6 +79,6 @@ export class PermissionDataSource implements DataSource<Permission> {
       catchError(() => of([])),
       finalize(() => this.loadingSubject.next(false))
 
-    ).subscribe(permissions => this.permissionsSubject.next(permissions));
+    ).subscribe(permissions =>  this.permissionsSubject.next(permissions));
   }
 }

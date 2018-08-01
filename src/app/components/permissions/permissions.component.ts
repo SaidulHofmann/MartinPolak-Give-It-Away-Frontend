@@ -5,7 +5,8 @@ import {PermissionDataSource} from '../../core/data-sources.core';
 import {Permission, PermissionFilter} from '../../models/permission.model';
 import {debounceTime, distinctUntilChanged, tap} from 'rxjs/internal/operators';
 import {fromEvent, merge} from 'rxjs/index';
-import {MatPaginator, MatSort, Sort} from '@angular/material';
+import {MatPaginator, MatSort, MatSortable, Sort, SortDirection} from '@angular/material';
+import {LocalDataService} from '../../services/local-data.service';
 
 @Component({
   selector: 'app-permissions',
@@ -16,8 +17,10 @@ export class PermissionsComponent implements OnInit, AfterViewInit {
 
   public dataSource: PermissionDataSource;
   public displayedColumns = ['_id', 'name', 'isPredefined'];
+  private sorting: MatSortable = { id: 'name', start: 'asc', disableClear: true };
   public permissionFilter: PermissionFilter = new PermissionFilter();
   public selectedPermission: Permission = new Permission();
+
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -25,11 +28,19 @@ export class PermissionsComponent implements OnInit, AfterViewInit {
 
   constructor(
     public userService: UserService,
+    private localDataService: LocalDataService,
     private dialogService: DialogService) { }
 
   public ngOnInit() {
     this.dataSource = new PermissionDataSource(this.userService);
-    this.dataSource.loadPermissions(this.permissionFilter);
+    this.dataSource.loading$.subscribe(loading => {
+      if (!loading && this.dataSource.permissions && this.dataSource.permissions.length > 0) {
+        this.onDataLoaded();
+      }
+    });
+    this.loadFilter();
+    this.loadSorting();
+    this.loadPermissionsPage();
   }
 
   public ngAfterViewInit() {
@@ -39,25 +50,34 @@ export class PermissionsComponent implements OnInit, AfterViewInit {
       distinctUntilChanged(),
       tap(() => {
         this.paginator.pageIndex = 0;
+        this.permissionFilter.filter = this.filterInput.nativeElement.value;
+        this.saveFilter();
         this.loadPermissionsPage();
       })
     ).subscribe();
 
-    // Reset the paginator after sorting.
+    // On sort events load sorted data from backend.
     this.sort.sortChange.subscribe(() => {
-      this.setSort(this.sort);
       this.paginator.pageIndex = 0;
       this.permissionFilter.page = 1;
+      this.updateSortInPermissionFilter(this.sort);
+      this.saveSorting();
+      this.loadPermissionsPage();
     });
 
-    // On sort or paginate events, load a new page.
-    merge(this.sort.sortChange, this.paginator.page).pipe(
-      tap(() => this.loadPermissionsPage())
-    ).subscribe();
+    // On paginate events load a new page.
+    this.paginator.page.subscribe(() => {
+      this.loadPermissionsPage();
+    });
   }
 
   public onRowClicked(permission: Permission) {
     this.selectedPermission = permission;
+    this.saveSelectedPermission();
+  }
+
+  private onDataLoaded() {
+    this.loadSelectedPermission();
   }
 
   public onDataChanged() {
@@ -65,26 +85,70 @@ export class PermissionsComponent implements OnInit, AfterViewInit {
   }
 
   private loadPermissionsPage() {
-    this.setPermissionFilter();
+    this.permissionFilter.page = this.paginator.pageIndex + 1;
+    this.permissionFilter.limit = this.paginator.pageSize;
     this.dataSource.loadPermissions(this.permissionFilter);
   }
 
-  private setPermissionFilter() {
-    this.permissionFilter.filter = this.filterInput.nativeElement.value;
-    this.permissionFilter.page = this.paginator.pageIndex + 1;
-    this.permissionFilter.limit = this.paginator.pageSize;
-  }
-
-  private setSort(sort: Sort) {
+  private updateSortInPermissionFilter(sort: Sort) {
     if (!sort.active) {
       this.permissionFilter.sort = '';
-      return;
+    } else {
+      this.setSortField(sort.active, sort.direction === 'asc');
     }
-    this.setSortField(sort.active, sort.direction === 'asc');
   }
 
   private setSortField(sortField: string, isSortDirAscending: boolean) {
     this.permissionFilter.sort = isSortDirAscending ? sortField : '-' + sortField;
+  }
+
+
+  // Manage settings.
+
+  private saveSelectedPermission() {
+    this.localDataService.saveObject('PermissionsComponent.selectedPermission', this.selectedPermission);
+  }
+
+  private loadSelectedPermission() {
+    let loadedPermission: Permission = this.localDataService.loadObject('PermissionsComponent.selectedPermission');
+    if (loadedPermission) {
+      let permissionRef = this.dataSource.permissions.find(p => p._id === loadedPermission._id);
+      if (permissionRef) {
+        this.selectedPermission = permissionRef;
+        return;
+      }
+    }
+    this.selectedPermission = new Permission();
+  }
+
+  private saveSorting() {
+    let sortDirection: 'asc' | 'desc' = this.sort.direction as 'asc' | 'desc';
+    let sorting: MatSortable = { id: this.sort.active, start: sortDirection, disableClear: true };
+    this.localDataService.saveObject('PermissionsComponent.sorting', sorting);
+  }
+
+  private loadSorting() {
+    let loadedSorting: MatSortable = this.localDataService.loadObject('PermissionsComponent.sorting');
+    if (loadedSorting) {
+      this.sorting = loadedSorting;
+      this.sort.sort(this.sorting);
+      this.updateSortInPermissionFilter(this.sort);
+    }
+  }
+
+  private saveFilter() {
+    this.localDataService.saveObject('PermissionsComponent.permissionFilter.filter', this.permissionFilter.filter);
+  }
+
+  private loadFilter() {
+    let loadedPermissionFilter: string = this.localDataService.loadObject('PermissionsComponent.permissionFilter.filter');
+    if (loadedPermissionFilter) {
+      this.permissionFilter.filter = loadedPermissionFilter;
+      this.filterInput.nativeElement.value = loadedPermissionFilter;
+    } else {
+      this.permissionFilter.filter = '';
+      this.filterInput.nativeElement.value = '';
+    }
   }
 
 }

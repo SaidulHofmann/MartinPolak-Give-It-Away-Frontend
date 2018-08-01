@@ -6,6 +6,8 @@ import {DialogService} from './dialog.service';
 import {UserService} from './user.service';
 import {NavigationService} from './navigation.service';
 import {HttpClient} from '@angular/common/http';
+import {IdNamePair} from '../core/types.core';
+import {ArticleCategory, ArticleStatus} from '../models/index.model';
 
 @Injectable({
   providedIn: 'root'
@@ -41,12 +43,12 @@ export class LocalDataService implements OnDestroy {
     this.saveObject('articleFilter', this.articleFilter);
   }
 
-  private saveObject(name: string, value: any) {
-    localStorage.setItem('name', JSON.stringify(value));
+  public saveObject(name: string, value: any) {
+    localStorage.setItem(name, JSON.stringify(value));
   }
 
-  private loadObject(name: string): any {
-    return JSON.parse(localStorage.getItem('name') || null);
+  public loadObject(name: string): any {
+    return JSON.parse(localStorage.getItem(name) || null);
   }
 
 

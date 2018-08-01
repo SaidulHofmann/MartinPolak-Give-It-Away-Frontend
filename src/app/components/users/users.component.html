@@ -17,7 +17,7 @@
       </div>
       <div class="table-responsive">
         <table mat-table [dataSource]="dataSource" class="table table-hover mat-elevation-z8"
-                   matSort matSortActive="lastname" matSortDirection="asc" matSortDisableClear>
+                   matSort matSortDisableClear>
           <caption>List of users</caption>
 
           <ng-container matColumnDef="_id">
@@ -44,7 +44,7 @@
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns" class="thead-light"></tr>
 
-          <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="onRowClicked(row)" [ngClass] = "{'highlight' : selectedUser.email == row.email}"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="onRowClicked(row)" [ngClass] = "{'highlight' : (selectedUser ? selectedUser.email == row.email: false)}"></tr>
 
         </table>
       </div>

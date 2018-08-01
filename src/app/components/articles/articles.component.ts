@@ -3,10 +3,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ArticleService} from '../../services/article.service';
 import {Article, ArticleFilter, HttpResponseArticles} from '../../models/article.model';
-import {Router} from '@angular/router';
 import {PagerService} from '../../services/pager.service';
-import {articleCategories, articleCategoryFilter, articleSortOptions,
-  articleStatus, articleStatusFilter} from '../../core/data-providers.core';
+import {articleCategoryFilter, articleSortOptions, articleStatusFilter} from '../../core/data-providers.core';
 import {Pager} from '../../core/types.core';
 import {ArticleStatusType} from '../../core/enums.core';
 import {User} from '../../models/user.model';
@@ -53,22 +51,11 @@ export class ArticlesComponent implements OnInit, OnDestroy {
     public userService: UserService,
     private articleService: ArticleService,
     private pagerService: PagerService) {
-
-    // test
-    this.localDataService.getPermissionRefList()
-      .then( (permissionList) => {
-        console.log('permissionList: ', permissionList);
-        permissionList.forEach((p) => {
-          console.log(`Permission name: ${p.name}, Id: ${p._id}.`);
-        });
-      }).catch( (error) => {
-      console.log('error: ', error);
-    });
   }
 
   ngOnInit() {
     this.loadArticleFilter();
-    if (this.articleFilter != null) {
+    if (this.articleFilter && this.articleFilter.category) {
       this.getArticles();
     } else {
       this.articleFilter = new ArticleFilter();
@@ -83,10 +70,10 @@ export class ArticlesComponent implements OnInit, OnDestroy {
 
   private loadArticleFilter() {
     this.articleFilter = this.localDataService.articleFilter;
-    if (this.articleFilter != null) {
-      this.articleFilter.category = articleCategoryFilter.find(c => c._id === this.articleFilter.category._id);
-      this.articleFilter.status = articleStatusFilter.find(s => s._id === this.articleFilter.status._id);
-      this.articleFilter.sort = articleSortOptions.find(s => s._id === this.articleFilter.sort._id);
+    if (this.articleFilter && this.articleFilter.category) {
+      this.articleFilter.category = this.articleCategories.find(c => c._id === this.articleFilter.category._id);
+      this.articleFilter.status = this.articleStatus.find(s => s._id === this.articleFilter.status._id);
+      this.articleFilter.sort = this.sortOptions.find(s => s._id === this.articleFilter.sort._id);
     }
   }
 
@@ -125,9 +112,9 @@ export class ArticlesComponent implements OnInit, OnDestroy {
   }
 
   onResetFilter() {
-    this.articleFilter.category = articleCategoryFilter[0];
-    this.articleFilter.status = articleStatusFilter[0];
-    this.articleFilter.sort = articleSortOptions[0];
+    this.articleFilter.category = this.articleCategories[0];
+    this.articleFilter.status = this.articleStatus[0];
+    this.articleFilter.sort = this.sortOptions[0];
     this.articleFilter.tags = '';
 
     this.articleFilter.includeUsersReservation = true;
