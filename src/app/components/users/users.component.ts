@@ -1,14 +1,12 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {UserService} from '../../services/user.service';
-import {User, UserFilter} from '../../models/user.model';
-import {MatPaginator, MatSort, MatSortable, Sort} from '@angular/material';
-import {debounceTime, distinctUntilChanged, tap, first} from 'rxjs/internal/operators';
-import {fromEvent, merge} from 'rxjs/index';
 import {DialogService} from '../../services/dialog.service';
+import {UserService} from '../../services/user.service';
 import {UserDataSource} from '../../core/data-sources.core';
+import {User, UserFilter} from '../../models/user.model';
+import {debounceTime, distinctUntilChanged, tap} from 'rxjs/internal/operators';
+import {fromEvent, merge} from 'rxjs/index';
+import {MatPaginator, MatSort, MatSortable, PageEvent, Sort} from '@angular/material';
 import {LocalDataService} from '../../services/local-data.service';
-import {Permission} from '../../models/permission.model';
-
 
 @Component({
   selector: 'app-users',
@@ -21,6 +19,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   public displayedColumns = ['_id', 'lastname', 'firstname', 'email'];
   private sorting: MatSortable = { id: 'name', start: 'asc', disableClear: true };
   public userFilter: UserFilter = new UserFilter();
+  private currentPageSize = this.userFilter.limit; // Enables detection of pageSize change. The paginator uses userFilter.
   public selectedUser: User = new User();
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -42,6 +41,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
     });
     this.loadFilter();
     this.loadSorting();
+    this.loadPaging();
     this.loadUsersPage();
   }
 
@@ -52,7 +52,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
       distinctUntilChanged(),
       tap(() => {
         this.paginator.pageIndex = 0;
-        this.userFilter.filter = this.filterInput.nativeElement.value;
+        this.userFilter.filter = this.filterInput.nativeElement.value.trim();
         this.saveFilter();
         this.loadUsersPage();
       })
@@ -68,7 +68,11 @@ export class UsersComponent implements OnInit, AfterViewInit {
     });
 
     // On paginate events load a new page.
-    this.paginator.page.subscribe(() => {
+    this.paginator.page.subscribe((pageEvent: PageEvent) => {
+      if (this.currentPageSize !== pageEvent.pageSize) {
+        this.currentPageSize = pageEvent.pageSize;
+        this.savePaging();
+      }
       this.loadUsersPage();
     });
   }
@@ -126,8 +130,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
   }
 
   private saveSorting() {
-    let sortDirection: 'asc' | 'desc' = this.sort.direction as 'asc' | 'desc';
-    let sorting: MatSortable = { id: this.sort.active, start: sortDirection, disableClear: true };
+    let sorting: MatSortable = { id: this.sort.active, start: this.sort.direction as 'asc' | 'desc', disableClear: true };
     this.localDataService.saveObject('UsersComponent.sorting', sorting);
   }
 
@@ -140,19 +143,29 @@ export class UsersComponent implements OnInit, AfterViewInit {
     }
   }
   private saveFilter() {
-    this.localDataService.saveObject('UsersComponent.userFilter', this.userFilter);
+    this.localDataService.saveObject('UsersComponent.userFilter.filter', this.userFilter.filter);
   }
 
   private loadFilter() {
-    this.userFilter = this.localDataService.loadObject('UsersComponent.userFilter');
-    if (!this.userFilter) {
-      this.userFilter = new UserFilter();
-      return;
-    }
-    if (this.userFilter.filter) {
-      this.filterInput.nativeElement.value = this.userFilter.filter;
+    let loadedUserFilter: string = this.localDataService.loadObject('UsersComponent.userFilter.filter');
+    if (loadedUserFilter) {
+      this.userFilter.filter = loadedUserFilter;
+      this.filterInput.nativeElement.value = loadedUserFilter;
     } else {
+      this.userFilter.filter = '';
       this.filterInput.nativeElement.value = '';
+    }
+  }
+
+  private savePaging() {
+    this.localDataService.saveObject('UsersComponent.currentPageSize', this.currentPageSize);
+  }
+
+  private loadPaging() {
+    let loadedPageSize: number = this.localDataService.loadObject('UsersComponent.currentPageSize');
+    if (loadedPageSize) {
+      this.paginator._changePageSize(loadedPageSize);
+      this.currentPageSize = loadedPageSize;
     }
   }
 

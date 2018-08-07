@@ -50,7 +50,7 @@
       </div>
 
       <mat-paginator [length]="userFilter.total" [pageSize]="userFilter.limit"
-                     [pageSizeOptions]="[3, 5, 10]" showFirstLastButtons></mat-paginator>
+                     [pageSizeOptions]="userFilter.pageSizeOptions" showFirstLastButtons></mat-paginator>
     </div>
 
   </div>

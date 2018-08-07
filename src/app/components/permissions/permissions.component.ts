@@ -5,7 +5,7 @@ import {PermissionDataSource} from '../../core/data-sources.core';
 import {Permission, PermissionFilter} from '../../models/permission.model';
 import {debounceTime, distinctUntilChanged, tap} from 'rxjs/internal/operators';
 import {fromEvent, merge} from 'rxjs/index';
-import {MatPaginator, MatSort, MatSortable, Sort, SortDirection} from '@angular/material';
+import {MatPaginator, MatSort, MatSortable, PageEvent, Sort} from '@angular/material';
 import {LocalDataService} from '../../services/local-data.service';
 
 @Component({
@@ -19,8 +19,8 @@ export class PermissionsComponent implements OnInit, AfterViewInit {
   public displayedColumns = ['_id', 'name', 'isPredefined'];
   private sorting: MatSortable = { id: 'name', start: 'asc', disableClear: true };
   public permissionFilter: PermissionFilter = new PermissionFilter();
+  private currentPageSize = this.permissionFilter.limit;  // Enables detection of pageSize change. The paginator uses permissionFilter.
   public selectedPermission: Permission = new Permission();
-
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -40,6 +40,7 @@ export class PermissionsComponent implements OnInit, AfterViewInit {
     });
     this.loadFilter();
     this.loadSorting();
+    this.loadPaging();
     this.loadPermissionsPage();
   }
 
@@ -50,7 +51,7 @@ export class PermissionsComponent implements OnInit, AfterViewInit {
       distinctUntilChanged(),
       tap(() => {
         this.paginator.pageIndex = 0;
-        this.permissionFilter.filter = this.filterInput.nativeElement.value;
+        this.permissionFilter.filter = this.filterInput.nativeElement.value.trim();
         this.saveFilter();
         this.loadPermissionsPage();
       })
@@ -66,7 +67,11 @@ export class PermissionsComponent implements OnInit, AfterViewInit {
     });
 
     // On paginate events load a new page.
-    this.paginator.page.subscribe(() => {
+    this.paginator.page.subscribe((pageEvent: PageEvent) => {
+      if (this.currentPageSize !== pageEvent.pageSize) {
+        this.currentPageSize = pageEvent.pageSize;
+        this.savePaging();
+      }
       this.loadPermissionsPage();
     });
   }
@@ -122,8 +127,7 @@ export class PermissionsComponent implements OnInit, AfterViewInit {
   }
 
   private saveSorting() {
-    let sortDirection: 'asc' | 'desc' = this.sort.direction as 'asc' | 'desc';
-    let sorting: MatSortable = { id: this.sort.active, start: sortDirection, disableClear: true };
+    let sorting: MatSortable = { id: this.sort.active, start: this.sort.direction as 'asc' | 'desc', disableClear: true };
     this.localDataService.saveObject('PermissionsComponent.sorting', sorting);
   }
 
@@ -148,6 +152,18 @@ export class PermissionsComponent implements OnInit, AfterViewInit {
     } else {
       this.permissionFilter.filter = '';
       this.filterInput.nativeElement.value = '';
+    }
+  }
+
+  private savePaging() {
+    this.localDataService.saveObject('PermissionsComponent.currentPageSize', this.currentPageSize);
+  }
+
+  private loadPaging() {
+    let loadedPageSize: number = this.localDataService.loadObject('PermissionsComponent.currentPageSize');
+    if (loadedPageSize) {
+      this.paginator._changePageSize(loadedPageSize);
+      this.currentPageSize = loadedPageSize;
     }
   }
 

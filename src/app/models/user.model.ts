@@ -56,4 +56,5 @@ export class UserFilter {
   page: number = 1;
   limit: number = 10;
   total: number = 1;
+  pageSizeOptions = [3, 5, 10, 20];
 }

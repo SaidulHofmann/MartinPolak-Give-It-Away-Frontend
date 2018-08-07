@@ -48,7 +48,7 @@
       </div>
 
       <mat-paginator [length]="permissionFilter.total" [pageSize]="permissionFilter.limit"
-                     [pageSizeOptions]="[3, 5, 10]" showFirstLastButtons></mat-paginator>
+                     [pageSizeOptions]="permissionFilter.pageSizeOptions" showFirstLastButtons></mat-paginator>
     </div>
 
   </div>
