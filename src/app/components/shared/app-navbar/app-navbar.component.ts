@@ -13,8 +13,8 @@ export class AppNavbarComponent implements OnInit {
 
   constructor(
     public userService: UserService,
-    private router: Router
-  ) { }
+    private router: Router) {
+  }
 
   public ngOnInit() {
     this.router.events.subscribe((event: RouterEvent) => {
@@ -26,5 +26,13 @@ export class AppNavbarComponent implements OnInit {
 
   public logout() {
     this.userService.logout();
+  }
+
+  private showCurrentRoutes() {
+    console.log('AppNavbarComponent: Angular router registered paths:');
+    for (let i = 0; i < this.router.config.length; i++) {
+      let routePath: string = this.router.config[i].path;
+      console.log(routePath);
+    }
   }
 }

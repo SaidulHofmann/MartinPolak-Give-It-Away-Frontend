@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import {Component, OnInit, Inject, Injector, ChangeDetectorRef} from '@angular/core';
 import {DialogResultType} from '../../../core/enums.core';
 import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import {DialogConfig} from '../../../core/types.core';
@@ -19,5 +19,4 @@ export class DialogComponent implements OnInit {
 
   ngOnInit() {
   }
-
 }

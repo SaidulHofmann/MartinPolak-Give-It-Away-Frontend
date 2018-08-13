@@ -1,13 +1,14 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {DialogResultType, EditModeType, ErrorCodeType} from '../../../core/enums.core';
 import {User} from '../../../models/user.model';
-import {getErrorJSON} from '../../../core/errors.core';
+import {getCustomOrDefaultError} from '../../../core/errors.core';
 import {UserService} from '../../../services/user.service';
 import {DialogService} from '../../../services/dialog.service';
 import {NgForm} from '@angular/forms';
 import {Permission, PermissionRef} from '../../../models/permission.model';
 import {LocalDataService} from '../../../services/local-data.service';
 import {Article, ArticleCategory} from '../../../models/index.model';
+import {ErrorDetails} from '../../../core/types.core';
 
 @Component({
   selector: 'app-permission',
@@ -113,14 +114,14 @@ export class PermissionComponent implements OnInit {
           'Der Berechtigungs-Eintrag wurde erfolgreich erstellt.');
       },
       (errorResponse) => {
-        let errorJson = getErrorJSON(errorResponse);
-        if (errorJson && errorJson.name === ErrorCodeType.DuplicateKeyError) {
+        let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
+        if (errorDetails && errorDetails.name === ErrorCodeType.DuplicateKeyError) {
           this.dialogService.inform('Berechtigungs-Eintrag erstellen',
-            errorJson.message || 'Die Berechtigungs-Bezeichnung wird bereits verwendet.');
+            errorDetails.message || 'Die Berechtigungs-Bezeichnung wird bereits verwendet.');
           this._editingPermission.name = '';
         } else {
           this.dialogService.inform('Berechtigungs-Eintrag erstellen',
-            errorJson.message || 'Bei der Erstellung des Berechtigungs-Eintrags ist ein Fehler aufgetreten.');
+            errorDetails.message || 'Bei der Erstellung des Berechtigungs-Eintrags ist ein Fehler aufgetreten.');
         }
       }
     );
@@ -136,14 +137,14 @@ export class PermissionComponent implements OnInit {
           'Der Berechtigungs-Eintrag wurde erfolgreich aktualisiert.');
       },
       (errorResponse) => {
-        let errorJson = getErrorJSON(errorResponse);
-        if (errorJson && errorJson.name === ErrorCodeType.DuplicateKeyError) {
+        let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
+        if (errorDetails && errorDetails.name === ErrorCodeType.DuplicateKeyError) {
           this.dialogService.inform('Berechtigungs-Eintrag aktualisieren',
-            errorJson.message || 'Die Berechtigungs-Bezeichnung wird bereits verwendet.');
+            errorDetails.message || 'Die Berechtigungs-Bezeichnung wird bereits verwendet.');
           this._editingPermission.name = '';
         } else {
           this.dialogService.inform('Berechtigungs-Eintrag aktualisieren',
-            errorJson.message || 'Bei der Aktualisierung des Berechtigungs-Eintrags ist ein Fehler aufgetreten.');
+            errorDetails.message || 'Bei der Aktualisierung des Berechtigungs-Eintrags ist ein Fehler aufgetreten.');
         }
       }
     );
@@ -166,9 +167,9 @@ export class PermissionComponent implements OnInit {
                 `Der Berechtigungs-Eintrag '${permissionName}' wurde erfolgreich entfernt.`);
             },
             (errorResponse) => {
-              let errorJson = getErrorJSON(errorResponse);
+              let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
               this.dialogService.inform('Berechtigungs-Eintrag entfernen',
-                errorJson.message || 'Beim Entfernen des Berechtigungs-Eintrags ist ein Fehler aufgetreten.');
+                errorDetails.message || 'Beim Entfernen des Berechtigungs-Eintrags ist ein Fehler aufgetreten.');
             });
 
         } else if (dialogResult === DialogResultType.Cancel) {

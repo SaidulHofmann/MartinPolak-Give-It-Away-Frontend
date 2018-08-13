@@ -1,7 +1,8 @@
 <div class="card text-center">
   <h5 class="card-header">{{config.title}}</h5>
-  <div class="card-body">
-    <p class="card-text">{{config.message}}</p>
+  <div class="card-body text-left">
+    <!--<p class="card-text" [innerHTML]="config.message"></p>-->
+    <textarea readonly rows="7" cols="60" wrap="hard" class="form-control card-text" [innerHTML]="config.message"></textarea>
   </div>
   <div class = card-footer mt-3>
     <button *ngIf="config.hasOkButton" class="btn btn-primary mr-3" [mat-dialog-close]="DialogResultType.Ok">Ok</button>

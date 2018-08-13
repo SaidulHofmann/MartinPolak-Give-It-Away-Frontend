@@ -4,7 +4,9 @@ import {Observable} from 'rxjs';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
 import {ArticleService} from './article.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ArticleResolver implements Resolve<Article> {
   constructor(private articleService: ArticleService) {}
 

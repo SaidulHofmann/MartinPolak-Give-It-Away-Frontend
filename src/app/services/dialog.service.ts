@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable, Injector} from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/index';
 import {DialogResultType} from '../core/enums.core';
@@ -10,12 +10,12 @@ import {DialogConfig} from '../core/types.core';
 })
 export class DialogService {
 
-  constructor(private dialog: MatDialog) { }
+  constructor(private dialog: MatDialog) {
+  }
 
   private openDialog(title: string, message: string, dialogConfig: DialogConfig): Observable<DialogResultType> {
     dialogConfig.title = title;
     dialogConfig.message = message;
-
     let dialogRef: MatDialogRef<DialogComponent>;
     dialogRef = this.dialog.open(DialogComponent, {data: dialogConfig, panelClass: 'custom-dialog-container'});
     return dialogRef.afterClosed();

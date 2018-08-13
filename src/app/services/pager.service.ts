@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import {Pager} from '../core/types.core';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class PagerService {
   getPager(totalItems: number, currentPage: number = 1, pageSize: number = 10): Pager {
     // Calculate total pages.

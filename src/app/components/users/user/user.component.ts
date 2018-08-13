@@ -1,12 +1,13 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {DialogResultType, EditModeType, ErrorCodeType} from '../../../core/enums.core';
 import {User} from '../../../models/user.model';
-import {getErrorJSON} from '../../../core/errors.core';
+import {getCustomOrDefaultError} from '../../../core/errors.core';
 import {UserService} from '../../../services/user.service';
 import {DialogService} from '../../../services/dialog.service';
 import {NgForm} from '@angular/forms';
 import {Permission, PermissionRef} from '../../../models/permission.model';
 import {LocalDataService} from '../../../services/local-data.service';
+import {ErrorDetails} from '../../../core/types.core';
 
 @Component({
   selector: 'app-user',
@@ -131,14 +132,14 @@ export class UserComponent implements OnInit {
           'Das Benutzerkonto wurde erfolgreich erstellt.');
       },
       (errorResponse) => {
-        let errorJson = getErrorJSON(errorResponse);
-        if (errorJson && errorJson.name === ErrorCodeType.DuplicateKeyError) {
+        let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
+        if (errorDetails && errorDetails.name === ErrorCodeType.DuplicateKeyError) {
           this.dialogService.inform('Benutzerkonto erstellen',
-            errorJson.message || 'Die E-Mail Adresse wird bereits verwendet.');
+            errorDetails.message || 'Die E-Mail Adresse wird bereits verwendet.');
           this.editingUser.email = '';
         } else {
           this.dialogService.inform('Benutzerkonto erstellen',
-            errorJson.message || 'Bei der Erstellung des Benutzerkontos ist ein Fehler aufgetreten.');
+            errorDetails.message || 'Bei der Erstellung des Benutzerkontos ist ein Fehler aufgetreten.');
         }
       }
     );
@@ -154,14 +155,14 @@ export class UserComponent implements OnInit {
           'Das Benutzerkonto wurde erfolgreich aktualisiert.');
       },
       (errorResponse) => {
-        let errorJson = getErrorJSON(errorResponse);
-        if (errorJson && errorJson.name === ErrorCodeType.DuplicateKeyError) {
+        let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
+        if (errorDetails && errorDetails.name === ErrorCodeType.DuplicateKeyError) {
           this.dialogService.inform('Benutzerkonto aktualisieren',
-            errorJson.message || 'Die E-Mail Adresse wird bereits verwendet.');
+            errorDetails.message || 'Die E-Mail Adresse wird bereits verwendet.');
           this.editingUser.email = '';
         } else {
           this.dialogService.inform('Benutzerkonto aktualisieren',
-            errorJson.message || 'Bei der Aktualisierung des Benutzerkontos ist ein Fehler aufgetreten.');
+            errorDetails.message || 'Bei der Aktualisierung des Benutzerkontos ist ein Fehler aufgetreten.');
         }
       }
     );
@@ -182,9 +183,9 @@ export class UserComponent implements OnInit {
               this.dialogService.inform('Benutzer entfernen', `Der Benutzer '${userName}' wurde erfolgreich entfernt.`);
             },
             (errorResponse) => {
-              let errorJson = getErrorJSON(errorResponse);
+              let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
               this.dialogService.inform('Benutzerkonto entfernen',
-                errorJson.message || 'Beim Entfernen des Benutzerkontos ist ein Fehler aufgetreten.');
+                errorDetails.message || 'Beim Entfernen des Benutzerkontos ist ein Fehler aufgetreten.');
             });
 
         } else if (dialogResult === DialogResultType.Cancel) {

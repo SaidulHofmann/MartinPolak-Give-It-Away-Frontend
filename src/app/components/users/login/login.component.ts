@@ -4,13 +4,13 @@
 import { Component, OnInit } from '@angular/core';
 import {UserService} from '../../../services/user.service';
 import {ErrorCodeType} from '../../../core/enums.core';
-import {HttpErrorArgs} from '../../../core/types.core';
+import {ErrorDetails, HttpErrorArgs} from '../../../core/types.core';
 import {User} from '../../../models/user.model';
 import {Router} from '@angular/router';
 import {NgForm} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {DialogService} from '../../../services/dialog.service';
-import {getErrorJSON} from '../../../core/errors.core';
+import {getCustomOrDefaultError} from '../../../core/errors.core';
 import {NavigationService} from '../../../services/navigation.service';
 
 @Component({
@@ -37,13 +37,13 @@ export class LoginComponent implements OnInit {
       .subscribe(
         (user: User) => { this.navService.gotoArticleOverviewPage(); },
         (errorResponse: HttpErrorResponse) => {
-          let errorJson = getErrorJSON(errorResponse);
+          let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
           if (errorResponse.status === 401) {
             this.dialogService.inform('Anmelden',
-              errorJson.message || 'E-Mail oder Passwort ungültig.');
+              errorDetails.message || 'E-Mail oder Passwort ungültig.');
           } else {
             this.dialogService.inform('Anmelden',
-              errorJson.message || 'Bei der Anmeldung ist ein Fehler aufgetreten.');
+              errorDetails.message || 'Bei der Anmeldung ist ein Fehler aufgetreten.');
           }
         }
       );

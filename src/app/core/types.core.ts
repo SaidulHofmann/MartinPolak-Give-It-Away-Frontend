@@ -37,6 +37,12 @@ export class HttpErrorArgs {
   ) { }
 }
 
+export class ErrorDetails {
+    name: string = '';
+    message: string = '';
+    status: number = 0;
+}
+
 export class MatPaginatorIntlDe extends MatPaginatorIntl {
   itemsPerPageLabel = 'Einträge pro Seite';
   firstPageLabel = 'Erste Seite';

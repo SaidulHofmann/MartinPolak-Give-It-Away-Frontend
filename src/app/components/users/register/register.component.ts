@@ -6,9 +6,9 @@ import { Router } from '@angular/router';
 import {UserService} from '../../../services/user.service';
 import {User} from '../../../models/user.model';
 import {ErrorCodeType} from '../../../core/enums.core';
-import {HttpErrorArgs} from '../../../core/types.core';
+import {ErrorDetails, HttpErrorArgs} from '../../../core/types.core';
 import {DialogService} from '../../../services/dialog.service';
-import {getErrorJSON} from '../../../core/errors.core';
+import {getCustomOrDefaultError} from '../../../core/errors.core';
 import {NavigationService} from '../../../services/navigation.service';
 
 @Component({
@@ -35,14 +35,14 @@ export class RegisterComponent implements OnInit {
         this.navService.gotoLoginPage();
       },
       (errorResponse) => {
-        let errorJson = getErrorJSON(errorResponse);
-        if (errorJson && errorJson.name === ErrorCodeType.DuplicateKeyError) {
+        let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
+        if (errorDetails && errorDetails.name === ErrorCodeType.DuplicateKeyError) {
           this.dialogService.inform('Registrieren',
-            errorJson.message || 'Die E-Mail Adresse wird bereits verwendet.');
+            errorDetails.message || 'Die E-Mail Adresse wird bereits verwendet.');
           this.user.email = '';
         } else {
           this.dialogService.inform('Registrieren',
-            errorJson.message || 'Bei der Erstellung des Benutzerkontos ist ein Fehler aufgetreten.');
+            errorDetails.message || 'Bei der Erstellung des Benutzerkontos ist ein Fehler aufgetreten.');
         }
       }
     );

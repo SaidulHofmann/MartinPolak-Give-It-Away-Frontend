@@ -35,7 +35,7 @@ export class ArticleRef {
 
 export class HttpResponseArticles {
   status = '';
-  data: HttpResponseArticleData = null;
+  data: HttpResponseArticleData = new HttpResponseArticleData();
   message = '';
 
 }

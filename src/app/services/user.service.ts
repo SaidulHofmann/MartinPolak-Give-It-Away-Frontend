@@ -17,7 +17,9 @@ const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json'})
 };
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class UserService {
   private api_url = 'http://localhost:3003';
   private usersUrl = `${this.api_url}/api/users`;

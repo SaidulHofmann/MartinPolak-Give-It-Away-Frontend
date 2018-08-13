@@ -1,22 +1,26 @@
 import { Injectable } from '@angular/core';
-import {Article, ArticleFilter} from '../models/article.model';
+import {Article, ArticleFilter, HttpResponseArticles} from '../models/article.model';
 import {Reservation, ReservationFilter} from '../models/reservation.model';
-import { Observable ,  of } from 'rxjs';
+import { Observable ,  of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { MessageService } from './message.service';
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
 import {UserService} from './user.service';
 
 import {Router} from '@angular/router';
 import {NavigationService} from './navigation.service';
 import {DialogService} from './dialog.service';
+import {ErrorDetails} from '../core/types.core';
+import {getCustomOrDefaultError, getErrorText} from '../core/errors.core';
 
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json'})
 };
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ArticleService {
 
   private api_url = 'http://localhost:3003';
@@ -53,7 +57,7 @@ export class ArticleService {
   }
 
   /** GET articles filtered. */
-  public getArticlesByFilter(articleFilter: ArticleFilter): Observable<any> {
+  public getArticlesByFilter(articleFilter: ArticleFilter): Observable<HttpResponseArticles> {
     let httpParams: HttpParams = null;
     if (articleFilter) {
       let httpParamsOject = this.getArticleFilterStringObject(articleFilter);
@@ -61,10 +65,12 @@ export class ArticleService {
     }
     return this.http.get(this.articlesUrl, { headers: this.getHttpHeaders(), params: httpParams })
       .pipe(
-        tap(res => { this.log(`Artikel geladen.`);
+        map(res  => res as HttpResponseArticles),
+        tap(() => { this.log(`Artikel geladen.`);
           // console.log('article res: ', res);
-        }),
-        catchError(this.handleError('getArticlesByFilter', []))
+        })
+        // catchError(this.handleError('getArticles', new HttpResponseArticles()))
+        // catchError( error => throwError('Die Artikel konnten nicht geladen werden. ' + error.message))
       );
   }
 
@@ -163,14 +169,9 @@ export class ArticleService {
   private handleError<T> (operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       console.error('ArticleService.handleError(): ', error);
-
       this.log(`${operation} failed: ${error.message}`);
 
-      if (error.status === 401) {
-        this.showAccessDeniedMessage();
-        this.userService.logout();
-        return of(result as T);
-      }
+      this.dialogService.inform('Fehlermeldung', getErrorText(error, operation));
 
       // Let the app keep running by returning an empty result.
       return of(result as T);

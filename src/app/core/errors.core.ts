@@ -1,3 +1,5 @@
+import {ErrorDetails} from './types.core';
+import {HttpErrorResponse} from '@angular/common/http';
 
 class CustomErrorBase extends Error {
   status = 500;
@@ -32,9 +34,15 @@ export class DuplicateKeyError extends CustomErrorBase {
   }
 }
 
-export function getErrorJSON(errorResponse): { name: string, message: string, status: number } {
-  let resultJson = { name: errorResponse.name, message: errorResponse.message, status: errorResponse.status };
+/**
+ * Returns an ErrorDetails object with customized error, if available, otherwise with the default error.
+ * @param errorResponse. Can contain customized server-side errors.
+ * @returns {ErrorDetails}
+ */
+export function getCustomOrDefaultError(errorResponse): ErrorDetails {
+  let resultJson: ErrorDetails = { name: errorResponse.name, message: errorResponse.message, status: errorResponse.status };
   let error = errorResponse.error ? errorResponse.error : null;
+  if (!error) { return resultJson; }
 
   if (typeof error === 'string') {
     resultJson.message = error;
@@ -44,4 +52,13 @@ export function getErrorJSON(errorResponse): { name: string, message: string, st
     if (error.message) { resultJson.message = error.message; }
   }
   return resultJson;
+}
+
+export function getErrorText(error: any, operation = 'unbekannt') {
+  let errorDetails: ErrorDetails = getCustomOrDefaultError(error);
+  return `${errorDetails.message}
+
+Status: ${errorDetails.status}
+Name: ${errorDetails.name}
+Methode: ${operation}.`;
 }
