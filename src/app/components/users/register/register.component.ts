@@ -3,13 +3,13 @@
 
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import {UserService} from '../../../services/user.service';
+import {UserService} from '../services/user.service';
 import {User} from '../../../models/user.model';
 import {ErrorCodeType} from '../../../core/enums.core';
 import {ErrorDetails, HttpErrorArgs} from '../../../core/types.core';
-import {DialogService} from '../../../services/dialog.service';
+import {DialogService} from '../../shared/services/dialog.service';
 import {getCustomOrDefaultError} from '../../../core/errors.core';
-import {NavigationService} from '../../../services/navigation.service';
+import {NavigationService} from '../../shared/services/navigation.service';
 
 @Component({
   selector: 'app-register',

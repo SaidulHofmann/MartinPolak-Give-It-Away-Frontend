@@ -1,9 +1,9 @@
 import {Injectable, Injector} from '@angular/core';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/index';
-import {DialogResultType} from '../core/enums.core';
-import {DialogComponent} from '../components/shared/dialog/dialog.component';
-import {DialogConfig} from '../core/types.core';
+import {DialogResultType} from '../../../core/enums.core';
+import {DialogComponent} from '../dialog/dialog.component';
+import {DialogConfig} from '../../../core/types.core';
 
 @Injectable({
   providedIn: 'root'

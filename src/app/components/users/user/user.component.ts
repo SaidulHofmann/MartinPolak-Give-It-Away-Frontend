@@ -2,11 +2,11 @@ import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} f
 import {DialogResultType, EditModeType, ErrorCodeType} from '../../../core/enums.core';
 import {User} from '../../../models/user.model';
 import {getCustomOrDefaultError} from '../../../core/errors.core';
-import {UserService} from '../../../services/user.service';
-import {DialogService} from '../../../services/dialog.service';
+import {UserService} from '../services/user.service';
+import {DialogService} from '../../shared/services/dialog.service';
 import {NgForm} from '@angular/forms';
 import {Permission, PermissionRef} from '../../../models/permission.model';
-import {LocalDataService} from '../../../services/local-data.service';
+import {LocalDataService} from '../../shared/services/local-data.service';
 import {ErrorDetails} from '../../../core/types.core';
 
 @Component({

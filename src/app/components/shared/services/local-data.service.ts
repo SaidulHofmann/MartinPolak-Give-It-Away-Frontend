@@ -1,13 +1,13 @@
 import {Injectable, OnDestroy} from '@angular/core';
-import {ArticleFilter} from '../models/article.model';
-import {Permission, PermissionRef} from '../models/permission.model';
+import {ArticleFilter} from '../../../models/article.model';
+import {Permission, PermissionRef} from '../../../models/permission.model';
 import {map} from 'rxjs/operators';
 import {DialogService} from './dialog.service';
-import {UserService} from './user.service';
+import {UserService} from '../../users/services/user.service';
 import {NavigationService} from './navigation.service';
 import {HttpClient} from '@angular/common/http';
-import {IdNamePair} from '../core/types.core';
-import {ArticleCategory, ArticleStatus} from '../models/index.model';
+import {IdNamePair} from '../../../core/types.core';
+import {ArticleCategory, ArticleStatus} from '../../../models/index.model';
 
 @Injectable({
   providedIn: 'root'

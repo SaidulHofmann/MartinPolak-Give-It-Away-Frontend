@@ -1,7 +1,7 @@
 import {HttpResponseUsers, User, UserFilter} from '../models/user.model';
 import {CollectionViewer, DataSource} from '@angular/cdk/collections';
 import {BehaviorSubject, Observable, of} from 'rxjs/index';
-import {UserService} from '../services/user.service';
+import {UserService} from '../components/users/services/user.service';
 import {catchError, finalize, map} from 'rxjs/internal/operators';
 import {HttpResponsePermissions, Permission, PermissionFilter} from '../models/permission.model';
 

@@ -1,0 +1,202 @@
+<div class="p-3 border border-secondary mat-elevation-z8">
+
+  <div class="mt-1">
+    <span *ngIf="editMode !== EditModeType.Read">
+      <button type="button" [disabled]="editMode === EditModeType.Read || !userService.canCreateOwnArticle()" (click)="onAddArticle()" class="btn btn-sm btn-success mr-3 mb-2" title="Artikel hinzufügen">
+         <i class="fa fa-plus mx-3 mx-sm-1"></i>Neu</button>&nbsp;
+      <button type="button" [disabled]="editMode === EditModeType.Read || !userService.canSaveArticle() || !articleForm.valid || articleForm.pristine" (click)="onSaveArticle()" class="btn btn-sm btn-dark mr-3 mb-2" title="Speichern">
+        <i class="fa fa-floppy-o mx-sm-1" aria-hidden="true"></i>Speichern</button>&nbsp;
+      <button type="button" [disabled]="editMode === EditModeType.Read || articleForm.pristine" class="btn btn-sm btn-secondary mr-3 mb-2" (click)="onRevert()" title="Änderungen verwerfen">
+        <i class="fa fa-times mx-sm-1" aria-hidden="true"></i>Verwerfen</button>
+    </span>
+    <button type="button" class="btn btn-sm btn-outline-primary mr-3 mb-2" (click)="onGoBack()" title="Zurück">
+      <i class="fa fa-arrow-left mx-sm-1" aria-hidden="true"></i>Zurück</button>
+  </div>
+
+  <hr>
+
+  <form [formGroup]="articleForm" class="p-0 mt-3">
+
+    <div class="card">
+      <div class="card-header"><h5>Artikel</h5></div>
+      <div class="card-body">
+
+        <div class="form-group row">
+          <label for="inputName" class="col-sm-3 col-form-label">Artikel Bezeichnung:</label>
+          <div class="col-sm-9">
+            <input id="inputName" required type="text" class="form-control form-control-sm" formControlName="name">
+            <div [hidden]="name.valid || name.pristine" class="alert alert-danger">Die Artikel Bezeichnung muss eingegeben werden.</div>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="selectArticleCategory" class="col-sm-3 col-form-label">Kategorie:</label>
+          <div class="col-sm-9">
+            <select id="selectArticleCategory" class="form-control form-control-sm" formControlName="category">
+              <option *ngFor="let categoryEntry of articleCategories"
+                      [ngValue]="categoryEntry">{{categoryEntry.name}}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="selectArticleStatus" class="col-sm-3 col-form-label">Status:</label>
+          <div class="col-sm-9">
+            <select id="selectArticleStatus" class="form-control form-control-sm" formControlName="status">
+              <option *ngFor="let articleStatusEntry of articleStatus"
+                      [ngValue]="articleStatusEntry">{{articleStatusEntry.name}}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="textareaDescription" class="col-sm-3 col-form-label">Beschreibung:</label>
+          <div class="col-sm-9">
+            <textarea id="textareaDescription" required rows="4" class="form-control form-control-sm" formControlName="description"
+                      placeholder="Detailinformationen zum Artikel, dessen Zustand, weshalb dieser verschenkt werden soll, etc."></textarea>
+            <div [hidden]="description.valid || description.pristine" class="alert alert-danger">Die Beschreibung muss eingegeben werden.</div>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="textareaHandover" class="col-sm-3 col-form-label">Übergabe:</label>
+          <div class="col-sm-9">
+            <textarea id="textareaHandover" required rows="4" class="form-control form-control-sm" formControlName="handover"
+                      placeholder="Wie soll die Übergabe erfolgen ?"></textarea>
+            <div [hidden]="handover.valid || handover.pristine" class="alert alert-danger">Die Übergabe muss beschrieben werden.</div>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="inputPictureOverview" class="col-sm-3 col-form-label">Artikel Übersichts Bild (URL):</label>
+          <div class="col-sm-9">
+            <input id="inputPictureOverview" type="text" class="form-control form-control-sm" formControlName="pictureOverview"
+                   placeholder="Bild Url (Link) für die Artikel-Übersichts Seite.">
+          </div>
+        </div>
+
+        <div formArrayName="pictures" class="row">
+          <label class="col-sm-3 col-form-label">Weitere Bilder (URL)</label>
+          <div class="col-sm-9">
+            <div class="form-group" *ngFor="let picture of pictures.controls; let i = index">
+              <div class="input-group">
+                <input type="url" required class="form-control form-control-sm" [formControlName]="i">
+                <button type="button" class="btn btn-sm pull-right" title="Eintrag löschen" (click)="onDeletePicture(i)"><i class="fa fa-trash fa-lg"></i></button>
+              </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-info mb-3" (click)="onAddPicture()">
+              <i class="fa fa-image mr-3"></i>Bild Url hinzufügen
+            </button>
+          </div>
+        </div>
+
+        <div formArrayName="videos" class="row">
+          <label class="col-sm-3 col-form-label">Videos (URL)</label>
+          <div class="col-sm-9">
+            <div class="form-group" *ngFor="let video of videos.controls; let i = index">
+              <div class="input-group">
+                <input type="url" required class="form-control form-control-sm" [formControlName]="i">
+                <button type="button" class="btn btn-sm pull-right" title="Eintrag löschen" (click)="onDeleteVideo(i)"><i class="fa fa-trash fa-lg"></i></button>
+              </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-info mb-3" (click)="onAddVideo()">
+              <i class="fa fa-video-camera mr-3"></i>Video Url hinzufügen
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="inputTags" class="col-sm-3 col-form-label">Suchbegriffe:</label>
+          <div class="col-sm-9">
+            <input id="inputTags" type="text" class="form-control form-control-sm" formControlName="tags">
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <br/>
+
+    <div *ngIf="editMode !== EditModeType.Create">
+      <div class="card p-0">
+        <h5 class="card-header">Schenkung</h5>
+        <div class="card-body">
+
+          <div class="form-row">
+            <div class="col-sm">
+              <div formGroupName="donee">
+                <div class="form-group">
+                  <label for="inputDonee">Verschenkt an:</label>
+                  <input id="inputDonee" readonly class="form-control form-control-sm" placeholder="{{ articleForm.get('donee.fullname').value }}">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm">
+              <div class="form-group">
+                <label for="inputDonationDate">Schenkungs-Datum:</label>
+                <input id="inputDonationDate" readonly class="form-control form-control-sm" placeholder="{{ articleForm.get('donationDate').value | date:'dd.MM.yyyy' }}">
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <br>
+
+      <div class="card p-0">
+        <h5 class="card-header">Publikation</h5>
+        <div class="card-body">
+
+          <div class="form-row">
+            <div class="col-sm">
+              <div formGroupName="publisher">
+                <div class="form-group">
+                  <label for="inputPublisher">Publiziert von:</label>
+                  <input id="inputPublisher" readonly class="form-control form-control-sm" placeholder="{{ articleForm.get('publisher.fullname').value }}">
+                </div>
+              </div>
+            </div>
+            <div class="col-sm">
+              <div class="form-group">
+                <label for="inputCreatedAt">Erfasst am:</label>
+                  <input id="inputCreatedAt" readonly class="form-control form-control-sm"
+                         placeholder="{{ articleForm.get('createdAt').value | date:'dd.MM.yyyy  HH:mm:ss' }}">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-sm">
+              <div class="form-group">
+                <label for="inputUpdatedAt">Aktualisiert am:</label>
+                <input id="inputUpdatedAt" readonly class="form-control form-control-sm" placeholder="{{ articleForm.get('updatedAt').value | date:'dd.MM.yyyy  HH:mm:ss' }}">
+              </div>
+            </div>
+            <div class="col-sm">
+              <div class="form-group">
+                <label for="input_id">Id:</label>
+                <input id="input_id" readonly class="form-control form-control-sm" placeholder="{{ articleForm.get('_id').value}}">
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </form>
+
+  </div>
+
+
+<!-- Debug messages -->
+<hr>
+<p>Debug Infos:<p>
+<p>Form value: {{ articleForm.value | json }}<p>
+<p>Form pristine: {{ articleForm.pristine | json }}</p>
+<p>Form status: {{ articleForm.status | json }}</p>
+<p>EditMode: {{ editMode }}</p>
+

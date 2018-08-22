@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {EditModeType} from '../../../core/enums.core';
 import {Article} from '../../../models/index.model';
-import {ArticleService} from '../../../services/article.service';
+import {ArticleService} from '../services/article.service';
 
 
 @Component({

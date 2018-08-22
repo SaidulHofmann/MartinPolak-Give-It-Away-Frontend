@@ -1,12 +1,12 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {DialogService} from '../../services/dialog.service';
-import {UserService} from '../../services/user.service';
+import {DialogService} from '../shared/services/dialog.service';
+import {UserService} from './services/user.service';
 import {UserDataSource} from '../../core/data-sources.core';
 import {User, UserFilter} from '../../models/user.model';
 import {debounceTime, distinctUntilChanged, tap} from 'rxjs/internal/operators';
 import {fromEvent, merge} from 'rxjs/index';
 import {MatPaginator, MatSort, MatSortable, PageEvent, Sort} from '@angular/material';
-import {LocalDataService} from '../../services/local-data.service';
+import {LocalDataService} from '../shared/services/local-data.service';
 
 @Component({
   selector: 'app-users',

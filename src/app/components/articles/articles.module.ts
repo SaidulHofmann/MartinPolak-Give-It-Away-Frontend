@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {ArticlesComponent} from './articles.component';
-import {ArticleComponent} from './article/article.component';
+import {ArticleComponent} from './article-item/article.component';
 import {EditArticleComponent} from './edit-article/edit-article.component';
 import {CreateArticleComponent} from './create-article/create-article.component';
 import {ArticleDetailsComponent} from './article-details/article-details.component';

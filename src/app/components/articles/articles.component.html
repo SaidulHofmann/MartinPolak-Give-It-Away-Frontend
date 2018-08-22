@@ -63,12 +63,12 @@
 
       <div class="col-md-4 form-check ml-md-3 mr-md-3 mb-3 mb-md-0">
         <div class="form-row ml-3">
-          <input id="inputMyPublications" type="checkbox" [(ngModel)]="articleFilter.selectPublishedArticles" name="inputMyPublications" (change)="onPublicationRervationCBChange($event)" class="form-check-input form-control-sm">
-          <label for="inputMyPublications" class="form-check-label">Meine Publikationen</label><br/>
+          <input id="myPublicationsInput" type="checkbox" [(ngModel)]="articleFilter.selectPublishedArticles" name="myPublicationsInput" (change)="onPublicationReservationCBChange($event)" class="form-check-input form-control-sm">
+          <label for="myPublicationsInput" class="form-check-label">Meine Publikationen</label><br/>
         </div>
         <div class="form-row ml-3">
-          <input id="inputMyReservations" type="checkbox" [(ngModel)]="articleFilter.selectReservedArticles" name="inputMyReservations" (change)="onPublicationRervationCBChange($event)" class="form-check-input form-control-sm">
-          <label for="inputMyReservations" class="form-check-label">Meine Reservationen</label>
+          <input id="myReservationsInput" type="checkbox" [(ngModel)]="articleFilter.selectReservedArticles" name="myReservationsInput" (change)="onPublicationReservationCBChange($event)" class="form-check-input form-control-sm">
+          <label for="myReservationsInput" class="form-check-label">Meine Reservationen</label>
         </div>
       </div>
 

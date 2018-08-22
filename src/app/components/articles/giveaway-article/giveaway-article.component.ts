@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import {Article} from '../../../models/index.model';
 import {ActivatedRoute, Data} from '@angular/router';
-import {ArticleService} from '../../../services/article.service';
+import {ArticleService} from '../services/article.service';
 import {HttpResponseReservations, ReservationFilter, Reservation} from '../../../models/reservation.model';
-import {PagerService} from '../../../services/pager.service';
+import {PagerService} from '../../shared/services/pager.service';
 import {ArticleRef} from '../../../models/article.model';
 import {ArticleStatusType} from '../../../core/enums.core';
 import {User, UserRef} from '../../../models/user.model';
-import {UserService} from '../../../services/user.service';
+import {UserService} from '../../users/services/user.service';
 import {ArticleStatus} from '../../../models/articleStatus.model';
 import {Location} from '@angular/common';
 import {Pager} from '../../../core/types.core';

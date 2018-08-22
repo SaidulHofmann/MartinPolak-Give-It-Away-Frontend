@@ -1,13 +1,13 @@
 import {ErrorHandler, Injectable, Injector, NgZone} from '@angular/core';
 import {DialogService} from './dialog.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {DialogConfig, ErrorDetails, HttpErrorArgs} from '../core/types.core';
-import {getCustomOrDefaultError, getErrorText} from '../core/errors.core';
-import {UserService} from './user.service';
+import {DialogConfig, ErrorDetails, HttpErrorArgs} from '../../../core/types.core';
+import {getCustomOrDefaultError, getErrorText} from '../../../core/errors.core';
+import {UserService} from '../../../components/users/services/user.service';
 import {Observable} from 'rxjs/index';
 import {MatDialog, MatDialogRef} from '@angular/material';
-import {DialogResultType} from '../core/enums.core';
-import {DialogComponent} from '../components/shared/dialog/dialog.component';
+import {DialogResultType} from '../../../core/enums.core';
+import {DialogComponent} from '../../../components/shared/dialog/dialog.component';
 
 @Injectable()
 export class ErrorHandlerService extends ErrorHandler {

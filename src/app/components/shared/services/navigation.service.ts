@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Router} from '@angular/router';
-import {Article} from '../models/article.model';
+import {Article} from '../../../models/article.model';
 
 @Injectable({
   providedIn: 'root'

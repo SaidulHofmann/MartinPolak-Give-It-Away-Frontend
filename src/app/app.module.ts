@@ -11,7 +11,7 @@ import { AppComponent } from './app.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { DateValueAccessorDirective } from './directives/dateValueAccessor.directive';
 
-import { ErrorHandlerService } from './services/error-handler.service';
+import { ErrorHandlerService } from './components/shared/services/error-handler.service';
 import { MatPaginatorIntl } from '@angular/material';
 import { MatPaginatorIntlDe } from './core/types.core';
 import { DialogComponent } from './components/shared/dialog/dialog.component';

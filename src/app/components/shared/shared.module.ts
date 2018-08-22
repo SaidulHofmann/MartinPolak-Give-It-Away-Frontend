@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {UserNavbarComponent} from './user-navbar/user-navbar.component';
 import {HeaderComponent} from './header/header.component';
 import {MessagesComponent} from './messages/messages.component';
 import {AppNavbarComponent} from './app-navbar/app-navbar.component';
@@ -31,8 +30,7 @@ import {BrowserModule} from '@angular/platform-browser';
     FooterComponent,
     HeaderComponent,
     MessagesComponent,
-    PagerComponent,
-    UserNavbarComponent
+    PagerComponent
   ],
   exports: [
     CommonModule,
@@ -49,8 +47,7 @@ import {BrowserModule} from '@angular/platform-browser';
     FooterComponent,
     HeaderComponent,
     MessagesComponent,
-    PagerComponent,
-    UserNavbarComponent
+    PagerComponent
   ]
 })
 export class SharedModule { }

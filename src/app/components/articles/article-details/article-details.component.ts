@@ -4,8 +4,8 @@ import {Location} from '@angular/common';
 import {Article} from '../../../models/article.model';
 import {Reservation} from '../../../models/reservation.model';
 import {User, UserRef} from '../../../models/user.model';
-import {UserService} from '../../../services/user.service';
-import {ArticleService} from '../../../services/article.service';
+import {UserService} from '../../users/services/user.service';
+import {ArticleService} from '../services/article.service';
 
 
 @Component({

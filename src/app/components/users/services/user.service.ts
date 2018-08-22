@@ -1,16 +1,16 @@
 import {Injectable} from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import {catchError, map, tap} from 'rxjs/operators';
-import {MessageService} from './message.service';
+import {MessageService} from '../../shared/services/message.service';
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
-import {HttpResponsePermissions, Permission, PermissionFilter, User} from '../models/index.model';
+import {HttpResponsePermissions, Permission, PermissionFilter, User} from '../../../models/index.model';
 import {Router} from '@angular/router';
-import {HttpResponseUsers, UserFilter} from '../models/user.model';
-import {HttpErrorArgs} from '../core/types.core';
-import {ErrorCodeType} from '../core/enums.core';
-import {Article} from '../models/article.model';
-import {DialogService} from './dialog.service';
-import {NavigationService} from './navigation.service';
+import {HttpResponseUsers, UserFilter} from '../../../models/user.model';
+import {HttpErrorArgs} from '../../../core/types.core';
+import {ErrorCodeType} from '../../../core/enums.core';
+import {Article} from '../../../models/article.model';
+import {DialogService} from '../../shared/services/dialog.service';
+import {NavigationService} from '../../shared/services/navigation.service';
 
 
 const httpOptions = {
@@ -171,6 +171,47 @@ export class UserService {
     this.currentUser = JSON.parse(localStorage.getItem('currentUser') || null);
   }
 
+  /**
+   * Handle Http operation that failed.
+   * Let the app continue.
+   * @param operation - name of the operation that failed
+   * @param result - optional value to return as the observable result
+   */
+  private handleError<T> (operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(error);
+      this.log(`${operation} failed: ${error.message}`);
+
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    };
+  }
+
+  private handlePostError (error: HttpErrorResponse): Observable<never> {
+    console.error('UserService.handlePostError(): ', error);
+    // Client-side or network errors.
+    if(error.error instanceof ErrorEvent) {
+      this.log('Die Anforderung konnte nicht zum Server gesendet werden: ' + error.error.message);
+      return throwError(new HttpErrorArgs(error, ErrorCodeType.Client_Side_Or_Network_Error));
+
+      // Server-side errors.
+    } else {
+      if(error.status === 401) {
+        return throwError(new HttpErrorArgs(error, ErrorCodeType.Authentication_Failed));
+      }
+
+      if(error.error.message.includes(ErrorCodeType.DuplicateKeyError)) {
+        return throwError(new HttpErrorArgs(error, ErrorCodeType.DuplicateKeyError));
+      }
+
+      // this.log('Die Anforderung konnte serverseitig nicht bearbeitet werden: ' + error.error.message);
+      return throwError(new HttpErrorArgs(error));
+    }
+  }
+
+  // User access rights.
+  // -----------------------------------------------------------------------------
+
   public canReadUserSettings(): boolean {
     if (!this.currentUser || !this.currentUser.permission) {
       return false;
@@ -209,44 +250,6 @@ export class UserService {
     return (this.currentUser.permission.userCreate || this.currentUser.permission.userUpdate || this.currentUser.permission.userDelete);
   }
 
-
-  /**
-   * Handle Http operation that failed.
-   * Let the app continue.
-   * @param operation - name of the operation that failed
-   * @param result - optional value to return as the observable result
-   */
-  private handleError<T> (operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(error);
-      this.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
-  }
-
-  private handlePostError (error: HttpErrorResponse): Observable<never> {
-    console.error('UserService.handlePostError(): ', error);
-    // Client-side or network errors.
-    if(error.error instanceof ErrorEvent) {
-      this.log('Die Anforderung konnte nicht zum Server gesendet werden: ' + error.error.message);
-      return throwError(new HttpErrorArgs(error, ErrorCodeType.Client_Side_Or_Network_Error));
-
-      // Server-side errors.
-    } else {
-      if(error.status === 401) {
-        return throwError(new HttpErrorArgs(error, ErrorCodeType.Authentication_Failed));
-      }
-
-      if(error.error.message.includes(ErrorCodeType.DuplicateKeyError)) {
-        return throwError(new HttpErrorArgs(error, ErrorCodeType.DuplicateKeyError));
-      }
-
-      // this.log('Die Anforderung konnte serverseitig nicht bearbeitet werden: ' + error.error.message);
-      return throwError(new HttpErrorArgs(error));
-    }
-  }
 
   // Permissions
   // -----------------------------------------------------------------------------
@@ -302,6 +305,9 @@ export class UserService {
     );
   }
 
+  // Permissions access rights.
+  // -----------------------------------------------------------------------------
+
   public canReadPermissionSettings(): boolean {
     if (!this.currentUser || !this.currentUser.permission) {
       return false;
@@ -335,9 +341,33 @@ export class UserService {
     return this.currentUser.permission.permissionDelete;
   }
 
-  public canDonateOtherArticle(): boolean {
+  public canSavePermission(): boolean {
     if (!this.currentUser || !this.currentUser.permission) { return false; }
-    return this.currentUser.permission.articleOtherDonate;
+    return (this.currentUser.permission.permissionCreate ||
+      this.currentUser.permission.permissionUpdate || this.currentUser.permission.permissionDelete);
+  }
+
+  // Article access rights.
+  // -----------------------------------------------------------------------------
+
+  public canCreateOwnArticle(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return this.currentUser.permission.articleOwnCreate;
+  }
+
+  public canUpdateOwnArticle(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return this.currentUser.permission.articleOwnUpdate;
+  }
+
+  public canDeleteOwnArticle(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return this.currentUser.permission.articleOwnDelete;
+  }
+
+  public canDonateOwnArticle(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return this.currentUser.permission.articleOwnDonate;
   }
 
   public canUpdateOtherArticle(): boolean {
@@ -345,12 +375,21 @@ export class UserService {
     return this.currentUser.permission.articleOtherUpdate;
   }
 
-  public canSavePermission(): boolean {
+  public canDeleteOtherArticle(): boolean {
     if (!this.currentUser || !this.currentUser.permission) { return false; }
-    return (this.currentUser.permission.permissionCreate ||
-      this.currentUser.permission.permissionUpdate || this.currentUser.permission.permissionDelete);
+    return this.currentUser.permission.articleOtherDelete;
   }
 
+  public canDonateOtherArticle(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return this.currentUser.permission.articleOtherDonate;
+  }
 
-
+  public canSaveArticle(): boolean {
+    if (!this.currentUser || !this.currentUser.permission) { return false; }
+    return (this.currentUser.permission.articleOwnCreate || this.currentUser.permission.articleOwnUpdate
+      || this.currentUser.permission.articleOwnDelete || this.currentUser.permission.articleOwnDonate
+      || this.currentUser.permission.articleOtherUpdate || this.currentUser.permission.articleOtherDelete
+      || this.currentUser.permission.articleOtherDonate );
+  }
 }

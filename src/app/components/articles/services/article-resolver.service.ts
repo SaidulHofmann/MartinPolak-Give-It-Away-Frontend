@@ -1,4 +1,4 @@
-import {Article} from '../models/article.model';
+import {Article} from '../../../models/article.model';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';

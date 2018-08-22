@@ -2,8 +2,8 @@ import { TestBed, inject } from '@angular/core/testing';
 
 import { UserService } from './user.service';
 import {HttpClient} from '@angular/common/http';
-import {MessageService} from './message.service';
-import {ArticleService} from './article.service';
+import {MessageService} from '../../shared/services/message.service';
+import {ArticleService} from '../../articles/services/article.service';
 
 describe('UserService', () => {
   let userService: UserService;

@@ -23,7 +23,7 @@
       </ng-template>
       <ng-template [ngIf]="userService.canReadPermissionSettings()">
         <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
-          <a *ngIf="userService.isAuthenticated" class="nav-link" routerLink="/permissions"><i class="fa fa-user mr-2" aria-hidden="true"></i>Berechtigungen</a>
+          <a *ngIf="userService.isAuthenticated" class="nav-link" routerLink="/permissions"><i class="fa fa-address-card-o mr-2" aria-hidden="true"></i>Berechtigungen</a>
         </li>
       </ng-template>
 
@@ -46,6 +46,3 @@
   </div>
 </nav>
 
-<!--<div *ngIf="currentUrl.startsWith('/users')">-->
-  <!--<app-user-navbar></app-user-navbar>-->
-<!--</div>-->

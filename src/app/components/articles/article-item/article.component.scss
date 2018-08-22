@@ -1,3 +1,9 @@
+@import 'variables';
+
+.card {
+  background-color: $gia-card-bg-color;
+}
+
 .col-form-label {
   padding: 0px 10px;
 }
@@ -5,4 +11,3 @@
 .form-control {
   padding: 3px 10px;
 }
-

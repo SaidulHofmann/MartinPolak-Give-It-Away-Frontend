@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
-import {Article, ArticleFilter, HttpResponseArticles} from '../models/article.model';
-import {Reservation, ReservationFilter} from '../models/reservation.model';
+import {Article, ArticleFilter, HttpResponseArticles} from '../../../models/article.model';
+import {Reservation, ReservationFilter} from '../../../models/reservation.model';
 import { Observable ,  of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { MessageService } from './message.service';
+import { MessageService } from '../../shared/services/message.service';
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
-import {UserService} from './user.service';
+import {UserService} from '../../users/services/user.service';
 
 import {Router} from '@angular/router';
-import {NavigationService} from './navigation.service';
-import {DialogService} from './dialog.service';
-import {ErrorDetails} from '../core/types.core';
-import {getCustomOrDefaultError, getErrorText} from '../core/errors.core';
+import {NavigationService} from '../../shared/services/navigation.service';
+import {DialogService} from '../../shared/services/dialog.service';
+import {ErrorDetails} from '../../../core/types.core';
+import {getCustomOrDefaultError, getErrorText} from '../../../core/errors.core';
 
 
 const httpOptions = {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Pager} from '../core/types.core';
+import {Pager} from '../../../core/types.core';
 
 @Injectable({
   providedIn: 'root'

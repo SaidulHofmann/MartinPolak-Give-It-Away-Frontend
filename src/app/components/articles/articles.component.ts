@@ -1,16 +1,16 @@
 // Implements UC04-Artikel anzeigen.
 
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ArticleService} from '../../services/article.service';
+import {ArticleService} from './services/article.service';
 import {Article, ArticleFilter, HttpResponseArticles} from '../../models/article.model';
-import {PagerService} from '../../services/pager.service';
+import {PagerService} from '../shared/services/pager.service';
 import {articleCategoryFilter, articleSortOptions, articleStatusFilter} from '../../core/data-providers.core';
 import {Pager} from '../../core/types.core';
 import {ArticleStatusType} from '../../core/enums.core';
 import {User} from '../../models/user.model';
-import {UserService} from '../../services/user.service';
-import {LocalDataService} from '../../services/local-data.service';
-import {NavigationService} from '../../services/navigation.service';
+import {UserService} from '../users/services/user.service';
+import {LocalDataService} from '../shared/services/local-data.service';
+import {NavigationService} from '../shared/services/navigation.service';
 
 
 @Component({
@@ -90,13 +90,13 @@ export class ArticlesComponent implements OnInit, OnDestroy {
     });
   }
 
-  onPublicationRervationCBChange(event) {
+  onPublicationReservationCBChange(event) {
     if (!event) { return; }
-    if (event.target.id === 'inputMyPublications') {
+    if (event.target.id === 'myPublicationsInput') {
       if (this.articleFilter.selectReservedArticles) {
         this.articleFilter.selectReservedArticles = false;
       }
-    } else if (event.target.id === 'inputMyReservations') {
+    } else if (event.target.id === 'myReservationsInput') {
       if (this.articleFilter.selectPublishedArticles) {
         this.articleFilter.selectPublishedArticles = false;
       }

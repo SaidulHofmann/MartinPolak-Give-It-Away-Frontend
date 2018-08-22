@@ -1,11 +1,11 @@
 import { TestBed, inject, async, ComponentFixture } from '@angular/core/testing';
 import { ArticleService } from './article.service';
 import {HttpClient, HttpClientModule, HttpHandler } from '@angular/common/http';
-import {MessageService} from './message.service';
-import { testArticleResponse, testArticleObj } from '../core/data-providers.core';
+import {MessageService} from '../../shared/services/message.service';
+import { testArticleResponse, testArticleObj } from '../../../core/data-providers.core';
 import {defer} from 'rxjs/observable/defer';
 import { of } from 'rxjs/observable/of';
-import {UserService} from './user.service';
+import {UserService} from '../../users/services/user.service';
 
 describe('ArticleService', () => {
   let articleService: ArticleService;

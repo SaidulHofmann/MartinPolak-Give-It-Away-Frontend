@@ -5,9 +5,11 @@ import {Location} from '@angular/common';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import { Article, ArticleCategory, ArticleStatus, User, UserRef } from '../../../models/index.model';
 import { articleCategories, articleStatus } from '../../../core/data-providers.core';
-import {ArticleService} from '../../../services/article.service';
-import {UserService} from '../../../services/user.service';
+import {ArticleService} from '../services/article.service';
+import {UserService} from '../../users/services/user.service';
 import {EditModeType} from '../../../core/enums.core';
+import {DialogService} from '../../shared/services/dialog.service';
+import {Permission} from '../../../models/permission.model';
 
 @Component({
   selector: 'app-article',
@@ -45,12 +47,14 @@ export class ArticleComponent implements OnInit, OnChanges {
     private formBuilder: FormBuilder,
     private articleService: ArticleService,
     private userService: UserService,
-    private location: Location) {
+    private location: Location,
+    private dialogService: DialogService) {
 
     if (!this.article) {
-      this.createArticle();
+      this.resetArticle();
+    } else {
+      this.createForm();
     }
-    this.createForm();
   }
 
   public ngOnInit() {
@@ -63,9 +67,10 @@ export class ArticleComponent implements OnInit, OnChanges {
     this.rebuildForm();
   }
 
-  private createArticle() {
+  private resetArticle() {
     this.article = new Article();
     this.article.publisher = this.userService.getCurrentUser() as UserRef;
+    this.createForm();
   }
 
   /**
@@ -105,8 +110,6 @@ export class ArticleComponent implements OnInit, OnChanges {
     this.setPictures(this.article.pictures);
     this.setVideos(this.article.videos);
   }
-
-
 
   /**
    * Sets the article values to the form controls.
@@ -209,25 +212,20 @@ export class ArticleComponent implements OnInit, OnChanges {
     this.videos.removeAt(index);
   }
 
+  // User events.
+  // --------------------------------------------------------------------------
 
-  public onSubmit() {
-    const articleToSave = this.getArticleToSave();
+  public onAddArticle() {
+    this.editMode = EditModeType.Create;
+    this.resetArticle();
+  }
 
+  public onSaveArticle() {
     if (this.editMode === EditModeType.Create) {
-      this.articleService.createArticle(articleToSave).subscribe(
-        (savedArticle: Article) => {
-          this.article = savedArticle;
-          this.editMode = EditModeType.Update;
-          this.rebuildForm();
-        }
-      );
+      this.createArticle();
+
     } else if (this.editMode === EditModeType.Update) {
-      this.articleService.updateArticle(articleToSave).subscribe(
-        (savedArticle: Article) => {
-          this.article = savedArticle;
-          this.rebuildForm();
-        }
-      );
+      this.updateArticle();
     }
   }
 
@@ -237,6 +235,36 @@ export class ArticleComponent implements OnInit, OnChanges {
 
   public onGoBack(): void {
     this.location.back();
+  }
+
+  // CRUD operations.
+  // --------------------------------------------------------------------------
+
+  private createArticle() {
+    const articleToSave = this.getArticleToSave();
+
+    this.articleService.createArticle(articleToSave).subscribe(
+      (savedArticle: Article) => {
+        this.article = savedArticle;
+        this.editMode = EditModeType.Update;
+        this.rebuildForm();
+        this.dialogService.inform('Artikel hinzufügen',
+          'Der Artikel wurde erfolgreich hinzugefügt.');
+      }
+    );
+  }
+
+  private updateArticle() {
+    const articleToSave = this.getArticleToSave();
+
+    this.articleService.updateArticle(articleToSave).subscribe(
+      (savedArticle: Article) => {
+        this.article = savedArticle;
+        this.rebuildForm();
+        this.dialogService.inform('Artikel aktualisieren',
+          'Der Artikel wurde erfolgreich aktualisiert.');
+      }
+    );
   }
 
 
