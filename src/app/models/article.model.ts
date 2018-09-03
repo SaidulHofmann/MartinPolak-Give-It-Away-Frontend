@@ -1,6 +1,4 @@
 import {ArticleCategory, ArticleStatus, User, UserRef, Reservation} from './index.model';
-import {articleCategories, articleCategoryFilter, articleSortOptions,
-  articleStatus, articleStatusFilter } from '../core/data-providers.core';
 import {IdNamePair} from '../core/types.core';
 
 export class Article {
@@ -17,8 +15,8 @@ export class Article {
 
   publisher: UserRef = null;
   donee: UserRef = null;
-  category: ArticleCategory = articleCategories[0];
-  status: ArticleStatus = articleStatus[0];
+  category: ArticleCategory = {_id: 'others', name: 'Sonstiges'};
+  status: ArticleStatus = {_id: 'available', name: 'Artikel verfügbar'};
 
   createdAt: Date = null; // assigned by MongoDb
   updatedAt: Date = null; // assigned by MongoDb
@@ -53,9 +51,9 @@ export class HttpResponseArticleData {
  */
 export class ArticleFilter {
   name = '';
-  category: ArticleCategory = articleCategoryFilter[0];
-  status: ArticleStatus = articleStatusFilter[0];
-  sort: IdNamePair = articleSortOptions[0];
+  category: ArticleCategory = null;
+  status: ArticleStatus = null;
+  sort: IdNamePair = null;
   tags = '';
 
   page = 1;

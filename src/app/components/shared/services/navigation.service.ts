@@ -1,13 +1,20 @@
 import { Injectable } from '@angular/core';
 import {Router} from '@angular/router';
-import {Article} from '../../../models/article.model';
+import {Location} from '@angular/common';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class NavigationService {
 
-  constructor( private router: Router) { }
+  constructor( private router: Router,
+               private location: Location) { }
+
+
+  public goBack() {
+    this.location.back();
+  }
 
   public gotoLoginPage() {
     this.router.navigate(['/users/login']);

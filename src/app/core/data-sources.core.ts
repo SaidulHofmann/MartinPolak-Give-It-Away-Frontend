@@ -1,7 +1,7 @@
 import {HttpResponseUsers, User, UserFilter} from '../models/user.model';
 import {CollectionViewer, DataSource} from '@angular/cdk/collections';
 import {BehaviorSubject, Observable, of} from 'rxjs/index';
-import {UserService} from '../components/users/services/user.service';
+import {UserService} from '../components/user/services/user.service';
 import {catchError, finalize, map} from 'rxjs/internal/operators';
 import {HttpResponsePermissions, Permission, PermissionFilter} from '../models/permission.model';
 
@@ -12,8 +12,8 @@ export class UserDataSource implements DataSource<User> {
 
   private usersSubject = new BehaviorSubject<User[]>([]);
   private loadingSubject = new BehaviorSubject<boolean>(false);
-
   public loading$ = this.loadingSubject.asObservable();
+
   public get users(): User[] {
     return this.usersSubject.getValue();
   }
@@ -50,9 +50,9 @@ export class UserDataSource implements DataSource<User> {
 export class PermissionDataSource implements DataSource<Permission> {
 
   private permissionsSubject = new BehaviorSubject<Permission[]>([]);
-  public loadingSubject = new BehaviorSubject<boolean>(false);
-
+  private loadingSubject = new BehaviorSubject<boolean>(false);
   public loading$ = this.loadingSubject.asObservable();
+
   public get permissions(): Permission[] {
     return this.permissionsSubject.getValue();
   }

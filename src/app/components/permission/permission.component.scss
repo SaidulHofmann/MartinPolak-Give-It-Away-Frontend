@@ -1,0 +1,25 @@
+table {
+  width: 100%;
+  border: 1px solid #2C3E50;
+
+  th {
+    padding: 10px 10px;
+    vertical-align: middle !important;
+  }
+
+  tr {
+    height: auto !important;
+    &.highlight {
+      background-color: #C3F3C3 !important;
+    }
+  }
+
+  td {
+    padding: 0px 10px;
+    vertical-align: middle;
+  }
+}
+
+.crud-button {
+  //  width: 110px;
+}

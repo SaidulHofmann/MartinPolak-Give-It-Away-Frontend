@@ -52,4 +52,13 @@ export class DialogService {
     return this.openDialog(title, message, dialogConfig);
   }
 
+  public askForLeavePageWithUnsavedChanges(): Observable<DialogResultType> {
+    let title = 'Seite verlassen';
+    let message = 'Es sind Änderungen vorhanden, welche noch nicht gespeichert wurden. Wollen Sie die Seite wirklich verlassen ?';
+    let dialogConfig = new DialogConfig();
+    dialogConfig.hasYesButton = true;
+    dialogConfig.hasNoButton = true;
+    return this.openDialog(title, message, dialogConfig);
+  }
+
 }

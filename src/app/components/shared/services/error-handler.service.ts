@@ -3,7 +3,7 @@ import {DialogService} from './dialog.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {DialogConfig, ErrorDetails, HttpErrorArgs} from '../../../core/types.core';
 import {getCustomOrDefaultError, getErrorText} from '../../../core/errors.core';
-import {UserService} from '../../../components/users/services/user.service';
+import {UserService} from '../../user/services/user.service';
 import {Observable} from 'rxjs/index';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {DialogResultType} from '../../../core/enums.core';
@@ -12,68 +12,59 @@ import {DialogComponent} from '../../../components/shared/dialog/dialog.componen
 @Injectable()
 export class ErrorHandlerService extends ErrorHandler {
 
-  private isDisplayingError: boolean = false;
+  private dialogService: DialogService;
+  private userService: UserService;
 
   constructor(
-    private ngZone: NgZone,
-    private dialogService: DialogService,
-    private userService: UserService) {
+    private injector: Injector) {
     super();
   }
 
   public handleError(error: any): void {
+    try {
+        if (this.dialogService == null) { this.dialogService = this.injector.get(DialogService); }
+        if (this.userService == null) { this.userService = this.injector.get(UserService); }
+        let zone: NgZone = this.injector.get(NgZone);
+        zone.run(() => {
 
-    if (!error || !error.message || error.message.length === 0) {
-      this.showErrorDialog('Fehler', 'Ein unbekannter Fehler ist aufgetreten.');
-      return;
-    }
+          if (!error || !error.message || error.message.length === 0) {
+            this.dialogService.inform('Fehler', 'Ein unbekannter Fehler ist aufgetreten.');
+            return;
+          }
 
-    // Server-side or connection errors.
-    if (error instanceof HttpErrorResponse) {
+          // Server-side or connection errors.
+          if (error instanceof HttpErrorResponse) {
 
-      // Offline - server or connection error.
-      if (!navigator.onLine) {
-        this.showErrorDialog('Verbindungs-Fehler', 'Es besteht keine Verbindung zum Server. \n' + getErrorText(error));
+            // Offline - server or connection error.
+            if (!navigator.onLine) {
+              this.dialogService.inform('Verbindungs-Fehler', 'Es besteht keine Verbindung zum Server. \n' + getErrorText(error));
 
-        // Online - Http Errors.
-      } else {
-        if (error.status === 401) {
-          this.handleError401(error);
-        } else {
-          this.showErrorDialog('Serverseitiger Fehler', 'Ein serverseitiger Fehler ist aufgetreten: \n' + getErrorText(error));
-        }
+              // Online - Http Errors.
+            } else {
+              if (error.status === 401) {
+                this.handleError401(error);
+              } else {
+                this.dialogService.inform('Serverseitiger Fehler', 'Ein serverseitiger Fehler ist aufgetreten: \n' + getErrorText(error));
+              }
 
-      }
-      // Client-side errors.
-    } else {
-      this.showErrorDialog('Clientseitiger Fehler', 'Ein clientseitiger Fehler ist aufgetreten: \n' + getErrorText(error));
+            }
+            // Client-side errors.
+          } else {
+            this.dialogService.inform('Clientseitiger Fehler', 'Ein clientseitiger Fehler ist aufgetreten: \n' + getErrorText(error));
 
-    }
+          }
 
-    super.handleError(error);
-  }
-
-  /**
-   * Shows the error dialog in NgZone.
-   * The error handler is executed outside the NgZone. Angular will not react on UI changes.
-   * Currently the dialog will not be displayed correctly and will not respond to user interactions if not in NgZone.
-   * Displays only one dialog to prevent infinite loop (displaying error causes error, displaying this error causes same error...).
-   */
-  private showErrorDialog(title: string, message: string) {
-    if (!this.isDisplayingError) {
-      this.isDisplayingError = true;
-      this.ngZone.run(() => {
-        this.dialogService.inform(title, message).subscribe(() => {
-          this.isDisplayingError = false;
+          super.handleError(error);
         });
-     });
-    } else {
-      console.log(title + ': ' + message);
-    }
+
+    } catch (ex) {
+        confirm('Ein unerwarteter Fehler ist aufgetreten: ' + ex.message);
+        super.handleError(error);
+      }
   }
 
   private handleError401(error: any) {
-    this.showErrorDialog('Berechtigungs-Fehler',
+    this.dialogService.inform('Berechtigungs-Fehler',
       'Der Zugriff auf Server Ressourcen ist nicht möglich weil der Benutzer ' +
       'nicht angemeldet oder die Anmeldung abgelaufen ist. \n' + getErrorText(error));
     this.userService.logout();

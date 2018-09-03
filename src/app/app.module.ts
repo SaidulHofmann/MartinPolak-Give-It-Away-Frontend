@@ -3,9 +3,9 @@ import { RouterModule } from '@angular/router';
 import {defaultRoutes} from './app-routing.module';
 
 import { SharedModule } from './components/shared/shared.module';
-import { PermissionsModule } from './components/permissions/permissions.module';
-import { UsersModule } from './components/users/users.module';
-import { ArticlesModule } from './components/articles/articles.module';
+import { PermissionModule } from './components/permission/permission.module';
+import { UserModule } from './components/user/user.module';
+import { ArticleModule } from './components/article/article.module';
 
 import { AppComponent } from './app.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
@@ -19,9 +19,9 @@ import { DialogComponent } from './components/shared/dialog/dialog.component';
 @NgModule({
   imports: [
     SharedModule,
-    PermissionsModule,
-    UsersModule,
-    ArticlesModule,
+    PermissionModule,
+    UserModule,
+    ArticleModule,
     RouterModule.forChild(defaultRoutes)
   ],
   declarations: [
