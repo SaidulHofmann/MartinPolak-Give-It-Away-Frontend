@@ -1,17 +1,16 @@
 // Creates a new article. UC3.1-Artikel erfassen.
 
 import {Component, Input, OnChanges, OnInit} from '@angular/core';
-import {Location} from '@angular/common';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import { Article, ArticleCategory, ArticleStatus, User, UserRef } from '../../../models/index.model';
-import {UserService} from '../../user/services/user.service';
+import { Article, ArticleCategory, ArticleStatus } from '../../../models/index.model';
 import {DialogResultType, EditModeType} from '../../../core/enums.core';
 import {DialogService} from '../../shared/services/dialog.service';
-import {ArticleBackendService} from '../services/article-backend.service';
-import {LocalDataService} from '../../shared/services/local-data.service';
 import {CanDeactivate} from '@angular/router';
-import {CanComponentDeactivate} from '../../shared/services/can-deactivate-guard.service';
-import { Observable ,  of, throwError } from 'rxjs';
+import {CanComponentDeactivate} from '../../permission/services/can-deactivate-guard.service';
+import { Observable } from 'rxjs';
+import {NavigationService} from '../../shared/services/navigation.service';
+import {ArticleItemService} from '../services/article-item.service';
+import {AuthService} from '../../permission/services/auth.service';
 
 @Component({
   selector: 'app-article-item',
@@ -23,51 +22,61 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
   // Constants, variables
   // ----------------------------------
   public EditModeType = EditModeType;
-  @Input()
-  public editMode: EditModeType = EditModeType.Read;
-  @Input()
-  public article: Article;
-
   public articleForm: FormGroup;
-  public articleCategories = null;
-  public articleStatus = null;
+
 
   // Properties
   // ----------------------------------
+  public get articleCategories(): ArticleCategory[] { return this.articleItemSvc.articleCategories; }
+  public get articleStatus(): ArticleStatus[]       { return this.articleItemSvc.articleStatus; }
+  @Input()
+  public set editMode(editMode: EditModeType)       { this.articleItemSvc.editMode = editMode; }
+  public get editMode()                             { return this.articleItemSvc.editMode; }
+  @Input()
+  public set article(article: Article)              { this.articleItemSvc.article = article; }
+  public get article()                              { return this.articleItemSvc.article; }
 
   // FormControl Getters
-  public get name() { return this.articleForm.get('name'); }
-  public get description() { return this.articleForm.get('description'); }
-  public get handover() { return this.articleForm.get('handover'); }
-  public get pictureOverview() { return this.articleForm.get('pictureOverview'); }
-  public get pictures(): FormArray { return this.articleForm.get('pictures') as FormArray; }
-  public get videos(): FormArray { return this.articleForm.get('videos') as FormArray; }
+  public get name()                                 { return this.articleForm.get('name'); }
+  public get description()                          { return this.articleForm.get('description'); }
+  public get handover()                             { return this.articleForm.get('handover'); }
+  public get pictureOverview()                      { return this.articleForm.get('pictureOverview'); }
+  public get pictures(): FormArray                  { return this.articleForm.get('pictures') as FormArray; }
+  public get videos(): FormArray                    { return this.articleForm.get('videos') as FormArray; }
 
 
   // Methods
   // ----------------------------------
 
   constructor(
+    private articleItemSvc: ArticleItemService,
+    public authService: AuthService,
     private formBuilder: FormBuilder,
-    private articleBackend: ArticleBackendService,
-    private localDataService: LocalDataService,
-    private userService: UserService,
-
-    private location: Location,
+    private navService: NavigationService,
     private dialogService: DialogService) {
   }
 
   public ngOnInit() {
     if (!this.article) {
-      this.resetArticle();
+      this.articleItemSvc.resetArticle();
     }
     this.createForm();
-    this.initAsync();
+    Promise.resolve(this.initAsync());
   }
 
   private async initAsync(): Promise<void> {
-    this.articleCategories = await this.localDataService.getArticleCategoryListAsync();
-    this.articleStatus = await this.localDataService.getArticleStatusListAsync();
+    try {
+      await this.articleItemSvc.loadSelectionListsAsync();
+      this.updateForm();
+    } catch (ex) {
+      throw new Error('Fehler bei der Initialisierung der Komponente ArticleItem:  ' + ex.message);
+    }
+  }
+
+  /**
+   * Updates the article form on @Input() Property Change.
+   */
+  public ngOnChanges() {
     this.updateForm();
   }
 
@@ -82,25 +91,13 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
   }
 
   /**
-   * Updates the article form on @Input() Property Change.
-   */
-  public ngOnChanges() {
-    this.updateForm();
-  }
-
-  private resetArticle() {
-    this.article = new Article();
-    this.article.publisher = this.userService.getCurrentUser() as UserRef;
-  }
-
-  /**
    * Creates the article form for displaying and editing articles.
    */
   private createForm() {
     // Article
     this.articleForm =    this.formBuilder.group({
       _id:                this.article._id || null,
-      category:           this.getArticleCategory(this.article),
+      category:           this.articleItemSvc.getArticleCategory(this.article),
       name:               [this.article.name || '', Validators.required ],
       description:        [this.article.description || '', Validators.required ],
       handover:           [this.article.handover || '', Validators.required ],
@@ -109,7 +106,7 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
       pictures:           this.formBuilder.array( []),
       videos:             this.formBuilder.array( []),
       tags:               this.article.tags || '',
-      status:             this.getArticleStatus(this.article) || null,
+      status:             this.articleItemSvc.getArticleStatus(this.article) || null,
 
       // Give away
       donee:              this.formBuilder.group({
@@ -135,18 +132,18 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
    * Sets the article values to the form controls.
    */
   private updateForm() {
-    if (!this.article) { return; }
+    if (!this.article || !this.articleForm) { return; }
 
     this.articleForm.reset({
       _id:                this.article._id || null,
-      category:           this.getArticleCategory(this.article),
+      category:           this.articleItemSvc.getArticleCategory(this.article),
       name:               this.article.name || '',
       description:        this.article.description || '',
       handover:           this.article.handover || '',
 
       pictureOverview:    this.article.pictureOverview || '',
       tags:               this.article.tags || '',
-      status:             this.getArticleStatus(this.article),
+      status:             this.articleItemSvc.getArticleStatus(this.article),
       donee:              {
         _id:              this.article.donee ? this.article.donee._id : null,
         fullname:        this.article.donee ? this.article.donee.fullname : ''
@@ -165,47 +162,6 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
     this.setVideos(this.article.videos);
   }
 
-  /**
-   * Returns the ArticleCategory entry in the articleCategories selection list for displaying the correct entry.
-   */
-  private getArticleCategory(article: Article): ArticleCategory {
-    if (!this.articleCategories) { return; }
-    if (!article.category || !article.category._id) { return  this.articleCategories[0] ; } // default value
-    return this.articleCategories.find(category => category._id === article.category._id);
-  }
-
-  /**
-   * Returns the ArticleStatus entry in the articleStatus selection list for displaying the correct entry.
-   */
-  private getArticleStatus(article: Article): ArticleStatus {
-    if (!this.articleStatus) { return; }
-    if (!article.status || !article.status._id) { return  this.articleStatus[0] ; } // default value
-    return this.articleStatus.find(status => status._id === article.status._id);
-  }
-
-  /**
-   * Returns a new article object with formControl values.
-   */
-  private getArticleToSave(): Article {
-    const articleToSave = Object.assign(new Article(), this.articleForm.value);
-
-    // Change view-model properties to model properties.
-    if (articleToSave.publisher && !articleToSave.publisher._id) {
-      articleToSave.publisher = null;
-    }
-    if (articleToSave.donee && !articleToSave.donee._id) {
-      articleToSave.donee = null;
-    }
-
-    // Trim strings
-    articleToSave.name = articleToSave.name.trim();
-    articleToSave.description = articleToSave.description.trim();
-    articleToSave.handover = articleToSave.handover.trim();
-    articleToSave.tags = articleToSave.tags.trim();
-
-    return articleToSave;
-  }
-
   // Handle pictures array
   // --------------------------------------------------------------------------
   private setPictures(pictures: string[]) {
@@ -213,9 +169,11 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
       this.formBuilder.control(pictureUrl, Validators.required));
     this.articleForm.setControl('pictures', this.formBuilder.array(pictureFCs));
   }
+
   public onAddPicture() {
     this.pictures.push(this.formBuilder.control('', Validators.required));
   }
+
   public onDeletePicture(index: number) {
     this.pictures.removeAt(index);
   }
@@ -227,9 +185,11 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
       this.formBuilder.control(videoUrl, Validators.required));
     this.articleForm.setControl('videos', this.formBuilder.array(videosFCs));
   }
+
   public onAddVideo() {
     this.videos.push(this.formBuilder.control('', Validators.required));
   }
+
   public onDeleteVideo(index: number) {
     this.videos.removeAt(index);
   }
@@ -239,16 +199,24 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
 
   public onAddArticle() {
     this.editMode = EditModeType.Create;
-    this.resetArticle();
+    this.articleItemSvc.resetArticle();
     this.createForm();
   }
 
   public onSaveArticle() {
     if (this.editMode === EditModeType.Create) {
-      this.createArticle();
+      this.articleItemSvc.createArticleAsync(this.articleForm.value).then(() => {
+        this.updateForm();
+        this.dialogService.inform('Artikel hinzufügen',
+          'Der Artikel wurde erfolgreich hinzugefügt.');
+      });
 
     } else if (this.editMode === EditModeType.Update) {
-      this.updateArticle();
+      this.articleItemSvc.updateArticleAsync(this.articleForm.value).then(() => {
+        this.updateForm();
+        this.dialogService.inform('Artikel aktualisieren',
+          'Der Artikel wurde erfolgreich aktualisiert.');
+      });
     }
   }
 
@@ -256,39 +224,8 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
     this.updateForm();
   }
 
-  public onGoBack(): void {
-    this.location.back();
+  public onGoBack() {
+    this.navService.goBack();
   }
-
-  // CRUD operations.
-  // --------------------------------------------------------------------------
-
-  private createArticle() {
-    const articleToSave = this.getArticleToSave();
-
-    this.articleBackend.createArticle(articleToSave).subscribe(
-      (savedArticle: Article) => {
-        this.article = savedArticle;
-        this.editMode = EditModeType.Update;
-        this.updateForm();
-        this.dialogService.inform('Artikel hinzufügen',
-          'Der Artikel wurde erfolgreich hinzugefügt.');
-      }
-    );
-  }
-
-  private updateArticle() {
-    const articleToSave = this.getArticleToSave();
-
-    this.articleBackend.updateArticle(articleToSave).subscribe(
-      (savedArticle: Article) => {
-        this.article = savedArticle;
-        this.updateForm();
-        this.dialogService.inform('Artikel aktualisieren',
-          'Der Artikel wurde erfolgreich aktualisiert.');
-      }
-    );
-  }
-
 
 }

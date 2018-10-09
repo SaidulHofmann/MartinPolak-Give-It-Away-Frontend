@@ -2,11 +2,9 @@
 
 import {Component, OnInit} from '@angular/core';
 import {ArticleService} from './services/article.service';
-import {PagerService} from '../shared/services/pager.service';
-import {Pager} from '../../core/types.core';
 import {ArticleStatusType} from '../../core/enums.core';
-import {UserService} from '../user/services/user.service';
 import {NavigationService} from '../shared/services/navigation.service';
+import {AuthService} from '../permission/services/auth.service';
 
 
 @Component({
@@ -19,10 +17,9 @@ export class ArticleComponent implements OnInit {
   public ArticleStatusType = ArticleStatusType;
 
   constructor(
+    public authService: AuthService,
     public navService: NavigationService,
-    public userService: UserService,
-    public articleService: ArticleService,
-    private pagerService: PagerService) {
+    public articleService: ArticleService) {
   }
 
   public ngOnInit() {

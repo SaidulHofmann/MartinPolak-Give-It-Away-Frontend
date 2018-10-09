@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Permission, PermissionRef} from '../../../models/permission.model';
 import {map} from 'rxjs/operators';
-import {DialogService} from './dialog.service';
-import {UserService} from '../../user/services/user.service';
 import {NavigationService} from './navigation.service';
 import {HttpClient} from '@angular/common/http';
 import {IdNamePair} from '../../../core/types.core';
 import {ArticleCategory, ArticleStatus} from '../../../models/index.model';
+import {AuthService} from '../../permission/services/auth.service';
+
 
 /**
  * Provides lists, cached data and support for persistency.
@@ -26,10 +26,9 @@ export class LocalDataService {
   // Methods
   // ----------------------------------
   constructor(
-    private httpClient: HttpClient,
+    private authService: AuthService,
     private navService: NavigationService,
-    private userService: UserService,
-    private dialogService: DialogService) {
+    private http: HttpClient) {
 
     this.preloadCachedData();
   }
@@ -81,8 +80,8 @@ export class LocalDataService {
   }
 
   private async loadPermissionListAsync(): Promise<void> {
-    this._permissionList = await this.httpClient.get<Permission[]>(
-      this._permissionUrl, { headers: this.userService.getHttpHeaders() })
+    this._permissionList = await this.http.get<Permission[]>(
+      this._permissionUrl, { headers: this.authService.getHttpHeaders() })
       .pipe( map((res) => res['data']['docs'] as Permission[])).toPromise();
   }
 
@@ -107,8 +106,8 @@ export class LocalDataService {
   }
 
   private async loadArticleCategoryListAsync(): Promise<ArticleCategory[]> {
-    return this.httpClient.get<ArticleCategory[]>(
-      this._articleCategoryUrl, { headers: this.userService.getHttpHeaders() })
+    return this.http.get<ArticleCategory[]>(
+      this._articleCategoryUrl, { headers: this.authService.getHttpHeaders() })
       .pipe( map((res) => res['data']['docs'] as ArticleCategory[])).toPromise();
   }
 
@@ -133,7 +132,7 @@ export class LocalDataService {
   }
 
   private async loadArticleStatusListAsync(): Promise<ArticleStatus[]> {
-    return this.httpClient.get<ArticleStatus[]>( this._articleStatusUrl, { headers: this.userService.getHttpHeaders() })
+    return this.http.get<ArticleStatus[]>( this._articleStatusUrl, { headers: this.authService.getHttpHeaders() })
       .pipe( map((res) => res['data']['docs'] as ArticleStatus[])).toPromise();
   }
 

@@ -4,10 +4,11 @@ import {Location} from '@angular/common';
 import {Article} from '../../../models/article.model';
 import {Reservation} from '../../../models/reservation.model';
 import {User, UserRef} from '../../../models/user.model';
-import {UserService} from '../../user/services/user.service';
-import {ArticleService} from '../services/article.service';
 import {Subscription} from 'rxjs/internal/Subscription';
 import {ArticleBackendService} from '../services/article-backend.service';
+import {AuthService} from '../../permission/services/auth.service';
+import {ArticleDetailsService} from '../services/article-details.service';
+import {NavigationService} from '../../shared/services/navigation.service';
 
 
 @Component({
@@ -17,68 +18,48 @@ import {ArticleBackendService} from '../services/article-backend.service';
 })
 export class ArticleDetailsComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription = new Subscription();
-  public article: Article;
+  public get article(): Article { return this.articleDetailsSvc.article; }
+  public set article(article: Article) { this.articleDetailsSvc.article = article; }
 
   public get currentUser(): User {
-    return this.userService.getCurrentUser();
+    return this.authService.getCurrentUser();
   }
 
   constructor(
-    private location: Location,
-    private route: ActivatedRoute,
-    private userService: UserService,
-    private articleBackend: ArticleBackendService) {
+    private authService: AuthService,
+    private articleDetailsSvc: ArticleDetailsService,
+    private navService: NavigationService,
+    private route: ActivatedRoute) {
   }
 
   public ngOnInit() {
-    this.route.data.subscribe(
-        (data: Data) => { this.article = data['article']; }
+    this.subscriptions = this.route.data.subscribe(
+      (data: Data) => {
+        this.article = data['article'];
+        if (!this.article.userHasReservation) {
+          this.articleDetailsSvc.assignDefaultReservation();
+        }}
     );
-    if (!this.article.userHasReservation) {
-      this.assignDefaultReservation();
-    }
   }
 
   public ngOnDestroy() {
-
+    this.subscriptions.unsubscribe();
   }
 
   public onGoBack() {
-    this.location.back();
-  }
-
-  private assignDefaultReservation() {
-    this.article.usersReservation = {
-      article: this.article._id,
-      user: new UserRef(this.currentUser._id),
-      commentPublisher: '',
-      commentApplicant: ''
-    } as Reservation;
+    this.navService.goBack();
   }
 
   public onCreateReservation() {
-    this.articleBackend.createReservation(this.article.usersReservation).subscribe(
-      (savedReservation: Reservation) => {
-        this.article.usersReservation = savedReservation;
-        this.article.userHasReservation = true;
-      });
+    this.articleDetailsSvc.createReservation();
   }
 
   public onUpdateReservation() {
-    this.articleBackend.updateReservation(this.article.usersReservation).subscribe(
-      (savedReservation: Reservation) => {
-        this.article.usersReservation = savedReservation;
-      }
-    );
+    this.articleDetailsSvc.updateReservation();
   }
 
   public onDeleteReservation(): void {
-    this.articleBackend.deleteReservation(this.article.usersReservation).subscribe(
-      (savedReservation: Reservation) => {
-        this.assignDefaultReservation();
-        this.article.userHasReservation = false;
-      }
-    );
+    this.articleDetailsSvc.deleteReservation();
   }
 
 }

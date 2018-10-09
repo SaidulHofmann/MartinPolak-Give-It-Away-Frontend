@@ -1,17 +1,16 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {DialogResultType, EditModeType, ErrorCodeType} from '../../../core/enums.core';
-import {User} from '../../../models/user.model';
 import {getCustomOrDefaultError} from '../../../core/errors.core';
-import {UserService} from '../../user/services/user.service';
 import {DialogService} from '../../shared/services/dialog.service';
 import {NgForm} from '@angular/forms';
-import {Permission, PermissionRef} from '../../../models/permission.model';
-import {LocalDataService} from '../../shared/services/local-data.service';
-import {Article, ArticleCategory} from '../../../models/index.model';
+import {Permission} from '../../../models/permission.model';
 import {ErrorDetails} from '../../../core/types.core';
 import {CanDeactivate} from '@angular/router';
-import {CanComponentDeactivate} from '../../shared/services/can-deactivate-guard.service';
+import {CanComponentDeactivate} from '../services/can-deactivate-guard.service';
 import {Observable} from 'rxjs/index';
+import {PermissionItemService} from '../services/permission-item.service';
+import {AuthService} from '../services/auth.service';
+
 
 @Component({
   selector: 'app-permission-item',
@@ -23,45 +22,44 @@ export class PermissionItemComponent implements OnInit, CanDeactivate<CanCompone
   // Constants, variables and properties.
   // --------------------------------------------------------------------------
   public EditModeType = EditModeType;
-  public editMode: EditModeType = EditModeType.Read;
 
+  public set editMode(editMode: EditModeType) {
+    this.permissionItemSvc.editMode = editMode;
+  }
+  public get editMode() { return this.permissionItemSvc.editMode; }
 
   @ViewChild('permissionForm') private permissionForm: NgForm;
   @ViewChild('name', { read: ElementRef }) private nameInput: ElementRef;
 
-  private _editingPermission: Permission = new Permission();
   public set editingPermission(permission: Permission) {
-    this._editingPermission = permission;
+    this.permissionItemSvc.editingPermission = permission;
   }
-  public get editingPermission() { return this._editingPermission; }
+  public get editingPermission() { return this.permissionItemSvc.editingPermission; }
 
-  private _selectedPermission = new Permission();
   @Input()
   public set selectedPermission(permission: Permission) {
-    this._selectedPermission = permission;
-    this.editingPermission = Object.assign({}, permission);
-    this.editMode = EditModeType.Read;
+    this.permissionItemSvc.selectedPermission = permission;
   }
-  public get selectedPermission() { return this._selectedPermission; }
+  public get selectedPermission() { return this.permissionItemSvc.selectedPermission; }
 
   @Output()
-  public dataChanged = new EventEmitter<void>();
+  public get dataChanged() { return this.permissionItemSvc.dataChanged; }
 
 
   // Methods.
   // --------------------------------------------------------------------------
 
   constructor(
-    public userService: UserService,
-    private dialogService: DialogService,
-    private localDataService: LocalDataService) {
+    public authService: AuthService,
+    public permissionItemSvc: PermissionItemService,
+    private dialogService: DialogService) {
   }
 
   public ngOnInit() {
   }
 
   private onDataChanged() {
-    this.dataChanged.emit();
+    this.permissionItemSvc.onDataChanged();
   }
 
   public canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
@@ -78,18 +76,16 @@ export class PermissionItemComponent implements OnInit, CanDeactivate<CanCompone
   // --------------------------------------------------------------------------
 
   public onEditPermission() {
-    this.editMode = this.EditModeType.Update;
+    this.permissionItemSvc.editPermission();
     this.nameInput.nativeElement.focus();
   }
 
   public onAddPermission() {
-    this.editMode = EditModeType.Create;
-    this._editingPermission = new Permission();
+    this.permissionItemSvc.addPermission();
     this.nameInput.nativeElement.focus();
   }
 
   public onDeletePermission() {
-    this.editMode = EditModeType.Delete;
     this.deletePermission();
   }
 
@@ -103,93 +99,69 @@ export class PermissionItemComponent implements OnInit, CanDeactivate<CanCompone
   }
 
   public onCancelEdit() {
-    this._editingPermission = Object.assign({}, this.selectedPermission);
+    this.permissionItemSvc.cancelEdit();
     this.permissionForm.form.markAsPristine();
-    this.editMode = this.EditModeType.Read;
-  }
-
-
-  // CRUD operations.
-  // --------------------------------------------------------------------------
-
-  private preparePermissionToSave() {
-    this._editingPermission.name = this._editingPermission.name.trim();
   }
 
   private createPermission() {
-    this.preparePermissionToSave();
-    this.userService.createPermission(this._editingPermission).subscribe(
-      (savedPermission: Permission) => {
-        this._editingPermission = savedPermission;
-        this.editMode = this.EditModeType.Update;
-        this.onDataChanged();
+    this.permissionItemSvc.createPermissionAsync()
+      .then((savedPermission: Permission) => {
+        this.permissionForm.form.markAsPristine();
         this.dialogService.inform('Berechtigungs-Eintrag erstellen',
           'Der Berechtigungs-Eintrag wurde erfolgreich erstellt.');
-      },
-      (errorResponse) => {
+      })
+      .catch((errorResponse) => {
         let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
         if (errorDetails && errorDetails.name === ErrorCodeType.DuplicateKeyError) {
           this.dialogService.inform('Berechtigungs-Eintrag erstellen',
             errorDetails.message || 'Die Berechtigungs-Bezeichnung wird bereits verwendet.');
-          this._editingPermission.name = '';
+          this.editingPermission.name = '';
         } else {
           this.dialogService.inform('Berechtigungs-Eintrag erstellen',
-            errorDetails.message || 'Bei der Erstellung des Berechtigungs-Eintrags ist ein Fehler aufgetreten.');
+            'Bei der Erstellung des Berechtigungs-Eintrags ist ein Fehler aufgetreten: ' + errorDetails.message);
         }
-      }
-    );
+      });
   }
 
   private updatePermission() {
-    this.preparePermissionToSave();
-    this.userService.updatePermission(this._editingPermission).subscribe(
-      (savedPermission: Permission) => {
-        this._editingPermission = savedPermission;
-        this.onDataChanged();
+    this.permissionItemSvc.updatePermissionAsync()
+      .then((savedPermission: Permission) => {
+        this.permissionForm.form.markAsPristine();
         this.dialogService.inform('Berechtigungs-Eintrag aktualisieren',
           'Der Berechtigungs-Eintrag wurde erfolgreich aktualisiert.');
-      },
-      (errorResponse) => {
+      })
+      .catch((errorResponse) => {
         let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
         if (errorDetails && errorDetails.name === ErrorCodeType.DuplicateKeyError) {
           this.dialogService.inform('Berechtigungs-Eintrag aktualisieren',
             errorDetails.message || 'Die Berechtigungs-Bezeichnung wird bereits verwendet.');
-          this._editingPermission.name = '';
+          this.editingPermission.name = '';
         } else {
           this.dialogService.inform('Berechtigungs-Eintrag aktualisieren',
-            errorDetails.message || 'Bei der Aktualisierung des Berechtigungs-Eintrags ist ein Fehler aufgetreten.');
+            'Bei der Aktualisierung des Berechtigungs-Eintrags ist ein Fehler aufgetreten: ' + errorDetails.message);
         }
-      }
-    );
+      });
   }
 
   private deletePermission() {
-    let permissionName = this._editingPermission.name;
-    this.dialogService.askForDelete('Berechtigungs-Eintrag entfernen',
-      `Soll der Berechtigungs-Eintrag '${permissionName}' wirklich entfernt werden ?`)
-      .subscribe((dialogResult: DialogResultType) => {
+    let permissionName = this.editingPermission.name;
+    let dialogResultObs = this.dialogService.askForDelete('Berechtigungs-Eintrag entfernen',
+      `Soll der Berechtigungs-Eintrag '${permissionName}' wirklich entfernt werden ?`);
 
-        if (dialogResult === DialogResultType.Delete) {
-          this.userService.deletePermission(this.selectedPermission).subscribe(
-            (permission: Permission) => {
-              this.onDataChanged();
-              this._editingPermission = new Permission();
-              this.permissionForm.form.markAsPristine();
-              this.editMode = this.EditModeType.Read;
-              this.dialogService.inform('Berechtigungs-Eintrag entfernen',
-                `Der Berechtigungs-Eintrag '${permissionName}' wurde erfolgreich entfernt.`);
-            },
-            (errorResponse) => {
-              let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
-              this.dialogService.inform('Berechtigungs-Eintrag entfernen',
-                errorDetails.message || 'Beim Entfernen des Berechtigungs-Eintrags ist ein Fehler aufgetreten.');
-            });
-
-        } else if (dialogResult === DialogResultType.Cancel) {
-          this.editMode = this.EditModeType.Read;
-        }
-      });
-    this.editMode = this.EditModeType.Read;
+    dialogResultObs.subscribe((dialogResult: DialogResultType) => {
+      if (dialogResult !== DialogResultType.Delete) { return; }
+      this.permissionItemSvc.deletePermissionAsync()
+        .then(() => {
+          this.permissionForm.form.markAsPristine();
+          this.dialogService.inform('Berechtigungs-Eintrag entfernen',
+            `Der Berechtigungs-Eintrag '${permissionName}' wurde erfolgreich entfernt.`);
+        })
+        .catch((errorResponse) => {
+          let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
+          this.dialogService.inform('Berechtigungs-Eintrag entfernen',
+            'Beim Entfernen des Berechtigungs-Eintrags ist ein Fehler aufgetreten: ' + errorDetails.message);
+        });
+    });
   }
 
 }

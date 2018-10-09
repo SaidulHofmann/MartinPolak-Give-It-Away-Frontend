@@ -1,110 +1,84 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Article} from '../../../models/index.model';
 import {ActivatedRoute, Data} from '@angular/router';
-import {ArticleService} from '../services/article.service';
-import {HttpResponseReservations, ReservationFilter, Reservation} from '../../../models/reservation.model';
-import {PagerService} from '../../shared/services/pager.service';
-import {ArticleRef} from '../../../models/article.model';
+import {Reservation} from '../../../models/reservation.model';
 import {ArticleStatusType} from '../../../core/enums.core';
-import {User, UserRef} from '../../../models/user.model';
-import {UserService} from '../../user/services/user.service';
-import {ArticleStatus} from '../../../models/articleStatus.model';
-import {Location} from '@angular/common';
-import {Pager} from '../../../core/types.core';
-import {ArticleBackendService} from '../services/article-backend.service';
+import {GiveawayArticleService} from '../services/giveaway-article.service';
+import {NavigationService} from '../../shared/services/navigation.service';
+import {DialogService} from '../../shared/services/dialog.service';
+import {Subscription} from '../../../../../node_modules/rxjs';
 
 @Component({
   selector: 'app-giveaway-article',
   templateUrl: './giveaway-article.component.html',
   styleUrls: ['./giveaway-article.component.scss']
 })
-export class GiveawayArticleComponent implements OnInit {
+export class GiveawayArticleComponent implements OnInit, OnDestroy {
 
   // Constants, variables
   // ----------------------------------
-  ArticleStatusType = ArticleStatusType;
-  public reservationsResponse: HttpResponseReservations = null;
-  public article: Article;
-  private reservationFilter: ReservationFilter = new ReservationFilter();
-  public pager = new Pager();
+  public ArticleStatusType = ArticleStatusType;
+  public get article(): Article         { return this.giveawayArticleSvc.article; }
+  public set article(article: Article)  { this.giveawayArticleSvc.article = article; }
+  private subscription: Subscription;
+
 
   // Properties
   // ----------------------------------
-  public get reservations() {
-    if (!this.reservationsResponse || !this.reservationsResponse.data || !this.reservationsResponse.data.docs ) {
-      return [];
-    }
-    return this.reservationsResponse.data.docs;
-  }
+
 
   // Methods
   // ----------------------------------
   constructor(
-    private location: Location,
+    public giveawayArticleSvc: GiveawayArticleService,
+    private navService: NavigationService,
     private route: ActivatedRoute,
-    private articleBackend: ArticleBackendService,
-    private pagerService: PagerService,
-    private userService: UserService) { }
+    private dialogService: DialogService) { }
 
   ngOnInit() {
-    this.route.data.subscribe(
-      (data: Data) => { this.article = data['article'];
-        this.onSetFilter();
+    this.subscription = this.route.data.subscribe((data: Data) => {
+      this.article = data['article'];
+      this.giveawayArticleSvc.setReservationFilter();
     });
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   public onGoBack() {
-    this.location.back();
+    this.navService.goBack();
   }
 
   onSetPage(pageNumber: number) {
-    if (pageNumber < 1 || pageNumber > this.pager.totalPages) { return; }
-    this.reservationFilter.page = pageNumber;
-    this.getReservations();
-  }
-
-  getReservations() {
-    this.articleBackend.getReservations(this.reservationFilter).subscribe(httpResponseReservations => {
-      this.reservationsResponse = httpResponseReservations;
-      this.pager = this.pagerService.getPager(this.reservationsResponse.data.total, this.reservationFilter.page);
-    });
-  }
-
-  onSetFilter() {
-    this.reservationFilter.article = new ArticleRef(this.article._id);
-    this.reservationFilter.page = 1;
-    this.getReservations();
+    this.giveawayArticleSvc.setPage(pageNumber);
   }
 
   public onUpdateReservation(reservation: Reservation) {
-    this.articleBackend.updateReservation(reservation).subscribe(
-      (savedReservation: Reservation) => {
-        console.log('GiveawayArticleComponent.onUpdateReservation(): savedReservation: ', savedReservation) ;
-      }
-    );
+    this.giveawayArticleSvc.updateReservationAsync(reservation).then(() => {
+        this.dialogService.inform('Reservation aktualisieren', 'Die reservation wurde erfolgreich aktualisiert.');
+    });
   }
 
-  onDonateProvisionally(reservation: Reservation) {
-    let articleToUpdate = Object.assign({}, this.article);
-    articleToUpdate.donee = new UserRef(reservation.user._id);
-    articleToUpdate.status = new ArticleStatus(this.ArticleStatusType.handoverPending);
-    this.articleBackend.updateArticle(articleToUpdate).subscribe(
-      (updatedArticle: Article) => {
-        this.article = updatedArticle;
-      }
-    );
+  public onDonateProvisionally(reservation: Reservation) {
+    if (!this.isValidReservation(reservation)) { return; }
+    this.giveawayArticleSvc.donateAsync(reservation, ArticleStatusType.handoverPending).then(() => {
+      this.dialogService.inform('Artikel verschenken', 'Der Artikel wurde dem Benutzer provisorisch zugewiesen.');
+    });
   }
 
-  onDonateDefinitely(reservation: Reservation) {
-    let articleToUpdate = Object.assign({}, this.article);
-    articleToUpdate.donee = new UserRef(reservation.user._id);
-    articleToUpdate.status = new ArticleStatus(this.ArticleStatusType.donated);
-    articleToUpdate.donationDate = new Date();
-    this.articleBackend.updateArticle(articleToUpdate).subscribe(
-      (updatedArticle: Article) => {
-        this.article = updatedArticle;
-      }
-    );
+  public onDonateDefinitely(reservation: Reservation) {
+    if (!this.isValidReservation(reservation)) { return; }
+    this.giveawayArticleSvc.donateAsync(reservation, ArticleStatusType.donated).then(() => {
+      this.dialogService.inform('Artikel verschenken', 'Der Artikel wurde dem Benutzer definitiv zugewiesen.');
+    });
+  }
+
+  private isValidReservation(reservation: Reservation): boolean {
+    if (!reservation.user) {
+      this.dialogService.inform('Validierung', 'Die Reservation ist ungültig, da der Benutzer nicht existiert.');
+      return false;
+    }
   }
 
 }

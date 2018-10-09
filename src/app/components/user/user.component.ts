@@ -1,84 +1,76 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {DialogService} from '../shared/services/dialog.service';
-import {UserService} from './services/user.service';
-import {UserDataSource} from '../../core/data-sources.core';
-import {User, UserFilter} from '../../models/user.model';
-import {debounceTime, distinctUntilChanged, tap} from 'rxjs/internal/operators';
-import {fromEvent, merge} from 'rxjs/index';
-import {MatPaginator, MatSort, MatSortable, PageEvent, Sort} from '@angular/material';
-import {LocalDataService} from '../shared/services/local-data.service';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {User} from '../../models/user.model';
+import {debounceTime, distinctUntilChanged, takeWhile, tap} from 'rxjs/internal/operators';
+import {fromEvent} from 'rxjs/index';
+import {MatPaginator, MatSort, PageEvent} from '@angular/material';
 import {CanDeactivate} from '@angular/router';
-import {CanComponentDeactivate} from '../shared/services/can-deactivate-guard.service';
-import {PermissionItemComponent} from '../permission/permission-item/permission-item.component';
+import {CanComponentDeactivate} from '../permission/services/can-deactivate-guard.service';
 import {UserItemComponent} from './user-item/user-item.component';
+import {UserService} from './services/user.service';
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss']
 })
-export class UserComponent implements OnInit, AfterViewInit, CanDeactivate<CanComponentDeactivate> {
+export class UserComponent implements OnInit, OnDestroy, AfterViewInit, CanDeactivate<CanComponentDeactivate> {
 
-  public dataSource: UserDataSource;
-  public displayedColumns = ['_id', 'lastname', 'firstname', 'email'];
-  private sorting: MatSortable = { id: 'name', start: 'asc', disableClear: true };
-  public userFilter: UserFilter = new UserFilter();
-  private currentPageSize = this.userFilter.limit; // Enables detection of pageSize change. The paginator uses userFilter.
-  public selectedUser: User = new User();
-
+  // Constants, variables
+  // ----------------------------------
+  private isInUse: boolean;
   @ViewChild(UserItemComponent) private userItemComponent: UserItemComponent;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild('filterInput') filterInput: ElementRef;
+  @ViewChild('filterInput')     private filterInput: ElementRef;
+  @ViewChild(MatSort)           private sorter: MatSort;
+  @ViewChild(MatPaginator)      private paginator: MatPaginator;
 
+
+  // Methods
+  // ----------------------------------
   constructor(
-    public userService: UserService,
-    private localDataService: LocalDataService,
-    private dialogService: DialogService) {
+    public userService: UserService) {
+    this.isInUse = true;
+  }
+
+  public ngOnDestroy() {
+    this.isInUse = false;
   }
 
   public ngOnInit() {
-    this.dataSource = new UserDataSource(this.userService);
-    this.dataSource.loading$.subscribe(loading => {
-      if (!loading && this.dataSource.users && this.dataSource.users.length > 0) {
-        this.onDataLoaded();
-      }
-    });
-    this.loadFilter();
-    this.loadSorting();
-    this.loadPaging();
-    this.loadUsersPage();
+    this.applyFilter();
+    this.applySort();
+    this.applyPaging();
   }
 
   public ngAfterViewInit() {
     // Server-side search (observable from keyup event).
     fromEvent(this.filterInput.nativeElement, 'keyup').pipe(
+      takeWhile(_ => this.isInUse),
       debounceTime(150),
       distinctUntilChanged(),
       tap(() => {
         this.paginator.pageIndex = 0;
-        this.userFilter.filter = this.filterInput.nativeElement.value.trim();
-        this.saveFilter();
-        this.loadUsersPage();
+        this.userService.userFilter.filter = this.filterInput.nativeElement.value.trim();
+        this.userService.loadUsersPage();
       })
     ).subscribe();
 
     // On sort events load sorted data from backend.
-    this.sort.sortChange.subscribe(() => {
+    this.sorter.sortChange.pipe(takeWhile(_ => this.isInUse)).subscribe(() => {
       this.paginator.pageIndex = 0;
-      this.userFilter.page = 1;
-      this.updateSortInUserFilter(this.sort);
-      this.saveSorting();
-      this.loadUsersPage();
+      this.updateSort();
+      this.userService.loadUsersPage();
     });
 
     // On paginate events load a new page.
-    this.paginator.page.subscribe((pageEvent: PageEvent) => {
-      if (this.currentPageSize !== pageEvent.pageSize) {
-        this.currentPageSize = pageEvent.pageSize;
-        this.savePaging();
+    this.paginator.page.pipe(takeWhile(_ => this.isInUse)).subscribe((pageEvent: PageEvent) => {
+      if (this.userService.userFilter.limit !== pageEvent.pageSize) {
+        this.userService.userFilter.limit = pageEvent.pageSize;
+        this.userService.savePageSize();
       }
-      this.loadUsersPage();
+      if (this.userService.userFilter.pageIndex !== pageEvent.pageIndex) {
+        this.userService.userFilter.pageIndex = pageEvent.pageIndex;
+      }
+      this.userService.loadUsersPage();
     });
   }
 
@@ -87,95 +79,39 @@ export class UserComponent implements OnInit, AfterViewInit, CanDeactivate<CanCo
   }
 
   public onRowClicked(user: User) {
-    this.selectedUser = user;
-    this.saveSelectedUser();
+    this.userService.selectedUser = user;
   }
 
-  private onDataLoaded() {
-    this.loadSelectedUser();
+  public onDataChanged(editingUserId: string) {
+    if (this.userService.selectedUser._id !== editingUserId) { // New user object created.
+      this.userService.selectedUser = new User(); // Dummy object, reference will always be updated after loading new data.
+      this.userService.selectedUser._id = editingUserId;
+    }
+    this.userService.loadUsersPage();
   }
 
-  public onDataChanged() {
-    this.loadUsersPage();
+  private applyFilter() {
+    this.filterInput.nativeElement.value = this.userService.userFilter.filter;
   }
 
-  private loadUsersPage() {
-    this.userFilter.page = this.paginator.pageIndex + 1;
-    this.userFilter.limit = this.paginator.pageSize;
-    this.dataSource.loadUsers(this.userFilter);
-  }
-
-  private updateSortInUserFilter(sort: Sort) {
-    if (!sort.active) {
-      this.userFilter.sort = '';
+  private updateSort() {
+    this.userService.setSort(this.sorter);
+    if (!this.sorter.active) {
+      this.userService.userFilter.sort = '';
     } else {
-      this.setSortField(sort.active, sort.direction === 'asc');
-    }
-    this.saveFilter();
-  }
-
-  private setSortField(sortField: string, isSortDirAscending: boolean) {
-    this.userFilter.sort = isSortDirAscending ? sortField : '-' + sortField;
-  }
-
-
-
-  // Manage settings.
-
-  private saveSelectedUser() {
-    this.localDataService.saveObject('UsersComponent.selectedUser', this.selectedUser);
-  }
-
-  private loadSelectedUser() {
-    let loadedUser: User = this.localDataService.loadObject('UsersComponent.selectedUser');
-    if (loadedUser) {
-      let userRef = this.dataSource.users.find(u => u._id === loadedUser._id);
-      if (userRef) {
-        this.selectedUser = userRef;
-        return;
-      }
-    }
-    this.selectedUser = new User();
-  }
-
-  private saveSorting() {
-    let sorting: MatSortable = { id: this.sort.active, start: this.sort.direction as 'asc' | 'desc', disableClear: true };
-    this.localDataService.saveObject('UsersComponent.sorting', sorting);
-  }
-
-  private loadSorting() {
-    let loadedSorting: MatSortable = this.localDataService.loadObject('UsersComponent.sorting');
-    if (loadedSorting) {
-      this.sorting = loadedSorting;
-      this.sort.sort(this.sorting);
-      this.updateSortInUserFilter(this.sort);
-    }
-  }
-  private saveFilter() {
-    this.localDataService.saveObject('UsersComponent.userFilter.filter', this.userFilter.filter);
-  }
-
-  private loadFilter() {
-    let loadedUserFilter: string = this.localDataService.loadObject('UsersComponent.userFilter.filter');
-    if (loadedUserFilter) {
-      this.userFilter.filter = loadedUserFilter;
-      this.filterInput.nativeElement.value = loadedUserFilter;
-    } else {
-      this.userFilter.filter = '';
-      this.filterInput.nativeElement.value = '';
+      this.userService.userFilter.sort = this.sorter.direction === 'asc' ? this.sorter.active : '-' + this.sorter.active;
     }
   }
 
-  private savePaging() {
-    this.localDataService.saveObject('UsersComponent.currentPageSize', this.currentPageSize);
+  private applySort() {
+    if (this.userService.sort) {
+      this.sorter.sort(this.userService.sort);
+    }
   }
 
-  private loadPaging() {
-    let loadedPageSize: number = this.localDataService.loadObject('UsersComponent.currentPageSize');
-    if (loadedPageSize) {
-      this.paginator._changePageSize(loadedPageSize);
-      this.currentPageSize = loadedPageSize;
-    }
+  private applyPaging() {
+    this.paginator._changePageSize(this.userService.userFilter.limit);
+    this.paginator._pageIndex = this.userService.userFilter.pageIndex;
   }
 
 }

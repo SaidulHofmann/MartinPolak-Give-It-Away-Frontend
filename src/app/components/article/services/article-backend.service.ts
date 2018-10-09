@@ -6,9 +6,9 @@ import {Article, ArticleFilter, HttpResponseArticles} from '../../../models/arti
 import {Observable, of} from 'rxjs/index';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {MessageService} from '../../shared/services/message.service';
-import {UserService} from '../../user/services/user.service';
 import {DialogService} from '../../shared/services/dialog.service';
 import {NavigationService} from '../../shared/services/navigation.service';
+import {AuthService} from '../../permission/services/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class ArticleBackendService {
@@ -22,20 +22,20 @@ export class ArticleBackendService {
   constructor(
     private http: HttpClient,
     private navService: NavigationService,
-    private userService: UserService,
+    private authService: AuthService,
     private messageService: MessageService,
     private dialogService: DialogService) {
   }
 
   private getHttpHeaders(): HttpHeaders {
-    if (!this.userService.getCurrentUser()) {
+    if (!this.authService.getCurrentUser()) {
       // this.showAccessDeniedMessage();
       throw new Error('Benutzer nicht angemeldet oder Anmeldung abgelaufen.');
-      // this.userService.logout();
+      // this.authService.logout();
     } else {
       return new HttpHeaders({
         'Content-Type': 'application/json',
-        authorization: 'Bearer ' + this.userService.getCurrentUser().authToken
+        authorization: 'Bearer ' + this.authService.getCurrentUser().authToken
       });
     }
   }

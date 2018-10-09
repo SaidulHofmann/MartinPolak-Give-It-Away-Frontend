@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {UserService} from '../../user/services/user.service';
 import {NavigationEnd, Router, RouterEvent} from '@angular/router';
+import {AuthService} from '../../permission/services/auth.service';
 
 
 @Component({
@@ -12,7 +12,7 @@ export class AppNavbarComponent implements OnInit {
   public currentUrl: string = '';
 
   constructor(
-    public userService: UserService,
+    public authService: AuthService,
     private router: Router) {
   }
 
@@ -25,7 +25,7 @@ export class AppNavbarComponent implements OnInit {
   }
 
   public logout() {
-    this.userService.logout();
+    this.authService.logout();
   }
 
   private showCurrentRoutes() {

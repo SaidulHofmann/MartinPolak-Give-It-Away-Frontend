@@ -6,7 +6,7 @@
 
   <div class="card-body">
 
-    <div class="card border-dark mb-5" *ngFor="let reservation of reservations">
+    <div class="card border-dark mb-5" *ngFor="let reservation of giveawayArticleSvc.reservations">
 
       <div class="card-header">
         <h5 class="card-title">Reservation von: {{ reservation.user ? reservation.user.fullname: 'Benutzer nicht vorhanden' }}</h5>
@@ -42,7 +42,7 @@
     </div>
 
   </div>
-  <app-pager [pager]="pager" (setPage)="onSetPage($event)"></app-pager>
+  <app-pager [pager]="giveawayArticleSvc.pager" (setPage)="onSetPage($event)"></app-pager>
 
 </div>
 <!--Daignostics-->

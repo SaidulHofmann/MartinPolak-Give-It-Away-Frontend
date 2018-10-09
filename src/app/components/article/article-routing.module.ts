@@ -6,8 +6,8 @@ import {ArticleResolver} from './services/article-resolver.service';
 import {CreateArticleComponent} from './create-article/create-article.component';
 import {EditArticleComponent} from './edit-article/edit-article.component';
 import {GiveawayArticleComponent} from './giveaway-article/giveaway-article.component';
-import {AuthGuard} from '../user/services/auth-guard.service';
-import {CanDeactivateGuard} from '../shared/services/can-deactivate-guard.service';
+import {AuthGuard} from '../permission/services/auth-guard.service';
+import {CanDeactivateGuard} from '../permission/services/can-deactivate-guard.service';
 
 const routes: Routes = [
   { path: 'articles',

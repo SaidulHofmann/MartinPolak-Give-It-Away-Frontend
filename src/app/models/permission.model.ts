@@ -55,9 +55,11 @@ export class PermissionFilter {
 
   filter: string = '';
   sort: string = '';
-  page: number = 1;
-  limit: number = 10;
+  pageIndex: number = 0;
+  limit: number = 5;
   total: number = 1;
   pageSizeOptions = [3, 5, 10, 20];
+
+  public get page(): number { return this.pageIndex + 1; }
 }
 

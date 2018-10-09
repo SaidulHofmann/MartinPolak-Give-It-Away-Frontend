@@ -1,9 +1,10 @@
 import {HttpResponseUsers, User, UserFilter} from '../models/user.model';
 import {CollectionViewer, DataSource} from '@angular/cdk/collections';
 import {BehaviorSubject, Observable, of} from 'rxjs/index';
-import {UserService} from '../components/user/services/user.service';
 import {catchError, finalize, map} from 'rxjs/internal/operators';
 import {HttpResponsePermissions, Permission, PermissionFilter} from '../models/permission.model';
+import {UserBackendService} from '../components/user/services/user-backend.service';
+import {PermissionBackendService} from '../components/permission/services/permission-backend.service';
 
 /**
  * Data source for User entities that can be used for crud operations with Angular datatable.
@@ -18,7 +19,7 @@ export class UserDataSource implements DataSource<User> {
     return this.usersSubject.getValue();
   }
 
-  constructor(private userService: UserService) {
+  constructor(private userBackendSvc: UserBackendService) {
   }
 
   public connect(collectionViewer: CollectionViewer): Observable<User[]> {
@@ -32,7 +33,7 @@ export class UserDataSource implements DataSource<User> {
 
   public loadUsers(userFilter: UserFilter) {
     this.loadingSubject.next(true);
-    this.userService.getUsersByFilter(userFilter).pipe(
+    this.userBackendSvc.getUsersByFilter(userFilter).pipe(
       map((res: HttpResponseUsers) => {
         userFilter.total = res.data.total;
         return res.data.docs;
@@ -57,7 +58,7 @@ export class PermissionDataSource implements DataSource<Permission> {
     return this.permissionsSubject.getValue();
   }
 
-  constructor(private userService: UserService) {
+  constructor(private permissionBackendSvc: PermissionBackendService) {
   }
 
   public connect(collectionViewer: CollectionViewer): Observable<Permission[]> {
@@ -71,7 +72,7 @@ export class PermissionDataSource implements DataSource<Permission> {
 
   public loadPermissions(permissionFilter: PermissionFilter) {
     this.loadingSubject.next(true);
-    this.userService.getPermissionsByFilter(permissionFilter).pipe(
+    this.permissionBackendSvc.getPermissionsByFilter(permissionFilter).pipe(
       map((res: HttpResponsePermissions) => {
         permissionFilter.total = res.data.total;
         return res.data.docs;

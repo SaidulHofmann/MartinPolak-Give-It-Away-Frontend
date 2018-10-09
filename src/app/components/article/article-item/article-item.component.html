@@ -2,9 +2,9 @@
 
   <div class="mt-1">
     <span *ngIf="editMode !== EditModeType.Read">
-      <button type="button" [disabled]="editMode === EditModeType.Read || !userService.canCreateOwnArticle()" (click)="onAddArticle()" class="btn btn-sm btn-success mr-3 mb-2" title="Artikel hinzufügen">
+      <button type="button" [disabled]="editMode === EditModeType.Read || !authService.canCreateOwnArticle()" (click)="onAddArticle()" class="btn btn-sm btn-success mr-3 mb-2" title="Artikel hinzufügen">
          <i class="fa fa-plus mx-3 mx-sm-1"></i>Neu</button>&nbsp;
-      <button type="button" [disabled]="editMode === EditModeType.Read || !userService.canSaveArticle() || !articleForm.valid || articleForm.pristine" (click)="onSaveArticle()" class="btn btn-sm btn-dark mr-3 mb-2" title="Speichern">
+      <button type="button" [disabled]="editMode === EditModeType.Read || !authService.canSaveArticle() || !articleForm.valid || articleForm.pristine" (click)="onSaveArticle()" class="btn btn-sm btn-dark mr-3 mb-2" title="Speichern">
         <i class="fa fa-floppy-o mx-sm-1" aria-hidden="true"></i>Speichern</button>&nbsp;
       <button type="button" [disabled]="editMode === EditModeType.Read || articleForm.pristine" class="btn btn-sm btn-secondary mr-3 mb-2" (click)="onRevert()" title="Änderungen verwerfen">
         <i class="fa fa-times mx-sm-1" aria-hidden="true"></i>Verwerfen</button>

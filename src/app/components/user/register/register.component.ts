@@ -2,14 +2,13 @@
 // Creates an user account
 
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import {UserService} from '../services/user.service';
 import {User} from '../../../models/user.model';
 import {ErrorCodeType} from '../../../core/enums.core';
-import {ErrorDetails, HttpErrorArgs} from '../../../core/types.core';
+import {ErrorDetails} from '../../../core/types.core';
 import {DialogService} from '../../shared/services/dialog.service';
 import {getCustomOrDefaultError} from '../../../core/errors.core';
 import {NavigationService} from '../../shared/services/navigation.service';
+import {AuthService} from '../../permission/services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -20,15 +19,15 @@ export class RegisterComponent implements OnInit {
   user: User = new User();
 
   constructor(
+    private authService: AuthService,
     public navService: NavigationService,
-    private userService: UserService,
     private dialogService: DialogService) { }
 
   ngOnInit() {
   }
 
   onSubmit() {
-    this.userService.registerUser(this.user).subscribe(
+    this.authService.createUser(this.user).subscribe(
       (savedUser: User) => {
         this.dialogService.inform('Registrieren',
           'Das Benutzerkonto wurde erfolgreich erstellt.');

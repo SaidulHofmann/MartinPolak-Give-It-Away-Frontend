@@ -1,16 +1,16 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {DialogResultType, EditModeType, ErrorCodeType} from '../../../core/enums.core';
 import {User} from '../../../models/user.model';
 import {getCustomOrDefaultError} from '../../../core/errors.core';
-import {UserService} from '../services/user.service';
 import {DialogService} from '../../shared/services/dialog.service';
 import {NgForm} from '@angular/forms';
-import {Permission, PermissionRef} from '../../../models/permission.model';
-import {LocalDataService} from '../../shared/services/local-data.service';
 import {ErrorDetails} from '../../../core/types.core';
 import {CanDeactivate} from '@angular/router';
-import {CanComponentDeactivate} from '../../shared/services/can-deactivate-guard.service';
+import {CanComponentDeactivate} from '../../permission/services/can-deactivate-guard.service';
 import {Observable} from 'rxjs/index';
+import {AuthService} from '../../permission/services/auth.service';
+import {UserItemService} from '../services/user-item.service';
+
 
 @Component({
   selector: 'app-user-item',
@@ -22,52 +22,44 @@ export class UserItemComponent implements OnInit, CanDeactivate<CanComponentDeac
   // Constants, variables and properties.
   // --------------------------------------------------------------------------
   public EditModeType = EditModeType;
-  public editMode: EditModeType = EditModeType.Read;
-  public permissions: Permission[] = [];
-  private defaultPermission: Permission = null;
+
+  public set editMode(editMode: EditModeType) {
+    this.userItemSvc.editMode = editMode;
+  }
+  public get editMode() { return this.userItemSvc.editMode; }
 
   @ViewChild('userForm') private userForm: NgForm;
   @ViewChild('firstname', { read: ElementRef }) private firstnameInput: ElementRef;
 
-  private _editingUser: User = new User();
   public set editingUser(user: User) {
-    this._editingUser = user;
-    this.setPermissionFromSelector(this._editingUser);
+    this.userItemSvc.editingUser = user;
   }
-  public get editingUser() { return this._editingUser; }
+  public get editingUser() { return this.userItemSvc.editingUser; }
 
-  private _selectedUser = new User();
   @Input()
   public set selectedUser(user: User) {
-    this._selectedUser = user;
-    this.editingUser = Object.assign({}, user);
-    this.editMode = EditModeType.Read;
+    this.userItemSvc.selectedUser = user;
   }
-  public get selectedUser() { return this._selectedUser; }
+  public get selectedUser() { return this.userItemSvc.selectedUser; }
 
   @Output()
-  public dataChanged = new EventEmitter<void>();
+  public get dataChanged() { return this.userItemSvc.dataChanged; }
 
 
   // Methods.
   // --------------------------------------------------------------------------
 
   constructor(
-    public userService: UserService,
-    private dialogService: DialogService,
-    private localDataService: LocalDataService) {
-
-    localDataService.getPermissionListAsync(true).then(permissions => {
-      this.permissions = permissions;
-      this.defaultPermission = this.permissions.find(permission => permission.name === 'Standardbenutzer');
-    });
+    public authService: AuthService,
+    public userItemSvc: UserItemService,
+    private dialogService: DialogService) {
   }
 
   public ngOnInit() {
   }
 
   private onDataChanged() {
-    this.dataChanged.emit();
+    this.userItemSvc.onDataChanged();
   }
 
   public canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
@@ -80,32 +72,20 @@ export class UserItemComponent implements OnInit, CanDeactivate<CanComponentDeac
     });
   }
 
-  private setPermissionFromSelector(user: User) {
-    if (!user) { return; }
-    if (!user.permission || !user.permission._id) {
-      user.permission = this.defaultPermission ;
-    } else  {
-      user.permission = this.permissions.find(permission => permission._id === user.permission._id);
-    }
-  }
-
   // User events.
   // --------------------------------------------------------------------------
 
   public onEditUser() {
-    this.editMode = this.EditModeType.Update;
+    this.userItemSvc.editUser();
     this.firstnameInput.nativeElement.focus();
   }
 
   public onAddUser() {
-    this.editMode = EditModeType.Create;
-    this.editingUser = new User();
-    this.setPermissionFromSelector(this.editingUser);
+    this.userItemSvc.addUser();
     this.firstnameInput.nativeElement.focus();
   }
 
   public onDeleteUser() {
-    this.editMode = EditModeType.Delete;
     this.deleteUser();
   }
 
@@ -119,32 +99,18 @@ export class UserItemComponent implements OnInit, CanDeactivate<CanComponentDeac
   }
 
   public onCancelEdit() {
-    this.editingUser = Object.assign({}, this.selectedUser);
+    this.userItemSvc.cancelEdit();
     this.userForm.form.markAsPristine();
-    this.editMode = this.EditModeType.Read;
-  }
-
-
-  // CRUD operations.
-  // --------------------------------------------------------------------------
-
-  private prepareUserToSave() {
-    this.editingUser.firstname = this.editingUser.firstname.trim();
-    this.editingUser.lastname = this.editingUser.lastname.trim();
-    this.editingUser.email = this.editingUser.email.trim();
   }
 
   private createUser() {
-    this.prepareUserToSave();
-    this.userService.registerUser(this.editingUser).subscribe(
-      (savedUser: User) => {
-        this.editingUser = savedUser;
-        this.editMode = this.EditModeType.Update;
-        this.onDataChanged();
+    this.userItemSvc.createUserAsync()
+      .then((savedUser: User) => {
+        this.userForm.form.markAsPristine();
         this.dialogService.inform('Benutzerkonto erstellen',
           'Das Benutzerkonto wurde erfolgreich erstellt.');
-      },
-      (errorResponse) => {
+      })
+      .catch((errorResponse) => {
         let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
         if (errorDetails && errorDetails.name === ErrorCodeType.DuplicateKeyError) {
           this.dialogService.inform('Benutzerkonto erstellen',
@@ -152,22 +118,19 @@ export class UserItemComponent implements OnInit, CanDeactivate<CanComponentDeac
           this.editingUser.email = '';
         } else {
           this.dialogService.inform('Benutzerkonto erstellen',
-            errorDetails.message || 'Bei der Erstellung des Benutzerkontos ist ein Fehler aufgetreten.');
+            'Bei der Erstellung des Benutzerkontos ist ein Fehler aufgetreten: ' + errorDetails.message);
         }
-      }
-    );
+      });
   }
 
   private updateUser() {
-    this.prepareUserToSave();
-    this.userService.updateUser(this.editingUser).subscribe(
-      (savedUser: User) => {
-        this.editingUser = savedUser;
-        this.onDataChanged();
+    this.userItemSvc.updateUserAsync()
+      .then((savedUser: User) => {
+        this.userForm.form.markAsPristine();
         this.dialogService.inform('Benutzerkonto aktualisieren',
           'Das Benutzerkonto wurde erfolgreich aktualisiert.');
-      },
-      (errorResponse) => {
+      })
+      .catch((errorResponse) => {
         let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
         if (errorDetails && errorDetails.name === ErrorCodeType.DuplicateKeyError) {
           this.dialogService.inform('Benutzerkonto aktualisieren',
@@ -175,37 +138,30 @@ export class UserItemComponent implements OnInit, CanDeactivate<CanComponentDeac
           this.editingUser.email = '';
         } else {
           this.dialogService.inform('Benutzerkonto aktualisieren',
-            errorDetails.message || 'Bei der Aktualisierung des Benutzerkontos ist ein Fehler aufgetreten.');
+            'Bei der Aktualisierung des Benutzerkontos ist ein Fehler aufgetreten: ' + errorDetails.message);
         }
-      }
-    );
+      });
   }
 
   private deleteUser() {
     let userName = this.selectedUser.fullname;
-    this.dialogService.askForDelete('Benutzerkonto entfernen', `Soll der Benutzer '${userName}' wirklich entfernt werden ?`)
-      .subscribe((dialogResult: DialogResultType) => {
+    let dialogResultObs = this.dialogService.askForDelete('Benutzerkonto entfernen',
+      `Soll der Benutzer '${userName}' wirklich entfernt werden ?`);
 
-        if (dialogResult === DialogResultType.Delete) {
-          this.userService.deleteUser(this.selectedUser).subscribe(
-            (user: User) => {
-              this.onDataChanged();
-              this.editingUser = new User();
-              this.userForm.form.markAsPristine();
-              this.editMode = this.EditModeType.Read;
-              this.dialogService.inform('Benutzer entfernen', `Der Benutzer '${userName}' wurde erfolgreich entfernt.`);
-            },
-            (errorResponse) => {
-              let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
-              this.dialogService.inform('Benutzerkonto entfernen',
-                errorDetails.message || 'Beim Entfernen des Benutzerkontos ist ein Fehler aufgetreten.');
-            });
-
-        } else if (dialogResult === DialogResultType.Cancel) {
-          this.editMode = this.EditModeType.Read;
-        }
-      });
-    this.editMode = this.EditModeType.Read;
+    dialogResultObs.subscribe((dialogResult: DialogResultType) => {
+      if (dialogResult !== DialogResultType.Delete) { return; }
+      this.userItemSvc.deleteUserAsync()
+        .then((user: User) => {
+          this.userForm.form.markAsPristine();
+          this.dialogService.inform('Benutzer entfernen',
+            `Der Benutzer '${userName}' wurde erfolgreich entfernt.`);
+        })
+        .catch((errorResponse) => {
+          let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
+          this.dialogService.inform('Benutzerkonto entfernen',
+            'Beim Entfernen des Benutzerkontos ist ein Fehler aufgetreten: ' + errorDetails.message);
+        });
+    });
   }
 
 }

@@ -1,12 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {DialogResultType, EditModeType} from '../../../core/enums.core';
-import {UserService} from '../../user/services/user.service';
+import {EditModeType} from '../../../core/enums.core';
 import {NavigationService} from '../../shared/services/navigation.service';
 import {ArticleItemComponent} from '../article-item/article-item.component';
-import {CanComponentDeactivate} from '../../shared/services/can-deactivate-guard.service';
+import {CanComponentDeactivate} from '../../permission/services/can-deactivate-guard.service';
 import {CanDeactivate} from '@angular/router';
-import {Observable} from 'rxjs/index';
-import {DialogService} from '../../shared/services/dialog.service';
+
 
 @Component({
   selector: 'app-create-article',
@@ -19,8 +17,6 @@ export class CreateArticleComponent implements OnInit, CanDeactivate<CanComponen
 
   constructor(
     public navService: NavigationService,
-    public userService: UserService,
-    private dialogService: DialogService
   ) { }
 
   public ngOnInit() {

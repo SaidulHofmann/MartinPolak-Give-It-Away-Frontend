@@ -4,7 +4,7 @@ import {EditModeType} from '../../../core/enums.core';
 import {Article} from '../../../models/index.model';
 import {ArticleService} from '../services/article.service';
 import {ArticleBackendService} from '../services/article-backend.service';
-import {CanComponentDeactivate} from '../../shared/services/can-deactivate-guard.service';
+import {CanComponentDeactivate} from '../../permission/services/can-deactivate-guard.service';
 import {ArticleItemComponent} from '../article-item/article-item.component';
 
 

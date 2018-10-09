@@ -85,7 +85,7 @@
     <mat-spinner></mat-spinner>
   </div>
 
-  <div class="card-body" *ngIf="userService.getCurrentUser()">
+  <div class="card-body" *ngIf="authService.getCurrentUser()">
     <div class="card" *ngFor="let article of articleService.articles$ | async">
       <div class="card-body">
         <div class="row">
@@ -95,9 +95,9 @@
             <img class="card-img" style="height: 250px; width: auto; cursor: pointer" src="{{ article.pictureOverview }}" alt="Bild"  (click)="navService.gotoArticleDetailsPage(article._id)">
             <div>
               <button class="btn btn-info btn-sm mt-2 mr-2" (click)="navService.gotoArticleDetailsPage(article._id)"><i class="fa fa-info-circle fa-lg mr-2"></i>Details</button>
-              <button *ngIf="article.status._id !== ArticleStatusType.donated && (article.publisher._id === userService.getCurrentUser()._id || userService.canDonateOtherArticle()) "
+              <button *ngIf="article.status._id !== ArticleStatusType.donated && (article.publisher._id === authService.getCurrentUser()._id || authService.canDonateOtherArticle()) "
                   class="btn btn-info btn-sm mt-2 mr-2" (click)="navService.gotoArticleGiveAwayPage(article._id)"><i class="fa fa-gift fa-lg mr-2"></i>Verschenken</button>
-              <button *ngIf="article.publisher._id === userService.getCurrentUser()._id || userService.canUpdateOtherArticle()"
+              <button *ngIf="article.publisher._id === authService.getCurrentUser()._id || authService.canUpdateOtherArticle()"
                   class="btn btn-outline-secondary btn-sm mt-2" (click)="navService.gotoArticleEditPage(article._id)"><i class="fa fa-edit fa-lg mr-2"></i>Bearbeiten</button>
             </div>
           </div>

@@ -1,19 +1,14 @@
 import {ErrorHandler, Injectable, Injector, NgZone} from '@angular/core';
 import {DialogService} from './dialog.service';
 import {HttpErrorResponse} from '@angular/common/http';
-import {DialogConfig, ErrorDetails, HttpErrorArgs} from '../../../core/types.core';
 import {getCustomOrDefaultError, getErrorText} from '../../../core/errors.core';
-import {UserService} from '../../user/services/user.service';
-import {Observable} from 'rxjs/index';
-import {MatDialog, MatDialogRef} from '@angular/material';
-import {DialogResultType} from '../../../core/enums.core';
-import {DialogComponent} from '../../../components/shared/dialog/dialog.component';
+import {AuthService} from '../../permission/services/auth.service';
 
 @Injectable()
 export class ErrorHandlerService extends ErrorHandler {
 
   private dialogService: DialogService;
-  private userService: UserService;
+  private authService: AuthService;
 
   constructor(
     private injector: Injector) {
@@ -23,7 +18,7 @@ export class ErrorHandlerService extends ErrorHandler {
   public handleError(error: any): void {
     try {
         if (this.dialogService == null) { this.dialogService = this.injector.get(DialogService); }
-        if (this.userService == null) { this.userService = this.injector.get(UserService); }
+        if (this.authService == null) { this.authService = this.injector.get(AuthService); }
         let zone: NgZone = this.injector.get(NgZone);
         zone.run(() => {
 
@@ -67,7 +62,7 @@ export class ErrorHandlerService extends ErrorHandler {
     this.dialogService.inform('Berechtigungs-Fehler',
       'Der Zugriff auf Server Ressourcen ist nicht möglich weil der Benutzer ' +
       'nicht angemeldet oder die Anmeldung abgelaufen ist. \n' + getErrorText(error));
-    this.userService.logout();
+    this.authService.logout();
   }
 
 }

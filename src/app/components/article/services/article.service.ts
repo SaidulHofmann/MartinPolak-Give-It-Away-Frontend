@@ -1,15 +1,12 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {Article, ArticleFilter, HttpResponseArticles} from '../../../models/article.model';
-import { Observable ,  of, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
-import {UserService} from '../../user/services/user.service';
+import { Observable } from 'rxjs';
 import {IdNamePair, Pager} from '../../../core/types.core';
 import {ArticleCategory, ArticleStatus} from '../../../models/index.model';
 import {PagerService} from '../../shared/services/pager.service';
 import {LocalDataService} from '../../shared/services/local-data.service';
 import {BehaviorSubject} from 'rxjs/index';
 import {ArticleBackendService} from './article-backend.service';
-import {Permission} from '../../../models/permission.model';
 
 
 @Injectable({ providedIn: 'root' })
@@ -40,7 +37,6 @@ export class ArticleService implements OnDestroy {
   // ----------------------------------
   constructor(
     private articleBackend: ArticleBackendService,
-    private userService: UserService,
     private pagerService: PagerService,
     private localDataService: LocalDataService) {
 
@@ -48,6 +44,7 @@ export class ArticleService implements OnDestroy {
   }
 
   ngOnDestroy() {
+    this.articlesSubject.complete();
     this.loadingSubject.complete();
   }
 

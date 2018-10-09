@@ -1,14 +1,13 @@
 import {Injectable} from '@angular/core';
 import {CanActivate} from '@angular/router';
-import {UserService} from './user.service';
 import {Observable} from 'rxjs/internal/Observable';
+import {AuthService} from './auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
-  constructor( private userService: UserService) {}
+  constructor( private authService: AuthService) {}
 
   canActivate(): Observable<boolean> | Promise<boolean> | boolean {
-    console.log(`@AuthGuard.CanActivate(): ${this.userService.isAuthenticated}.`);
-    return this.userService.isAuthenticated;
+    return this.authService.isAuthenticated;
   }
 }
