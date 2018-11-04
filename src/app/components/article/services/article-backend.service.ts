@@ -9,15 +9,16 @@ import {MessageService} from '../../shared/services/message.service';
 import {DialogService} from '../../shared/services/dialog.service';
 import {NavigationService} from '../../shared/services/navigation.service';
 import {AuthService} from '../../permission/services/auth.service';
+import {apiUrl} from '../../../core/globals.core';
 
 @Injectable({ providedIn: 'root' })
 export class ArticleBackendService {
 
   // Constants, variables
   // ----------------------------------
-  private api_url = 'http://localhost:3003';
-  private articlesUrl = `${this.api_url}/api/articles`;
-  private reservationsUrl = `${this.api_url}/api/reservations`;
+  private apiUrl = apiUrl;
+  private articlesUrl = `${this.apiUrl}/api/articles`;
+  private reservationsUrl = `${this.apiUrl}/api/reservations`;
 
   constructor(
     private http: HttpClient,
@@ -29,9 +30,7 @@ export class ArticleBackendService {
 
   private getHttpHeaders(): HttpHeaders {
     if (!this.authService.getCurrentUser()) {
-      // this.showAccessDeniedMessage();
       throw new Error('Benutzer nicht angemeldet oder Anmeldung abgelaufen.');
-      // this.authService.logout();
     } else {
       return new HttpHeaders({
         'Content-Type': 'application/json',
@@ -147,11 +146,6 @@ export class ArticleBackendService {
     this.messageService.add('Artikel Service: ' + message);
   }
 
-  private showAccessDeniedMessage() {
-    this.dialogService.inform('Server Anforderung',
-      'Der Zugriff auf Server Ressourcen ist nicht möglich weil der Benutzer nicht angemeldet ist.');
-  }
-
   /**
    * Handle Http operation that failed.
    * Let the app continue.
@@ -160,7 +154,7 @@ export class ArticleBackendService {
    */
   private handleError<T> (operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-      console.error('ArticleService.handleError(): ', error);
+      console.error('ArticleBackendService.handleError(): ', error);
       this.log(`${operation} failed: ${error.message}`);
 
       this.dialogService.inform('Fehlermeldung', getErrorText(error, operation));

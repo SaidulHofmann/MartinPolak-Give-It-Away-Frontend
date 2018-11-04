@@ -20,7 +20,7 @@
               </ol>
               <div class="carousel-inner">
                 <div *ngFor="let picture of article.pictures; let i = index" class="carousel-item"  [ngClass]="{'active': i===0}">
-                  <img class="d-block w-100" [src]="picture" alt="Slide">
+                  <img class="d-block w-100" src="{{imageUrlBackend}}/{{article._id}}/{{picture}}" alt="Slide">
                 </div>
               </div>
               <a class="carousel-control-prev" href="#picture-carousel" role="button" data-slide="prev">

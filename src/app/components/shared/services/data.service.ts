@@ -6,21 +6,24 @@ import {HttpClient} from '@angular/common/http';
 import {IdNamePair} from '../../../core/types.core';
 import {ArticleCategory, ArticleStatus} from '../../../models/index.model';
 import {AuthService} from '../../permission/services/auth.service';
+import {apiUrl} from '../../../core/globals.core';
+
 
 
 /**
- * Provides lists, cached data and support for persistency.
+ * Provides lists, cached data and support for persistency and data handling.
  */
 @Injectable({ providedIn: 'root' })
-export class LocalDataService {
+export class DataService {
   // tslint:disable:member-ordering
 
   // Constants, variables, properties
   // ----------------------------------
-  private _api_url = 'http://localhost:3003';
-  private _permissionUrl = `${this._api_url}/api/permissions`;
-  private _articleCategoryUrl = `${this._api_url}/api/articleCategories`;
-  private _articleStatusUrl = `${this._api_url}/api/articleStatus`;
+  private apiUrl = apiUrl;
+  private permissionUrl = `${this.apiUrl}/api/permissions`;
+  private articleCategoryUrl = `${this.apiUrl}/api/articleCategories`;
+  private articleStatusUrl = `${this.apiUrl}/api/articleStatus`;
+  private articleImageUrl = `${this.apiUrl}/api/files/articleImages`;
 
 
   // Methods
@@ -81,7 +84,7 @@ export class LocalDataService {
 
   private async loadPermissionListAsync(): Promise<void> {
     this._permissionList = await this.http.get<Permission[]>(
-      this._permissionUrl, { headers: this.authService.getHttpHeaders() })
+      this.permissionUrl, { headers: this.authService.getHttpHeaders() })
       .pipe( map((res) => res['data']['docs'] as Permission[])).toPromise();
   }
 
@@ -107,7 +110,7 @@ export class LocalDataService {
 
   private async loadArticleCategoryListAsync(): Promise<ArticleCategory[]> {
     return this.http.get<ArticleCategory[]>(
-      this._articleCategoryUrl, { headers: this.authService.getHttpHeaders() })
+      this.articleCategoryUrl, { headers: this.authService.getHttpHeaders() })
       .pipe( map((res) => res['data']['docs'] as ArticleCategory[])).toPromise();
   }
 
@@ -132,7 +135,7 @@ export class LocalDataService {
   }
 
   private async loadArticleStatusListAsync(): Promise<ArticleStatus[]> {
-    return this.http.get<ArticleStatus[]>( this._articleStatusUrl, { headers: this.authService.getHttpHeaders() })
+    return this.http.get<ArticleStatus[]>( this.articleStatusUrl, { headers: this.authService.getHttpHeaders() })
       .pipe( map((res) => res['data']['docs'] as ArticleStatus[])).toPromise();
   }
 
@@ -152,5 +155,26 @@ export class LocalDataService {
     return this._articleSortOptions;
   }
 
+
+  // Image upload / delete.
+  // -----------------------------------------------
+
+  public async uploadArticleImage(file: File, articleId: string): Promise<string> {
+    if (!file) { throw new RangeError(`Die Datei '${file}' ist ungültig.`); }
+    if (!articleId) { throw new RangeError(`Die Artikel Id '${articleId}' ist ungültig.`); }
+
+    const formData: FormData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('articleId', articleId);
+
+    return this.http.post(this.articleImageUrl, formData, { headers: this.authService.getHttpFormHeaders() })
+      .pipe(map(res  => res['data'])).toPromise();
+  }
+
+  public async deleteArticleImage(fileName: string, articleId: string): Promise<string> {
+    let url = `${this.articleImageUrl}/${articleId}/${fileName}`;
+    return this.http.delete(url, { headers: this.authService.getHttpHeaders() })
+      .pipe(map(res => res['data'])).toPromise();
+  }
 
 }

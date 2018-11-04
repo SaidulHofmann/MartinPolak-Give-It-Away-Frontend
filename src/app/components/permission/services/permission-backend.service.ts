@@ -7,12 +7,13 @@ import {HttpResponsePermissions, Permission, PermissionFilter} from '../../../mo
 import {HttpErrorArgs} from '../../../core/types.core';
 import {ErrorCodeType} from '../../../core/enums.core';
 import {AuthService} from '../../permission/services/auth.service';
+import {apiUrl} from '../../../core/globals.core';
 
 
 @Injectable({ providedIn: 'root' })
 export class PermissionBackendService {
-  private api_url = 'http://localhost:3003';
-  private permissionsUrl = `${this.api_url}/api/permissions`;
+  private apiUrl = apiUrl;
+  private permissionsUrl = `${this.apiUrl}/api/permissions`;
 
   private get httpHeaders() { return this.authService.getHttpHeaders(); }
 

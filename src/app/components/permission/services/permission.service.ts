@@ -3,7 +3,7 @@ import {PermissionDataSource} from '../../../core/data-sources.core';
 import {MatSort, MatSortable} from '@angular/material';
 import {Permission, PermissionFilter} from '../../../models/permission.model';
 import {Subscription} from '../../../../../node_modules/rxjs';
-import {LocalDataService} from '../../shared/services/local-data.service';
+import {DataService} from '../../shared/services/data.service';
 import {PermissionBackendService} from './permission-backend.service';
 
 
@@ -29,7 +29,7 @@ export class PermissionService implements OnDestroy {
   // ----------------------------------
   constructor(
     private permissionBackendSvc: PermissionBackendService,
-    private localDataService: LocalDataService) {
+    private localDataService: DataService) {
     this.init();
   }
 

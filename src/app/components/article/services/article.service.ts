@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import {IdNamePair, Pager} from '../../../core/types.core';
 import {ArticleCategory, ArticleStatus} from '../../../models/index.model';
 import {PagerService} from '../../shared/services/pager.service';
-import {LocalDataService} from '../../shared/services/local-data.service';
+import {DataService} from '../../shared/services/data.service';
 import {BehaviorSubject} from 'rxjs/index';
 import {ArticleBackendService} from './article-backend.service';
 
@@ -38,7 +38,7 @@ export class ArticleService implements OnDestroy {
   constructor(
     private articleBackend: ArticleBackendService,
     private pagerService: PagerService,
-    private localDataService: LocalDataService) {
+    private localDataService: DataService) {
 
     Promise.resolve(this.initAsync());
   }

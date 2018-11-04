@@ -70,48 +70,44 @@
         </div>
 
         <div class="form-group row">
-          <label for="inputPictureOverview" class="col-sm-3 col-form-label">Artikel Übersichts Bild (URL):</label>
-          <div class="col-sm-9">
-            <input id="inputPictureOverview" type="text" class="form-control form-control-sm" formControlName="pictureOverview"
-                   placeholder="Bild Url (Link) für die Artikel-Übersichts Seite.">
-          </div>
-        </div>
-
-        <div formArrayName="pictures" class="row">
-          <label class="col-sm-3 col-form-label">Weitere Bilder (URL)</label>
-          <div class="col-sm-9">
-            <div class="form-group" *ngFor="let picture of pictures.controls; let i = index">
-              <div class="input-group">
-                <input type="url" required class="form-control form-control-sm" [formControlName]="i">
-                <button type="button" class="btn btn-sm pull-right" title="Eintrag löschen" (click)="onDeletePicture(i)"><i class="fa fa-trash fa-lg"></i></button>
-              </div>
-            </div>
-            <button type="button" class="btn btn-sm btn-info mb-3" (click)="onAddPicture()">
-              <i class="fa fa-image mr-3"></i>Bild Url hinzufügen
-            </button>
-          </div>
-        </div>
-
-        <div formArrayName="videos" class="row">
-          <label class="col-sm-3 col-form-label">Videos (URL)</label>
-          <div class="col-sm-9">
-            <div class="form-group" *ngFor="let video of videos.controls; let i = index">
-              <div class="input-group">
-                <input type="url" required class="form-control form-control-sm" [formControlName]="i">
-                <button type="button" class="btn btn-sm pull-right" title="Eintrag löschen" (click)="onDeleteVideo(i)"><i class="fa fa-trash fa-lg"></i></button>
-              </div>
-            </div>
-            <button type="button" class="btn btn-sm btn-info mb-3" (click)="onAddVideo()">
-              <i class="fa fa-video-camera mr-3"></i>Video Url hinzufügen
-            </button>
-          </div>
-        </div>
-
-        <div class="form-group row">
           <label for="inputTags" class="col-sm-3 col-form-label">Suchbegriffe:</label>
           <div class="col-sm-9">
             <input id="inputTags" type="text" class="form-control form-control-sm" formControlName="tags">
           </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="inputPictureOverview" class="col-sm-3 col-form-label">Übersichts-Bild:</label>
+          <div class="col-sm-9">
+            <input #singleFileInput style="display: none" type="file" accept="image/*" (change)="onOverviewImageFileSelected(singleFileInput)">
+            <button type="button" class="btn btn-sm btn-info mb-3" (click)="singleFileInput.click()">
+              <i class="fa fa-image mr-3"></i>Übersichts-Bild hinzufügen</button>
+            <div class="input-group">
+              <input id="inputPictureOverview" readonly (mouseover)="onOverviewImageHover()" type="text" class="form-control form-control-sm" formControlName="pictureOverview">
+              <button type="button" class="btn btn-sm pull-right" title="Eintrag löschen" (click)="onDeleteOverviewImage()"><i class="fa fa-trash fa-lg"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div formArrayName="pictures" class="row">
+          <label class="col-sm-3 col-form-label">Weitere Bilder</label>
+          <div class="col-sm-9">
+            <input #multipleFileInput style="display: none" type="file" accept="image/*" (change)="onAdditionalImageFilesSelected(multipleFileInput)" multiple>
+            <button type="button" class="btn btn-sm btn-info mb-3" (click)="multipleFileInput.click()">
+              <i class="fa fa-image mr-3"></i>Weitere Bilder hinzufügen</button>
+
+            <div class="form-group" *ngFor="let picture of picturesFormArray.controls; let i = index">
+              <div class="input-group">
+                <input type="url" readonly (mouseover)="onAdditionalImageHover(i)" class="form-control form-control-sm" [formControlName]="i">
+                <button type="button" class="btn btn-sm pull-right" title="Eintrag löschen" (click)="onDeleteAdditionalImage(i)"><i class="fa fa-trash fa-lg"></i></button>
+              </div>
+            </div>
+            <br/>
+            <div *ngIf="hoveredImageUrl" >
+              <img class="card-img mb-3" style="height: 250px; width: auto;" src="{{hoveredImageUrl}}" alt="Bild"
+                   (error)="onImageError()">
+            </div>
+            </div>
         </div>
 
       </div>

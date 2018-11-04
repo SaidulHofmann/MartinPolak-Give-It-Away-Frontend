@@ -10,15 +10,16 @@ import {HttpErrorArgs} from '../../../core/types.core';
 import {ErrorCodeType} from '../../../core/enums.core';
 import {NavigationService} from '../../shared/services/navigation.service';
 import {AuthService} from '../../permission/services/auth.service';
+import {apiUrl} from '../../../core/globals.core';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserBackendService {
-  private api_url = 'http://localhost:3003';
-  private usersUrl = `${this.api_url}/api/users`;
-  private permissionsUrl = `${this.api_url}/api/permissions`;
+  private apiUrl = apiUrl;
+  private usersUrl = `${this.apiUrl}/api/users`;
+  private permissionsUrl = `${this.apiUrl}/api/permissions`;
 
   private get httpHeaders() { return this.authService.getHttpHeaders(); }
 

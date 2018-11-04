@@ -63,3 +63,40 @@ export class MatPaginatorIntlDe extends MatPaginatorIntl {
     return startIndex + 1 + ' - ' + endIndex + ' von ' + length;
   };
 }
+
+export class FileUploadReport {
+  public fileStatusMap: Map<string, FileProcessingStatus> = new Map<string, FileProcessingStatus>(); // fileName, uploadStatus
+  public hasFailedEntries: boolean = false;
+
+  public getReport() {
+    let report = `
+    Datei-Upload Status:`;
+    for (let [fileName, uploadStatus] of this.fileStatusMap) {
+      report += `
+      ${uploadStatus.processedSuccessfully ? '- Hinzugefügt:' : '- Fehler:'} ${fileName} ${uploadStatus.processedSuccessfully ? '' : uploadStatus.statusMessage}`;
+    }
+    return report;
+  }
+}
+
+export class FileDeleteReport {
+  public fileStatusMap: Map<string, FileProcessingStatus> = new Map<string, FileProcessingStatus>(); // fileName, deleteStatus
+  public hasFailedEntries: boolean = false;
+
+  public getReport() {
+    let report = `
+    Datei-Entfernungs Status:`;
+    for (let [fileName, deleteStatus] of this.fileStatusMap) {
+      report += `
+      ${deleteStatus.processedSuccessfully ? '- Entfernt:' : '- Fehler:'} ${fileName} ${deleteStatus.processedSuccessfully ? '' : deleteStatus.statusMessage}`;
+    }
+    return report;
+  }
+}
+
+export class FileProcessingStatus {
+  constructor(
+    public processedSuccessfully: boolean = true,
+    public statusMessage: string = 'OK.'
+  ) {}
+}

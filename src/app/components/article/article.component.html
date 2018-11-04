@@ -3,7 +3,7 @@
   <form class="form pt-3 pb-2 pr-2" #searchForm="ngForm" style="border: 3px solid #cfd8dc">
     <div class="form-row">
 
-      <div class="col-md-4 mr-2 mr-md-3">
+      <div class="col-md-4 mr-3">
         <div class="form-row">
           <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -18,7 +18,7 @@
         </div>
       </div>
 
-      <div class="col-md-4 mr-2 mr-md-3">
+      <div class="col-md-4 mr-3">
         <div class="form-row">
           <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -33,7 +33,7 @@
         </div>
       </div>
 
-      <div class="col-md-3 mr-2 mr-md-3">
+      <div class="col-md-3 mr-3">
         <div class="form-row">
           <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -48,7 +48,7 @@
         </div>
       </div>
 
-      <div class="col-md-4 mr-2 mr-md-3">
+      <div class="col-md-4 mr-3 mt-md-1">
         <div class="form-row">
 
           <div class="input-group mb-3">
@@ -61,21 +61,23 @@
         </div>
       </div>
 
-      <div class="col-md-4 form-check ml-md-3 mr-md-3 mb-3 mb-md-0">
-        <div class="form-row ml-3">
-          <input id="myPublicationsInput" type="checkbox" [(ngModel)]="articleService.articleFilter.selectPublishedArticles" name="myPublicationsInput" (change)="onPublicationReservationCBChange($event)" class="form-check-input form-control-sm">
+      <div class="col-md-4 form-check ml-md-3 mr-1 mr-md-0 mb-3 mb-md-0">
+        <div class="form-row ml-3 ml-md-0">
+          <input id="myPublicationsInput" type="checkbox"  class="form-check-input" [(ngModel)]="articleService.articleFilter.selectPublishedArticles" name="myPublicationsInput" (change)="onPublicationReservationCBChange($event)">
           <label for="myPublicationsInput" class="form-check-label">Meine Publikationen</label><br/>
         </div>
-        <div class="form-row ml-3">
-          <input id="myReservationsInput" type="checkbox" [(ngModel)]="articleService.articleFilter.selectReservedArticles" name="myReservationsInput" (change)="onPublicationReservationCBChange($event)" class="form-check-input form-control-sm">
+        <div class="form-row ml-3 ml-md-0">
+          <input id="myReservationsInput" type="checkbox" class="form-check-input" [(ngModel)]="articleService.articleFilter.selectReservedArticles" name="myReservationsInput" (change)="onPublicationReservationCBChange($event)">
           <label for="myReservationsInput" class="form-check-label">Meine Reservationen</label>
         </div>
       </div>
 
       <div class="col-md-3">
-        <button id="buttonFilter" type="button" class="btn btn-info btn-sm mt-md-2 mr-3" (click)="onSetFilter()"><i class="fa fa-filter mr-2"></i>Filtern</button>
-        <button id="buttonReset" type="button" class="btn btn-outline-info btn-sm mt-md-2" (click)="onResetFilter()">
-          <i class="fa fa-filter mr-2"><i class="fa fa-times"></i></i>Reset</button>
+        <div class="form-row">
+          <button id="buttonFilter" type="button" class="btn btn-info btn-sm mt-md-2 mr-3" (click)="onSetFilter()"><i class="fa fa-filter mr-2"></i>Filtern</button>
+          <button id="buttonReset" type="button" class="btn btn-outline-info btn-sm mt-md-2" (click)="onResetFilter()" title="Reset">
+            <i class="fa fa-filter mr-2"><i class="fa fa-times"></i></i><span class="d-md-none d-lg-inline-block">Reset</span></button>
+        </div>
       </div>
 
     </div>
@@ -92,7 +94,7 @@
 
           <div class="col-md-5">
             <h4 class="card-title">{{ article.name }}</h4>
-            <img class="card-img" style="height: 250px; width: auto; cursor: pointer" src="{{ article.pictureOverview }}" alt="Bild"  (click)="navService.gotoArticleDetailsPage(article._id)">
+            <img class="card-img" style="height: 250px; width: auto; cursor: pointer" src="{{ imageUrlBackend }}/{{ article._id }}/{{ article.pictureOverview }}" alt="Bild" (click)="navService.gotoArticleDetailsPage(article._id)">
             <div>
               <button class="btn btn-info btn-sm mt-2 mr-2" (click)="navService.gotoArticleDetailsPage(article._id)"><i class="fa fa-info-circle fa-lg mr-2"></i>Details</button>
               <button *ngIf="article.status._id !== ArticleStatusType.donated && (article.publisher._id === authService.getCurrentUser()._id || authService.canDonateOtherArticle()) "

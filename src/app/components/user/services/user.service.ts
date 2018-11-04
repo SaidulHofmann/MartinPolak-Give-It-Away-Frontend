@@ -2,7 +2,7 @@ import {Injectable, OnDestroy} from '@angular/core';
 import {UserDataSource} from '../../../core/data-sources.core';
 import {MatSort, MatSortable} from '@angular/material';
 import {User, UserFilter} from '../../../models/user.model';
-import {LocalDataService} from '../../shared/services/local-data.service';
+import {DataService} from '../../shared/services/data.service';
 import {UserBackendService} from './user-backend.service';
 import {Subscription} from '../../../../../node_modules/rxjs';
 
@@ -29,7 +29,7 @@ export class UserService implements OnDestroy {
   // ----------------------------------
   constructor(
     private userBackendSvc: UserBackendService,
-    private localDataService: LocalDataService) {
+    private localDataService: DataService) {
     this.init();
   }
 

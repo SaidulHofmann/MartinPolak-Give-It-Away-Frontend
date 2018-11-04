@@ -3,7 +3,7 @@ import {EditModeType} from '../../../core/enums.core';
 import {User} from '../../../models/user.model';
 import {UserBackendService} from './user-backend.service';
 import {Permission} from '../../../models/permission.model';
-import {LocalDataService} from '../../shared/services/local-data.service';
+import {DataService} from '../../shared/services/data.service';
 import {defaultPermissionName} from '../../../core/globals.core';
 import {AuthService} from '../../permission/services/auth.service';
 
@@ -42,7 +42,7 @@ export class UserItemService implements OnDestroy {
   constructor(
     private authService: AuthService,
     private userBackendSvc: UserBackendService,
-    private localDataService: LocalDataService) {
+    private localDataService: DataService) {
 
     this.localDataService.getPermissionListAsync(true).then(permissions => {
       this.permissions = permissions;

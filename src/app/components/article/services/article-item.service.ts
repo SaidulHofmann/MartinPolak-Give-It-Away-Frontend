@@ -2,11 +2,14 @@ import {Injectable, OnDestroy} from '@angular/core';
 import {Article} from '../../../models/article.model';
 import {ArticleCategory, ArticleStatus, UserRef} from '../../../models/index.model';
 import {PagerService} from '../../shared/services/pager.service';
-import {LocalDataService} from '../../shared/services/local-data.service';
+import {DataService} from '../../shared/services/data.service';
 import {ArticleBackendService} from './article-backend.service';
 import {EditModeType} from '../../../core/enums.core';
 import {ArticleService} from './article.service';
 import {AuthService} from '../../permission/services/auth.service';
+import {ErrorDetails, FileUploadReport, FileDeleteReport, FileProcessingStatus} from '../../../core/types.core';
+import {getCustomOrDefaultError} from '../../../core/errors.core';
+import {imageUrlBackend, imageUrlFrontend, defaultImageName} from '../../../core/globals.core';
 
 
 @Injectable({ providedIn: 'root' })
@@ -19,10 +22,18 @@ export class ArticleItemService implements OnDestroy {
   public articleStatus: ArticleStatus[] = [];
   public article: Article = new Article();
 
+  public imagesToUploadMap: Map<string, File> = new Map<string, File>(); // <fileName, imageFile>.
+  public imagesToDeleteSet: Set<string> = new Set<string>(); // fileName.
+  public hoveredImage: string = '';
+  public hoveredImageUrl: string = '';
+  public defaultImage: string = defaultImageName;
+  public defaultImageUrl: string = `${imageUrlFrontend}/${defaultImageName}`;
+
 
   // Properties
   // ----------------------------------
-
+  public get hasFilesToUpload(): boolean { return this.imagesToUploadMap && this.imagesToUploadMap.size > 0; }
+  public get hasFilesToDelete(): boolean { return this.imagesToDeleteSet && this.imagesToDeleteSet.size > 0; }
 
   // Methods
   // ----------------------------------
@@ -31,7 +42,7 @@ export class ArticleItemService implements OnDestroy {
     private articleBackend: ArticleBackendService,
     private articleService: ArticleService,
     private pagerService: PagerService,
-    private localDataService: LocalDataService) {
+    private dataService: DataService) {
 
     this.resetArticle();
 
@@ -41,13 +52,17 @@ export class ArticleItemService implements OnDestroy {
   }
 
   public async loadSelectionListsAsync(): Promise<void> {
-    this.articleCategories = await this.localDataService.getArticleCategoryListAsync();
-    this.articleStatus = await this.localDataService.getArticleStatusListAsync();
+    this.articleCategories = await this.dataService.getArticleCategoryListAsync();
+    this.articleStatus = await this.dataService.getArticleStatusListAsync();
   }
 
   public resetArticle() {
     this.article = new Article();
     this.article.publisher = this.authService.getCurrentUser() as UserRef;
+    this.hoveredImage = '';
+    this.hoveredImageUrl = '';
+    this.imagesToUploadMap.clear();
+    this.imagesToDeleteSet.clear();
   }
 
   /**
@@ -110,6 +125,58 @@ export class ArticleItemService implements OnDestroy {
     } catch (ex) {
       throw ex;
     }
+  }
+
+  public async uploadImages(): Promise<FileUploadReport> {
+    console.log('@ArticleItemService.uploadImages()');
+    let uploadReport: FileUploadReport = new FileUploadReport();
+    let articleId = this.article._id;
+
+    if (!this.imagesToUploadMap || this.imagesToUploadMap.size === 0) {
+      throw Error('Es wurden keine Bilder für den Upload selektiert.');
+    }
+    if (!articleId) {
+      throw Error('Für den Upload von Bildern zu einem Artikel muss der Artikel erstellt und die Artikel-Id bekannt sein.');
+    }
+
+    for (let [fileName, file] of this.imagesToUploadMap) {
+      try {
+        await this.dataService.uploadArticleImage(file, articleId);
+        uploadReport.fileStatusMap.set(fileName, new FileProcessingStatus(true));
+      } catch (errorResponse) {
+        let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
+        uploadReport.fileStatusMap.set(fileName, new FileProcessingStatus(false, errorDetails.message));
+        uploadReport.hasFailedEntries = true;
+      }
+    }
+    this.imagesToUploadMap.clear();
+    return uploadReport;
+  }
+
+  public async deleteImages(): Promise<FileDeleteReport> {
+    console.log('@ArticleItemService.deleteImages()');
+    let deleteReport: FileDeleteReport = new FileDeleteReport();
+    let articleId = this.article._id;
+
+    if (!this.imagesToDeleteSet || this.imagesToDeleteSet.size === 0) {
+      throw Error('Es wurden keine Bilder zum Entfernen ausgewählt.');
+    }
+    if (!articleId) {
+      throw Error('Für das Entfernen von Bildern zu einem Artikel muss der Artikel erstellt und die Artikel-Id bekannt sein.');
+    }
+
+    for (let fileName of this.imagesToDeleteSet) {
+      try {
+        await this.dataService.deleteArticleImage(fileName, articleId);
+        deleteReport.fileStatusMap.set(fileName, new FileProcessingStatus(true));
+      } catch (errorResponse) {
+        let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
+        deleteReport.fileStatusMap.set(fileName, new FileProcessingStatus(false, errorDetails.message));
+        deleteReport.hasFailedEntries = true;
+      }
+    }
+    this.imagesToDeleteSet.clear();
+    return deleteReport;
   }
 
 }

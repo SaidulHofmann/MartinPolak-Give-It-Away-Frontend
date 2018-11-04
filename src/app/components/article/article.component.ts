@@ -5,6 +5,7 @@ import {ArticleService} from './services/article.service';
 import {ArticleStatusType} from '../../core/enums.core';
 import {NavigationService} from '../shared/services/navigation.service';
 import {AuthService} from '../permission/services/auth.service';
+import {imageUrlBackend} from '../../core/globals.core';
 
 
 @Component({
@@ -15,6 +16,7 @@ import {AuthService} from '../permission/services/auth.service';
 export class ArticleComponent implements OnInit {
 
   public ArticleStatusType = ArticleStatusType;
+  public imageUrlBackend: string = imageUrlBackend;
 
   constructor(
     public authService: AuthService,

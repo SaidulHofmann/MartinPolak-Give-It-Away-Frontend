@@ -5,14 +5,15 @@ import {MessageService} from '../../shared/services/message.service';
 import {NavigationService} from '../../shared/services/navigation.service';
 import {map, tap} from 'rxjs/operators';
 import {Observable} from '../../../../../node_modules/rxjs';
+import {apiUrl} from '../../../core/globals.core';
 
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private httpOptions = { headers: new HttpHeaders({ 'Content-Type': 'application/json'}) };
-  private api_url = 'http://localhost:3003';
-  private registerUrl = `${this.api_url}/register`;
-  private loginUrl = `${this.api_url}/login`;
+  private apiUrl = apiUrl;
+  private registerUrl = `${this.apiUrl}/register`;
+  private loginUrl = `${this.apiUrl}/login`;
   private currentUser: User = null;
 
   constructor(
@@ -35,6 +36,17 @@ export class AuthService {
     } else {
       return new HttpHeaders({
         'Content-Type': 'application/json',
+        authorization: 'Bearer ' + this.getCurrentUser().authToken
+      });
+    }
+  }
+
+  public getHttpFormHeaders(): HttpHeaders {
+    if (!this.getCurrentUser()) {
+      throw Error('Der Zugriff auf Server Ressourcen ist nicht möglich weil der Benutzer nicht angemeldet ist.');
+      this.navService.gotoLoginPage();
+    } else {
+      return new HttpHeaders({
         authorization: 'Bearer ' + this.getCurrentUser().authToken
       });
     }

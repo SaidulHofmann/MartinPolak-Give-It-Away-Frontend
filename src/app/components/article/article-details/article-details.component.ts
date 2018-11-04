@@ -1,14 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Data} from '@angular/router';
-import {Location} from '@angular/common';
 import {Article} from '../../../models/article.model';
-import {Reservation} from '../../../models/reservation.model';
-import {User, UserRef} from '../../../models/user.model';
+import {User} from '../../../models/user.model';
 import {Subscription} from 'rxjs/internal/Subscription';
-import {ArticleBackendService} from '../services/article-backend.service';
 import {AuthService} from '../../permission/services/auth.service';
 import {ArticleDetailsService} from '../services/article-details.service';
 import {NavigationService} from '../../shared/services/navigation.service';
+import {imageUrlBackend} from '../../../core/globals.core';
 
 
 @Component({
@@ -17,6 +15,7 @@ import {NavigationService} from '../../shared/services/navigation.service';
   styleUrls: ['./article-details.component.scss']
 })
 export class ArticleDetailsComponent implements OnInit, OnDestroy {
+  public imageUrlBackend: string = imageUrlBackend;
   private subscriptions: Subscription = new Subscription();
   public get article(): Article { return this.articleDetailsSvc.article; }
   public set article(article: Article) { this.articleDetailsSvc.article = article; }
