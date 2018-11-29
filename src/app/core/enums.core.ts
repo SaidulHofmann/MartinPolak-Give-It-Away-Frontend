@@ -27,3 +27,40 @@ export enum DialogResultType {
   Cancel = 'Cancel'
 }
 
+export enum ArticleDonationStatus {
+  ApplicantArticleAvailable = 'ApplicantArticleAvailable',
+  ApplicantArticleHandoverPendingIsDonee = 'ApplicantArticleHandoverPendingIsDonee',
+  ApplicantArticleHandoverPendingIsNotDonee = 'ApplicantArticleHandoverPendingIsNotDonee',
+  ApplicantArticleDonatedIsDonee = 'ApplicantArticleDonatedIsDonee',
+  ApplicantArticleDonatedIsNotDonee = 'ApplicantArticleDonatedIsNotDonee',
+
+  NonApplicantArticleAvailable = 'NonApplicantArticleAvailable',
+  NonApplicantArticleHandoverPending = 'NonApplicantArticleHandoverPending',
+  NonApplicantArticleDonated = 'NonApplicantArticleDonated',
+
+  PublisherArticleAvailable = 'PublisherArticleAvailable',
+  PublisherArticleHandoverPending = 'PublisherArticleHandoverPending',
+  PublisherArticleDonated = 'PublisherArticleDonated',
+}
+
+export enum PermissionType {
+  articleOwnCreate = 'articleOwnCreate',
+  articleOwnUpdate = 'articleOwnUpdate',
+  articleOwnDelete = 'articleOwnDelete',
+  articleOwnDonate = 'articleOwnDonate',
+
+  articleOtherUpdate = 'articleOtherUpdate',
+  articleOtherDelete = 'articleOtherDelete',
+  articleOtherDonate = 'articleOtherDonate',
+
+  userCreate = 'userCreate',
+  userRead = 'userRead',
+  userUpdate = 'userUpdate',
+  userDelete = 'userDelete',
+
+  permissionCreate = 'permissionCreate',
+  permissionRead = 'permissionRead',
+  permissionUpdate = 'permissionUpdate',
+  permissionDelete = 'permissionDelete'
+}
+

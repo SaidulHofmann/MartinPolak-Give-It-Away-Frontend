@@ -18,8 +18,9 @@ export class GiveawayArticleComponent implements OnInit, OnDestroy {
   // Constants, variables
   // ----------------------------------
   public ArticleStatusType = ArticleStatusType;
-  public get article(): Article         { return this.giveawayArticleSvc.article; }
-  public set article(article: Article)  { this.giveawayArticleSvc.article = article; }
+  public get article(): Article             { return this.giveawayArticleSvc.article; }
+  public set article(article: Article)      { this.giveawayArticleSvc.article = article; }
+  public get reservations(): Reservation[]  { return this.giveawayArticleSvc.reservations; }
   private subscription: Subscription;
 
 
@@ -63,14 +64,14 @@ export class GiveawayArticleComponent implements OnInit, OnDestroy {
   public onDonateProvisionally(reservation: Reservation) {
     if (!this.isValidReservation(reservation)) { return; }
     this.giveawayArticleSvc.donateAsync(reservation, ArticleStatusType.handoverPending).then(() => {
-      this.dialogService.inform('Artikel verschenken', 'Der Artikel wurde dem Benutzer provisorisch zugewiesen.');
+      this.dialogService.inform('Artikel verschenken', 'Der Artikel wurde dem Benutzer zugewiesen.');
     });
   }
 
   public onDonateDefinitely(reservation: Reservation) {
     if (!this.isValidReservation(reservation)) { return; }
     this.giveawayArticleSvc.donateAsync(reservation, ArticleStatusType.donated).then(() => {
-      this.dialogService.inform('Artikel verschenken', 'Der Artikel wurde dem Benutzer definitiv zugewiesen.');
+      this.dialogService.inform('Artikel verschenken', 'Die Schenkung wurde abgeschlossen.');
     });
   }
 
@@ -78,6 +79,8 @@ export class GiveawayArticleComponent implements OnInit, OnDestroy {
     if (!reservation.user) {
       this.dialogService.inform('Validierung', 'Die Reservation ist ungültig, da der Benutzer nicht existiert.');
       return false;
+    } else {
+      return true;
     }
   }
 

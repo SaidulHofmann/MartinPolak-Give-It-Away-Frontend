@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import {HeaderComponent} from './header/header.component';
 import {MessagesComponent} from './messages/messages.component';
 import {AppNavbarComponent} from './app-navbar/app-navbar.component';
 import {PagerComponent} from './pager/pager.component';
 import {FooterComponent} from './footer/footer.component';
 import {DialogComponent} from './dialog/dialog.component';
-import {AppRoutingModule} from '../../app-routing.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MaterialModule} from '../../material.module';
 import {HttpClientModule} from '@angular/common/http';
@@ -18,10 +18,10 @@ import {BrowserModule} from '@angular/platform-browser';
     CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
+    RouterModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    AppRoutingModule,
     MaterialModule
   ],
   declarations: [
@@ -39,7 +39,6 @@ import {BrowserModule} from '@angular/platform-browser';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    AppRoutingModule,
     MaterialModule,
 
     AppNavbarComponent,

@@ -29,12 +29,12 @@ export class ArticleBackendService {
   }
 
   private getHttpHeaders(): HttpHeaders {
-    if (!this.authService.getCurrentUser()) {
+    if (!this.authService.currentUser) {
       throw new Error('Benutzer nicht angemeldet oder Anmeldung abgelaufen.');
     } else {
       return new HttpHeaders({
         'Content-Type': 'application/json',
-        authorization: 'Bearer ' + this.authService.getCurrentUser().authToken
+        authorization: 'Bearer ' + this.authService.currentUser.authToken
       });
     }
   }

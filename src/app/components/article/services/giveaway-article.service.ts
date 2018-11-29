@@ -7,6 +7,7 @@ import {Pager} from '../../../core/types.core';
 import {PagerService} from '../../shared/services/pager.service';
 import {ArticleStatus} from '../../../models/articleStatus.model';
 import {ArticleStatusType} from '../../../core/enums.core';
+import {ArticleService} from './article.service';
 
 @Injectable({ providedIn: 'root' })
 export class GiveawayArticleService implements OnDestroy {
@@ -15,6 +16,7 @@ export class GiveawayArticleService implements OnDestroy {
   // ----------------------------------
   public article: Article;
   public reservations: Reservation[] = [];
+  public reservationsOriginal: Reservation[] = [];
   public reservationFilter: ReservationFilter = new ReservationFilter();
   public pager = new Pager();
 
@@ -26,6 +28,7 @@ export class GiveawayArticleService implements OnDestroy {
   // ----------------------------------
   constructor(
     private articleBackend: ArticleBackendService,
+    private articleService: ArticleService,
     private pagerService: PagerService) {
   }
 
@@ -41,6 +44,7 @@ export class GiveawayArticleService implements OnDestroy {
   private loadReservations() {
     this.articleBackend.getReservations(this.reservationFilter).subscribe((httpResponseReservations: HttpResponseReservations) => {
       this.reservations = httpResponseReservations.data.docs;
+      this.reservationsOriginal = this.reservations.map(res => Object.assign({}, res));
       this.pager = this.pagerService.getPager(httpResponseReservations.data.total, this.reservationFilter.page);
     });
   }
@@ -53,7 +57,7 @@ export class GiveawayArticleService implements OnDestroy {
 
   public async updateReservationAsync(reservation: Reservation): Promise<Reservation> {
     try {
-      return await this.articleBackend.updateReservation(reservation).toPromise();
+      return this.articleBackend.updateReservation(reservation).toPromise();
     } catch (ex) {
       throw ex;
     }
@@ -61,13 +65,29 @@ export class GiveawayArticleService implements OnDestroy {
 
   public async donateAsync(reservation: Reservation, donationType: ArticleStatusType): Promise<void> {
     try {
+      if (this.isModifiedReservation(reservation)) {
+        await this.updateReservationAsync(reservation);
+      }
+
       let articleToUpdate: Article = Object.assign({}, this.article);
+      articleToUpdate.donationDate = new Date();
       articleToUpdate.donee = new UserRef(reservation.user._id);
       articleToUpdate.status = new ArticleStatus(donationType);
+
       let updatedArticle: Article = await this.articleBackend.updateArticle(articleToUpdate).toPromise();
       this.article = updatedArticle;
+      this.articleService.loadArticlesAsync();
     } catch (ex) {
       throw ex;
     }
+  }
+
+  public isModifiedReservation(reservation: Reservation): boolean {
+    let reservationOriginal = this.reservationsOriginal.find(resOriginal =>  resOriginal._id === reservation._id);
+    if (!reservationOriginal) {
+      console.error('Die Reservation existiert nicht im reservationsOriginal Array.');
+      return true;
+    }
+    return reservation.commentPublisher !== reservationOriginal.commentPublisher;
   }
 }

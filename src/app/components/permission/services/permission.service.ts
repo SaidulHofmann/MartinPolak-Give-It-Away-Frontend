@@ -50,7 +50,15 @@ export class PermissionService implements OnDestroy {
   }
 
   private onDataLoaded() {
-    this.setSelectedPermissionRef();
+    if (this.dataSource.permissions) {
+      if (!this.selectedPermission._id) {
+        this.selectedPermission = this.dataSource.permissions[0];
+      } else {
+        this.setSelectedPermissionRef();
+      }
+    } else {
+      this.selectedPermission = new Permission();
+    }
   }
 
   public loadPermissionsPage() {

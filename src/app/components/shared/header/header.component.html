@@ -1,1 +1,10 @@
-<h1><span class="gia-header">Give it Away</span> - <small>Verschenken Sie, was Sie nicht mehr brauchen !</small></h1>
+<div class="card">
+  <img class="card-img" src="{{imageUrlFrontend + '/tv-thrown-out-window1.jpg'}}" alt="Bild">
+  <div class="card-img-overlay">
+    <p *ngIf="authService.currentUser" class="text-right text-info">{{authService.currentUser.fullname + ' | ' + authService.currentUser.permission.name}}</p>
+    <h1>
+      <div class="gia-header">Give it Away</div>
+      <small class="d-none d-sm-inline-block">Verschenken Sie, was Sie nicht mehr brauchen !</small>
+    </h1>
+  </div>
+</div>

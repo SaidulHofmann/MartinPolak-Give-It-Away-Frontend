@@ -1,6 +1,6 @@
 <h3 class="card-title">Artikel Übersicht</h3>
 <div class="card">
-  <form class="form pt-3 pb-2 pr-2" #searchForm="ngForm" style="border: 3px solid #cfd8dc">
+  <form class="form pt-3 pb-2 pr-2" #searchForm="ngForm">
     <div class="form-row">
 
       <div class="col-md-4 mr-3">
@@ -9,7 +9,8 @@
             <div class="input-group-prepend">
               <span class="input-group-text" id="articleCategory"><i class="fa fa-snowflake-o" aria-hidden="true"></i></span>
             </div>
-            <select class="form-control form-control-sm" [(ngModel)]="articleService.articleFilter.category" name="articleCategory" (change)="onSetFilter()" aria-label="articleCategory" aria-describedby="articleCategory">
+            <select name="articleCategory" [(ngModel)]="articleService.articleFilter.category" (change)="onSetFilter()"
+                    class="form-control form-control-sm" aria-label="articleCategory" aria-describedby="articleCategory">
               <option *ngFor="let categoryEntry of articleService.articleCategories"
                       [ngValue]="categoryEntry">{{categoryEntry.name}}
               </option>
@@ -24,7 +25,8 @@
             <div class="input-group-prepend">
               <span class="input-group-text" id="articleStatusEntry"><i class="fa fa-bar-chart" aria-hidden="true"></i></span>
             </div>
-          <select class="form-control form-control-sm" [(ngModel)]="articleService.articleFilter.status" name="articleStatusEntry"  (change)="onSetFilter()"  aria-label="articleStatusEntry" aria-describedby="articleStatusEntry">
+          <select name="articleStatusEntry" [(ngModel)]="articleService.articleFilter.status" (change)="onSetFilter()"
+                  class="form-control form-control-sm" aria-label="articleStatusEntry" aria-describedby="articleStatusEntry">
             <option *ngFor="let statusEntry of articleService.articleStatus"
                     [ngValue]="statusEntry">{{statusEntry.name}}
             </option>
@@ -39,7 +41,8 @@
             <div class="input-group-prepend">
               <span class="input-group-text" id="sortOption"><i class="fa fa-sort-alpha-asc mr-1" aria-hidden="true"></i></span>
             </div>
-            <select class="form-control form-control-sm" [(ngModel)]="articleService.articleFilter.sort" name="sortOption"  (change)="onSetFilter()" aria-label="sortOption" aria-describedby="sortOption">
+            <select name="sortOption" [(ngModel)]="articleService.articleFilter.sort" (change)="onSetFilter()"
+                    class="form-control form-control-sm" aria-label="sortOption" aria-describedby="sortOption">
               <option *ngFor="let sortOptionEntry of articleService.sortOptions"
                       [ngValue]="sortOptionEntry">{{sortOptionEntry.name}}
               </option>
@@ -55,7 +58,8 @@
             <div class="input-group-prepend">
               <span class="input-group-text" id="inputTags"><i class="fa fa-search mr-1" aria-hidden="true"></i></span>
             </div>
-            <input type="text" class="form-control form-control-sm" [(ngModel)]="articleService.articleFilter.tags" name="tags" (keyup.enter)="onSetFilter()" aria-label="inputTags" aria-describedby="inputTags">
+            <input name="tags" type="text" [(ngModel)]="articleService.articleFilter.tags" (keyup.enter)="onSetFilter()"
+                   placeholder="Suchbegriffe eingeben" class="form-control form-control-sm" aria-label="inputTags" aria-describedby="inputTags">
           </div>
 
         </div>
@@ -63,11 +67,13 @@
 
       <div class="col-md-4 form-check ml-md-3 mr-1 mr-md-0 mb-3 mb-md-0">
         <div class="form-row ml-3 ml-md-0">
-          <input id="myPublicationsInput" type="checkbox"  class="form-check-input" [(ngModel)]="articleService.articleFilter.selectPublishedArticles" name="myPublicationsInput" (change)="onPublicationReservationCBChange($event)">
+          <input id="myPublicationsInput" type="checkbox" [(ngModel)]="articleService.articleFilter.selectPublishedArticles"
+                 class="form-check-input" name="myPublicationsInput" (change)="onPublicationReservationCBChange($event)">
           <label for="myPublicationsInput" class="form-check-label">Meine Publikationen</label><br/>
         </div>
         <div class="form-row ml-3 ml-md-0">
-          <input id="myReservationsInput" type="checkbox" class="form-check-input" [(ngModel)]="articleService.articleFilter.selectReservedArticles" name="myReservationsInput" (change)="onPublicationReservationCBChange($event)">
+          <input id="myReservationsInput" type="checkbox" [(ngModel)]="articleService.articleFilter.selectReservedArticles"
+                 class="form-check-input" name="myReservationsInput" (change)="onPublicationReservationCBChange($event)">
           <label for="myReservationsInput" class="form-check-label">Meine Reservationen</label>
         </div>
       </div>
@@ -87,26 +93,40 @@
     <mat-spinner></mat-spinner>
   </div>
 
-  <div class="card-body" *ngIf="authService.getCurrentUser()">
+  <div class="card-body" *ngIf="authService.currentUser">
     <div class="card" *ngFor="let article of articleService.articles$ | async">
       <div class="card-body">
         <div class="row">
 
-          <div class="col-md-5">
+          <div class="col-md-5 mb-3 mb-md-0">
             <h4 class="card-title">{{ article.name }}</h4>
-            <img class="card-img" style="height: 250px; width: auto; cursor: pointer" src="{{ imageUrlBackend }}/{{ article._id }}/{{ article.pictureOverview }}" alt="Bild" (click)="navService.gotoArticleDetailsPage(article._id)">
-            <div>
+            <div *ngIf="article.overviewImage; else noImageTemplate">
+              <img class="img-fluid cursor-pointer"
+                   src="{{ imageUrlBackend }}/{{ article._id }}/{{ article.overviewImage }}" alt="Bild" (click)="navService.gotoArticleDetailsPage(article._id)">
+            </div>
+            <ng-template #noImageTemplate>
+              <img class="img-fluid cursor-pointer"
+                   src="{{ imageUrlFrontend }}/{{ defaultImage }}" alt="Bild" (click)="navService.gotoArticleDetailsPage(article._id)">
+            </ng-template>
+              <div>
               <button class="btn btn-info btn-sm mt-2 mr-2" (click)="navService.gotoArticleDetailsPage(article._id)"><i class="fa fa-info-circle fa-lg mr-2"></i>Details</button>
-              <button *ngIf="article.status._id !== ArticleStatusType.donated && (article.publisher._id === authService.getCurrentUser()._id || authService.canDonateOtherArticle()) "
+              <button *ngIf="article.status._id !== ArticleStatusType.donated && (authService.isPublisher(article) || authService.canDonateOtherArticle) "
                   class="btn btn-info btn-sm mt-2 mr-2" (click)="navService.gotoArticleGiveAwayPage(article._id)"><i class="fa fa-gift fa-lg mr-2"></i>Verschenken</button>
-              <button *ngIf="article.publisher._id === authService.getCurrentUser()._id || authService.canUpdateOtherArticle()"
+              <button *ngIf="authService.canUpdateArticle(article) || authService.canDeleteArticle(article)"
                   class="btn btn-outline-secondary btn-sm mt-2" (click)="navService.gotoArticleEditPage(article._id)"><i class="fa fa-edit fa-lg mr-2"></i>Bearbeiten</button>
             </div>
           </div>
 
           <div class="col-md-7">
             <div class="form-group">
-              <div class="card-title">{{ article.status ? article.status.name : '' }}</div>
+              <div class="card-title">
+                <span [ngClass]="{
+                  'alert': !(article.status._id === ArticleStatusType.available),
+                  'alert-warning': article.status._id === ArticleStatusType.handoverPending,
+                  'alert-info': article.status._id === ArticleStatusType.donated
+                  }">{{ article.status ? article.status.name + ' ' : '' }}</span>
+                <span *ngIf="article.userHasReservation && article.status._id !== ArticleStatusType.donated" class="alert alert-success">Reserviert</span>
+              </div>
               <div class="card-title">{{ article.description }}</div>
             </div>
           </div>

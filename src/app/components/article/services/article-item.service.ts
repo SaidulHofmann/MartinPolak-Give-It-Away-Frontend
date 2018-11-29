@@ -7,9 +7,10 @@ import {ArticleBackendService} from './article-backend.service';
 import {EditModeType} from '../../../core/enums.core';
 import {ArticleService} from './article.service';
 import {AuthService} from '../../permission/services/auth.service';
-import {ErrorDetails, FileUploadReport, FileDeleteReport, FileProcessingStatus} from '../../../core/types.core';
+import {ErrorDetails, FileDeleteReport, FileProcessingStatus, FileUploadReport} from '../../../core/types.core';
 import {getCustomOrDefaultError} from '../../../core/errors.core';
-import {imageUrlBackend, imageUrlFrontend, defaultImageName} from '../../../core/globals.core';
+import {defaultImageName, imageUrlFrontend} from '../../../core/globals.core';
+import {Permission} from '../../../models/permission.model';
 
 
 @Injectable({ providedIn: 'root' })
@@ -34,6 +35,15 @@ export class ArticleItemService implements OnDestroy {
   // ----------------------------------
   public get hasFilesToUpload(): boolean { return this.imagesToUploadMap && this.imagesToUploadMap.size > 0; }
   public get hasFilesToDelete(): boolean { return this.imagesToDeleteSet && this.imagesToDeleteSet.size > 0; }
+  public get canDeleteArticle() {
+    if ((this.editMode === EditModeType.Update
+      || this.editMode === EditModeType.Delete)
+      && this.authService.canDeleteArticle(this.article)) {
+        return true;
+    } else {
+      return false;
+    }
+  }
 
   // Methods
   // ----------------------------------
@@ -58,7 +68,7 @@ export class ArticleItemService implements OnDestroy {
 
   public resetArticle() {
     this.article = new Article();
-    this.article.publisher = this.authService.getCurrentUser() as UserRef;
+    this.article.publisher = this.authService.currentUser as UserRef;
     this.hoveredImage = '';
     this.hoveredImageUrl = '';
     this.imagesToUploadMap.clear();
@@ -127,6 +137,21 @@ export class ArticleItemService implements OnDestroy {
     }
   }
 
+  public async deleteArticleAsync(): Promise<Article> {
+    let currentEditMode = this.editMode;
+    try {
+      this.editMode = EditModeType.Delete;
+      let deletedArticle: Article = await this.articleBackend.deleteArticle(this.article).toPromise();
+      this.articleService.loadArticlesAsync();
+      this.article = new Article();
+      this.editMode = EditModeType.Create;
+      return deletedArticle;
+    } catch (ex) {
+      this.editMode = currentEditMode;
+      return Promise.reject(ex);
+    }
+  }
+
   public async uploadImages(): Promise<FileUploadReport> {
     console.log('@ArticleItemService.uploadImages()');
     let uploadReport: FileUploadReport = new FileUploadReport();
@@ -177,6 +202,10 @@ export class ArticleItemService implements OnDestroy {
     }
     this.imagesToDeleteSet.clear();
     return deleteReport;
+  }
+
+  public getArticleStatusHoverText(): string {
+    return `Das Ändern des Artikel Status wird zurzeit nicht unterstützt, da die Verwaltung von Reservationen in diesem Dialog zurzeit nicht vorgesehen ist.`;
   }
 
 }

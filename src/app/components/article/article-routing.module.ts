@@ -7,7 +7,9 @@ import {CreateArticleComponent} from './create-article/create-article.component'
 import {EditArticleComponent} from './edit-article/edit-article.component';
 import {GiveawayArticleComponent} from './giveaway-article/giveaway-article.component';
 import {AuthGuard} from '../permission/services/auth-guard.service';
+import {PermissionGuard} from '../permission/services/permission-guard.service';
 import {CanDeactivateGuard} from '../permission/services/can-deactivate-guard.service';
+import {PermissionType} from '../../core/enums.core';
 
 const routes: Routes = [
   { path: 'articles',
@@ -21,18 +23,29 @@ const routes: Routes = [
   },
   { path: 'articles/create',
     component: CreateArticleComponent,
-    canActivate: [AuthGuard],
-    canDeactivate: [CanDeactivateGuard]
+    canActivate: [PermissionGuard],
+    canDeactivate: [CanDeactivateGuard],
+    data: { acceptedPermissions: [PermissionType.articleOwnCreate] }
   },
   { path: 'articles/:id/edit',
     component: EditArticleComponent,
-    canActivate: [AuthGuard],
-    canDeactivate: [CanDeactivateGuard]
+    canActivate: [PermissionGuard],
+    canDeactivate: [CanDeactivateGuard],
+    data: { acceptedPermissions: [
+      PermissionType.articleOwnUpdate,
+      PermissionType.articleOtherUpdate,
+      PermissionType.articleOwnDelete,
+      PermissionType.articleOtherDelete
+      ]}
   },
   { path: 'articles/:id/giveAway',
     component: GiveawayArticleComponent,
-    canActivate: [AuthGuard],
-    resolve: { article: ArticleResolver }
+    canActivate: [PermissionGuard],
+    resolve: { article: ArticleResolver },
+    data: { acceptedPermissions: [
+        PermissionType.articleOwnDonate,
+        PermissionType.articleOtherDonate
+      ]}
   }
 ];
 

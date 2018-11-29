@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {imageUrlFrontend } from '../../../core/globals.core';
+import {AuthService} from '../../permission/services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -7,7 +9,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor() { }
+  public imageUrlFrontend = imageUrlFrontend;
+
+  constructor(public authService: AuthService) { }
 
   ngOnInit() {
   }

@@ -11,15 +11,15 @@
           <h4>{{ article.name }}</h4>
         </div>
         <div class="card-body">
-          <div *ngIf="article.pictures">
+          <div *ngIf="article.additionalImages && article.additionalImages.length > 0; else noAdditionalImagesTemplate">
             <div id="picture-carousel" class="carousel slide" #pictureCarousel>
               <ol class="carousel-indicators">
-                <div *ngFor="let picture of article.pictures; let i = index">
+                <div *ngFor="let picture of article.additionalImages; let i = index">
                   <li  data-target="#picture-carousel" data-slide-to="i" [ngClass]="{'active': i===0}"></li>
                 </div>
               </ol>
               <div class="carousel-inner">
-                <div *ngFor="let picture of article.pictures; let i = index" class="carousel-item"  [ngClass]="{'active': i===0}">
+                <div *ngFor="let picture of article.additionalImages; let i = index" class="carousel-item"  [ngClass]="{'active': i === 0}">
                   <img class="d-block w-100" src="{{imageUrlBackend}}/{{article._id}}/{{picture}}" alt="Slide">
                 </div>
               </div>
@@ -34,6 +34,9 @@
             </div>
           </div>
         </div>
+        <ng-template #noAdditionalImagesTemplate>
+          <img class="d-block w-100" [src]="articleDetailsSvc.getFallbackImage()" alt="Slide">
+        </ng-template>
       </div>
 
     </div>
@@ -64,25 +67,36 @@
         </div>
 
         <div class="card-body">
-          <div *ngIf="article.userHasReservation" class="alert alert-success">
-            Sie wurden als Interessent für diesen Artikel erfasst.
+          <div class="alert" [ngClass]="{
+            'alert-success': article.status._id === ArticleStatusType.available,
+            'alert-warning': article.status._id === ArticleStatusType.handoverPending,
+            'alert-info': article.status._id === ArticleStatusType.donated}">{{articleDetailsSvc.getArticleDonationStatusText()}}
           </div>
-          <div>Wieso sollen Sie diesen Artikel erhalten ?</div>
-          <textarea [(ngModel)]="article.usersReservation.commentApplicant" rows="4" class="form-control mt-1 mb-3"
-                    placeholder="Bitte eine kurze Begründung, falls Sie den Artikel geschenkt erhalten wollen.">
-            </textarea>
-          Kommentar des Publizierenden
-          <textarea readonly [(ngModel)]="article.usersReservation.commentPublisher" rows="4" class="form-control mt-1"></textarea>
 
-          <div *ngIf="!article.userHasReservation && !(currentUser._id === article.publisher._id)">
-            <button type="button" class="btn btn-success mt-3" (click)="onCreateReservation()">Artikel reservieren</button>
+          <div *ngIf="currentUser._id !== article.publisher._id; else publisherTemplate">
+            <div>Wieso sollen Sie diesen Artikel erhalten ?</div>
+            <textarea [(ngModel)]="article.usersReservation.commentApplicant" rows="4" class="form-control mt-1 mb-3"
+                      placeholder="Bitte eine kurze Begründung, weshalb der Artikel Ihnen geschenkt werden soll.">
+              </textarea>
+            Kommentar des Publizierenden
+            <textarea readonly [(ngModel)]="article.usersReservation.commentPublisher" rows="4" class="form-control mt-1"></textarea>
+
+            <div *ngIf="!article.userHasReservation && !(currentUser._id === article.publisher._id)">
+              <button type="button" class="btn btn-success mt-3" (click)="onCreateReservation()">Artikel reservieren</button>
+            </div>
+            <div *ngIf="article.userHasReservation && article.status._id !== ArticleStatusType.donated">
+              <button type="button" class="btn btn-info mt-3 mr-2" (click)="onUpdateReservation()">
+                <i class="fa fa-commenting-o mr-2" aria-hidden="true"></i>Kommentar speichern</button>
+              <button type="button" class="btn btn-danger mt-3" (click)="onDeleteReservation()">
+                <i class="fa fa-trash fa-lg mr-2"></i>Reservation aufheben</button>
+            </div>
           </div>
-          <div *ngIf="article.userHasReservation">
-            <button type="button" class="btn btn-info mt-3 mr-2" (click)="onUpdateReservation()">
-              <i class="fa fa-commenting-o mr-2" aria-hidden="true"></i>Kommentar speichern</button>
-            <button type="button" class="btn btn-danger mt-3" (click)="onDeleteReservation()">
-              <i class="fa fa-trash fa-lg mr-2"></i>Reservierung aufheben</button>
-          </div>
+
+          <ng-template #publisherTemplate>
+            <br/>
+            <button *ngIf="article.status._id !== ArticleStatusType.donated" [disabled]="!authService.canDonateOwnArticle" class="btn btn-info btn-sm mt-2 mr-2"
+                    (click)="navService.gotoArticleGiveAwayPage(article._id)"><i class="fa fa-gift fa-lg mr-2"></i>Reservationen</button>
+          </ng-template>
 
         </div>
       </div>

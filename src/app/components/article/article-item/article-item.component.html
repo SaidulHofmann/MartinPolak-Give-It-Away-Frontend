@@ -2,15 +2,20 @@
 
   <div class="mt-1">
     <span *ngIf="editMode !== EditModeType.Read">
-      <button type="button" [disabled]="editMode === EditModeType.Read || !authService.canCreateOwnArticle()" (click)="onAddArticle()" class="btn btn-sm btn-success mr-3 mb-2" title="Artikel hinzufügen">
-         <i class="fa fa-plus mx-3 mx-sm-1"></i>Neu</button>&nbsp;
-      <button type="button" [disabled]="editMode === EditModeType.Read || !authService.canSaveArticle() || !articleForm.valid || articleForm.pristine" (click)="onSaveArticle()" class="btn btn-sm btn-dark mr-3 mb-2" title="Speichern">
-        <i class="fa fa-floppy-o mx-sm-1" aria-hidden="true"></i>Speichern</button>&nbsp;
-      <button type="button" [disabled]="editMode === EditModeType.Read || articleForm.pristine" class="btn btn-sm btn-secondary mr-3 mb-2" (click)="onRevert()" title="Änderungen verwerfen">
-        <i class="fa fa-times mx-sm-1" aria-hidden="true"></i>Verwerfen</button>
+      <button type="button" (click)="onAddArticle()" [disabled]="editMode === EditModeType.Read || !authService.canCreateOwnArticle" class="btn btn-sm btn-success mr-3 mb-2" title="Artikel hinzufügen">
+         <i class="fa fa-plus mx-3 mx-sm-1"></i><span class="d-none d-sm-inline-block">Neu</span></button>&nbsp;
+
+      <button type="button" (click)="onDeleteArticle()" *ngIf="editMode === EditModeType.Update || editMode === EditModeType.Delete" [disabled]="!articleItemSvc.canDeleteArticle" class="btn btn-sm btn-danger mr-3 mr-md-5 mb-2"  title="Artikel entfernen">
+         <i class="fa fa-trash mx-3 mx-sm-1" aria-hidden="true"></i><span class="d-none d-sm-inline-block">Entfernen</span></button>
+
+      <button type="button" (click)="onSaveArticle()" [disabled]="editMode === EditModeType.Read || !authService.canSaveArticle || !articleForm.valid || articleForm.pristine" class="btn btn-sm btn-dark mr-3 mb-2" title="Speichern">
+        <i class="fa fa-floppy-o mx-3 mx-sm-1" aria-hidden="true"></i><span class="d-none d-sm-inline-block">Speichern</span></button>&nbsp;
+
+      <button type="button" (click)="onRevert()" [disabled]="editMode === EditModeType.Read || articleForm.pristine" class="btn btn-sm btn-secondary mr-3 mb-2" title="Änderungen verwerfen">
+        <i class="fa fa-times mx-3 mx-sm-1" aria-hidden="true"></i><span class="d-none d-sm-inline-block">Verwerfen</span></button>
     </span>
-    <button type="button" class="btn btn-sm btn-outline-primary mr-3 mb-2" (click)="onGoBack()" title="Zurück">
-      <i class="fa fa-arrow-left mx-sm-1" aria-hidden="true"></i>Zurück</button>
+    <button type="button" (click)="onGoBack()" class="btn btn-sm btn-outline-primary mr-3 mb-2" title="Zurück">
+      <i class="fa fa-arrow-left mx-3 mx-sm-1" aria-hidden="true"></i><span class="d-none d-sm-inline-block">Zurück</span></button>
   </div>
 
   <hr>
@@ -22,9 +27,9 @@
       <div class="card-body">
 
         <div class="form-group row">
-          <label for="inputName" class="col-sm-3 col-form-label">Artikel Bezeichnung:</label>
+          <label for="nameInput" class="col-sm-3 col-form-label">Artikel Bezeichnung:</label>
           <div class="col-sm-9">
-            <input id="inputName" required type="text" class="form-control form-control-sm" formControlName="name">
+            <input id="nameInput" #articleNameInput required type="text" class="form-control form-control-sm" formControlName="name">
             <div [hidden]="name.valid || name.pristine" class="alert alert-danger">Die Artikel Bezeichnung muss eingegeben werden.</div>
           </div>
         </div>
@@ -41,7 +46,7 @@
         </div>
 
         <div class="form-group row">
-          <label for="selectArticleStatus" class="col-sm-3 col-form-label">Status:</label>
+          <label for="selectArticleStatus" class="col-sm-3 col-form-label" [title]="articleItemSvc.getArticleStatusHoverText()">Status: <i class="fa fa-info-circle" aria-hidden="true"></i></label>
           <div class="col-sm-9">
             <select id="selectArticleStatus" class="form-control form-control-sm" formControlName="status">
               <option *ngFor="let articleStatusEntry of articleStatus"
@@ -77,35 +82,35 @@
         </div>
 
         <div class="form-group row">
-          <label for="inputPictureOverview" class="col-sm-3 col-form-label">Übersichts-Bild:</label>
+          <label for="inputOverviewImage" class="col-sm-3 col-form-label">Übersichts-Bild:</label>
           <div class="col-sm-9">
-            <input #singleFileInput style="display: none" type="file" accept="image/*" (change)="onOverviewImageFileSelected(singleFileInput)">
-            <button type="button" class="btn btn-sm btn-info mb-3" (click)="singleFileInput.click()">
+            <input #singleFileInput class="d-none" type="file" accept="image/*" (change)="onOverviewImageFileSelected(singleFileInput)">
+            <button type="button" (click)="singleFileInput.click()" [disabled]="!isEditableArticle" class="btn btn-sm btn-info mb-3">
               <i class="fa fa-image mr-3"></i>Übersichts-Bild hinzufügen</button>
             <div class="input-group">
-              <input id="inputPictureOverview" readonly (mouseover)="onOverviewImageHover()" type="text" class="form-control form-control-sm" formControlName="pictureOverview">
-              <button type="button" class="btn btn-sm pull-right" title="Eintrag löschen" (click)="onDeleteOverviewImage()"><i class="fa fa-trash fa-lg"></i></button>
+              <input id="inputOverviewImage" readonly (mouseover)="onOverviewImageHover()" type="text" class="form-control form-control-sm" formControlName="overviewImage">
+              <button type="button" (click)="onDeleteOverviewImage()" [disabled]="!isEditableArticle" class="btn btn-sm pull-right" title="Eintrag löschen" ><i class="fa fa-trash fa-lg"></i></button>
             </div>
           </div>
         </div>
 
-        <div formArrayName="pictures" class="row">
+        <div formArrayName="additionalImages" class="row">
           <label class="col-sm-3 col-form-label">Weitere Bilder</label>
           <div class="col-sm-9">
-            <input #multipleFileInput style="display: none" type="file" accept="image/*" (change)="onAdditionalImageFilesSelected(multipleFileInput)" multiple>
-            <button type="button" class="btn btn-sm btn-info mb-3" (click)="multipleFileInput.click()">
+            <input #multipleFileInput class="d-none" type="file" accept="image/*" (change)="onAdditionalImageFilesSelected(multipleFileInput)" multiple>
+            <button type="button" (click)="multipleFileInput.click()" [disabled]="!isEditableArticle" class="btn btn-sm btn-info mb-3">
               <i class="fa fa-image mr-3"></i>Weitere Bilder hinzufügen</button>
 
-            <div class="form-group" *ngFor="let picture of picturesFormArray.controls; let i = index">
+            <div class="form-group" *ngFor="let picture of additionalImagesFormArray.controls; let i = index">
               <div class="input-group">
                 <input type="url" readonly (mouseover)="onAdditionalImageHover(i)" class="form-control form-control-sm" [formControlName]="i">
-                <button type="button" class="btn btn-sm pull-right" title="Eintrag löschen" (click)="onDeleteAdditionalImage(i)"><i class="fa fa-trash fa-lg"></i></button>
+                <button type="button" (click)="onDeleteAdditionalImage(i)" [disabled]="!isEditableArticle" class="btn btn-sm pull-right" title="Eintrag löschen"><i class="fa fa-trash fa-lg"></i></button>
               </div>
             </div>
             <br/>
             <div *ngIf="hoveredImageUrl" >
-              <img class="card-img mb-3" style="height: 250px; width: auto;" src="{{hoveredImageUrl}}" alt="Bild"
-                   (error)="onImageError()">
+              <img class="card-img mb-3 img-fluid" src="{{hoveredImageUrl}}" alt="Bild"
+                   (error)="onImageLoadError()">
             </div>
             </div>
         </div>
@@ -195,4 +200,6 @@
 <p>Form pristine: {{ articleForm.pristine | json }}</p>
 <p>Form status: {{ articleForm.status | json }}</p>
 <p>EditMode: {{ editMode }}</p>
+<p>Invalid controls: {{getInvalidControls()}}</p>
+<p>Form editable: {{isEditableArticle}}</p>
 

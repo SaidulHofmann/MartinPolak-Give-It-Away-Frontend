@@ -56,15 +56,8 @@ export const testArticle: Article = {
   name: 'Motorrad 5',
   description:  'Yamaha 5000ccm',
   handover: 'Abholung durch den Kunden.',
-  pictureOverview:  'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Yamaha_img_2227.jpg/1200px-Yamaha_img_2227.jpg',
-  pictures: [
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Yamaha_img_2227.jpg/1200px-Yamaha_img_2227.jpg',
-    'http://www.motorcyclespecs.co.za/Gallery%20%20A/Yamaha%20XS650B%2075%20%201.jpg',
-    'http://nippon-classic.de/wp-content/uploads/2015/07/Yamaha_XS650_1970-1978_0018_YME1-1024x812.jpg',
-    'http://nippon-classic.de/wp-content/uploads/2015/07/Yamaha_XS650_1970-1978_0019_YME.jpg',
-    'https://i.ytimg.com/vi/51h-ESZqIKg/maxresdefault.jpg'
-  ],
-  videos: [
+  overviewImage:  'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Yamaha_img_2227.jpg/1200px-Yamaha_img_2227.jpg',
+  additionalImages: [
     'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Yamaha_img_2227.jpg/1200px-Yamaha_img_2227.jpg',
     'http://www.motorcyclespecs.co.za/Gallery%20%20A/Yamaha%20XS650B%2075%20%201.jpg',
     'http://nippon-classic.de/wp-content/uploads/2015/07/Yamaha_XS650_1970-1978_0018_YME1-1024x812.jpg',
@@ -86,19 +79,18 @@ export const testArticle: Article = {
 export const testArticleResponseObj = {
   'status': 200,
   'data': {
-    'pictures': [
+    'additionalImages': [
       'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Yamaha_img_2227.jpg/1200px-Yamaha_img_2227.jpg',
       'http://www.motorcyclespecs.co.za/Gallery%20%20A/Yamaha%20XS650B%2075%20%201.jpg',
       'http://nippon-classic.de/wp-content/uploads/2015/07/Yamaha_XS650_1970-1978_0018_YME1-1024x812.jpg',
       'http://nippon-classic.de/wp-content/uploads/2015/07/Yamaha_XS650_1970-1978_0019_YME.jpg',
       'https://i.ytimg.com/vi/51h-ESZqIKg/maxresdefault.jpg'
     ],
-    'videos': [],
     '_id': '5a9e4e65bdd7751e5033123f',
     'name': 'Motorrad 1',
     'description': 'Yamaha 1000ccm',
     'handover': 'Abholung durch den Kunden.',
-    'pictureOverview': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Yamaha_img_2227.jpg/1200px-Yamaha_img_2227.jpg',
+    'overviewImage': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Yamaha_img_2227.jpg/1200px-Yamaha_img_2227.jpg',
     'tags': 'Motorrad, Yamaha, Yamaha 1000ccm',
     'donationDate': null,
     'publisher': {
@@ -123,19 +115,18 @@ export const testArticleResponseObj = {
 };
 
 export const testArticleObj: Article = {
-  'pictures': [
+  'additionalImages': [
     'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Yamaha_img_2227.jpg/1200px-Yamaha_img_2227.jpg',
     'http://www.motorcyclespecs.co.za/Gallery%20%20A/Yamaha%20XS650B%2075%20%201.jpg',
     'http://nippon-classic.de/wp-content/uploads/2015/07/Yamaha_XS650_1970-1978_0018_YME1-1024x812.jpg',
     'http://nippon-classic.de/wp-content/uploads/2015/07/Yamaha_XS650_1970-1978_0019_YME.jpg',
     'https://i.ytimg.com/vi/51h-ESZqIKg/maxresdefault.jpg'
   ],
-  'videos': [],
   '_id': '5a9e4e65bdd7751e5033123f',
   'name': 'Motorrad 1',
   'description': 'Yamaha 1000ccm',
   'handover': 'Abholung durch den Kunden.',
-  'pictureOverview': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Yamaha_img_2227.jpg/1200px-Yamaha_img_2227.jpg',
+  'overviewImage': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Yamaha_img_2227.jpg/1200px-Yamaha_img_2227.jpg',
   'tags': 'Motorrad, Yamaha, Yamaha 1000ccm',
   'donationDate': null,
   'publisher': {

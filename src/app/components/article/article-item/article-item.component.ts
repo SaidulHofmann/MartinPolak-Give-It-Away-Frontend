@@ -1,21 +1,20 @@
 // Creates a new article. UC3.1-Artikel erfassen.
 
-import {Component, Input, OnChanges, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnChanges, OnInit, ViewChild} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import { Article, ArticleCategory, ArticleStatus } from '../../../models/index.model';
+import {Article, ArticleCategory, ArticleStatus} from '../../../models/index.model';
 import {DialogResultType, EditModeType} from '../../../core/enums.core';
 import {DialogService} from '../../shared/services/dialog.service';
 import {CanDeactivate} from '@angular/router';
 import {CanComponentDeactivate} from '../../permission/services/can-deactivate-guard.service';
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 import {NavigationService} from '../../shared/services/navigation.service';
 import {ArticleItemService} from '../services/article-item.service';
 import {AuthService} from '../../permission/services/auth.service';
 import {DataService} from '../../shared/services/data.service';
-import {imageUrlBackend} from '../../../core/globals.core';
+import {imageUrlBackend, maxImageFileSize} from '../../../core/globals.core';
 import {ErrorDetails, FileUploadReport} from '../../../core/types.core';
 import {getCustomOrDefaultError} from '../../../core/errors.core';
-
 
 
 @Component({
@@ -36,7 +35,11 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
   public get articleCategories(): ArticleCategory[] { return this.articleItemSvc.articleCategories; }
   public get articleStatus(): ArticleStatus[]       { return this.articleItemSvc.articleStatus; }
   @Input()
-  public set editMode(editMode: EditModeType)       { this.articleItemSvc.editMode = editMode; }
+  public set editMode(editMode: EditModeType) {
+    this.articleItemSvc.editMode = editMode;
+    this.setFocus();
+    this.setReadOnly();
+  }
   public get editMode()                             { return this.articleItemSvc.editMode; }
   @Input()
   public set article(article: Article)              { this.articleItemSvc.article = article; }
@@ -48,22 +51,22 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
   public get hoveredImageUrl()                      { return this.articleItemSvc.hoveredImageUrl; }
   public get defaultImage()                         { return this.articleItemSvc.defaultImage; }
   public get defaultImageUrl()                      { return this.articleItemSvc.defaultImageUrl; }
-
+  public get isArticleFormDisabled()                { return this.articleForm ? this.articleForm.disabled : true; }
   // FormControl Getters
   public get name()                                 { return this.articleForm.get('name'); }
   public get description()                          { return this.articleForm.get('description'); }
   public get handover()                             { return this.articleForm.get('handover'); }
-  public get pictureOverviewControl()               { return this.articleForm.get('pictureOverview'); }
-  public get picturesFormArray(): FormArray         { return this.articleForm.get('pictures') as FormArray; }
-  public get videos(): FormArray                    { return this.articleForm.get('videos') as FormArray; }
+  public get overviewImageControl()                 { return this.articleForm.get('overviewImage'); }
+  public get additionalImagesFormArray(): FormArray   { return this.articleForm.get('additionalImages') as FormArray; }
 
+  @ViewChild('articleNameInput') private articleNameInput: ElementRef;
 
   // Methods
   // ----------------------------------
 
   constructor(
     public authService: AuthService,
-    private articleItemSvc: ArticleItemService,
+    public articleItemSvc: ArticleItemService,
     private formBuilder: FormBuilder,
     private navService: NavigationService,
     private dialogService: DialogService,
@@ -117,11 +120,10 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
       description:        [this.article.description || '', Validators.required ],
       handover:           [this.article.handover || '', Validators.required ],
 
-      pictureOverview:    this.article.pictureOverview || '',
-      pictures:           this.formBuilder.array( []),
-      videos:             this.formBuilder.array( []),
+      overviewImage:      this.article.overviewImage || '',
+      additionalImages:   this.formBuilder.array( []),
       tags:               this.article.tags || '',
-      status:             this.articleItemSvc.getArticleStatus(this.article) || null,
+      status:             [{ value: this.articleItemSvc.getArticleStatus(this.article) || null, disabled: true }],
 
       // Give away
       donee:              this.formBuilder.group({
@@ -139,8 +141,7 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
       updatedAt:          this.article.updatedAt || null
     });
 
-    this.createImageControls(this.article.pictures);
-    this.createVideoControls(this.article.videos);
+    this.createImageControls(this.article.additionalImages);
   }
 
   /**
@@ -156,7 +157,7 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
       description:        this.article.description || '',
       handover:           this.article.handover || '',
 
-      pictureOverview:    this.article.pictureOverview || '',
+      overviewImage:      this.article.overviewImage || '',
       tags:               this.article.tags || '',
       status:             this.articleItemSvc.getArticleStatus(this.article),
       donee:              {
@@ -173,30 +174,65 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
       updatedAt:          this.article.updatedAt || null,
     });
 
-    this.createImageControls(this.article.pictures);
-    this.createVideoControls(this.article.videos);
+    this.createImageControls(this.article.additionalImages);
   }
+
+  private setFocus(): void {
+    if (this.articleItemSvc.editMode === EditModeType.Create || this.articleItemSvc.editMode === EditModeType.Update) {
+      this.articleNameInput.nativeElement.focus();
+    }
+  }
+
+  private setReadOnly(): void {
+    if (!this.articleForm) { return; }
+    if (this.isEditableArticle) {
+      this.articleForm.enable();
+    } else {
+      this.articleForm.disable();
+    }
+  }
+
+  public get isEditableArticle(): boolean {
+    if (!this.articleForm) { return false; }
+    switch (this.editMode) {
+      case EditModeType.Read:
+        return false;
+      case EditModeType.Create:
+        return this.authService.canCreateOwnArticle ? true : false;
+      case EditModeType.Update:
+        return this.authService.canUpdateArticle(this.article) ? true : false;
+      case EditModeType.Delete:
+        return false;
+    }
+  }
+
 
   // Handle Images.
   // --------------------------------------------------------------------------
   private createImageControls(images: string[]) {
     const imageFCs = images.map(imageFileName =>
       this.formBuilder.control(imageFileName, Validators.required));
-    this.articleForm.setControl('pictures', this.formBuilder.array(imageFCs));
+    this.articleForm.setControl('additionalImages', this.formBuilder.array(imageFCs));
   }
 
   private addImageControl(imageFileName: string) {
-    this.picturesFormArray.push(this.formBuilder.control(imageFileName, Validators.required));
+    this.additionalImagesFormArray.push(this.formBuilder.control(imageFileName, Validators.required));
     if (this.articleForm.pristine) { this.articleForm.markAsDirty(); }
   }
 
   public onOverviewImageFileSelected(fileInput: HTMLInputElement) {
     let selectedFile: File = fileInput.files[0];
     if (!selectedFile) { return; }
-    let currentOverviewImage = this.pictureOverviewControl.value;
+    if (selectedFile.size > maxImageFileSize) {
+      this.dialogService.inform('Upload',
+        `Die Datei '${selectedFile.name}' ist zu gross für den Upload. `
+        + `Die maximale Grösse beträgt ${maxImageFileSize / (1024 * 1024)} MB.`);
+      return;
+    }
+    let currentOverviewImage = this.overviewImageControl.value;
 
     // Assign new image.
-    this.pictureOverviewControl.setValue(selectedFile.name);
+    this.overviewImageControl.setValue(selectedFile.name);
     this.articleItemSvc.imagesToUploadMap.set(selectedFile.name, selectedFile);
     if (this.articleForm.pristine) { this.articleForm.markAsDirty(); }
 
@@ -204,35 +240,30 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
     if (currentOverviewImage) {
       if (this.articleItemSvc.imagesToUploadMap.has(currentOverviewImage)) {
         this.articleItemSvc.imagesToUploadMap.delete(currentOverviewImage);
-      } else if (!this.picturesFormArray.value.includes(currentOverviewImage)) {
+      } else if (!this.additionalImagesFormArray.value.includes(currentOverviewImage)) {
         this.articleItemSvc.imagesToDeleteSet.add(currentOverviewImage);
       }
     }
-
-    console.log('onAddOverviewImage: this.articleItemSvc.imagesToUploadMap: ', this.articleItemSvc.imagesToUploadMap);
-    console.log('onAddOverviewImage: this.articleItemSvc.imagesToDeleteSet ', this.articleItemSvc.imagesToDeleteSet);
   }
 
   public onAdditionalImageFilesSelected(fileInput: HTMLInputElement) {
     if (!fileInput.files || fileInput.files.length === 0) { return; }
 
     Array.from(fileInput.files).forEach(file => {
-      if (!this.picturesFormArray.value.includes(file.name)) {
+      if (!this.additionalImagesFormArray.value.includes(file.name)) {
         this.articleItemSvc.imagesToUploadMap.set(file.name, file);
         this.addImageControl(file.name);
       }
     });
-
-    console.log('onAdditionalImageFilesSelected: this.articleItemSvc.imagesToUploadMap: ', this.articleItemSvc.imagesToUploadMap);
   }
 
   public onDeleteOverviewImage() {
-    let overviewImage = this.pictureOverviewControl.value;
+    let overviewImage = this.overviewImageControl.value;
     if (!overviewImage) { return; }
 
-    this.pictureOverviewControl.setValue('');
+    this.overviewImageControl.setValue('');
     if (this.articleForm.pristine) { this.articleForm.markAsDirty(); }
-    if (this.picturesFormArray.value.includes(overviewImage)) { return; }
+    if (this.additionalImagesFormArray.value.includes(overviewImage)) { return; }
 
     if (this.articleItemSvc.imagesToUploadMap.has(overviewImage)) {
       this.articleItemSvc.imagesToUploadMap.delete(overviewImage);
@@ -242,22 +273,19 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
   }
 
   public onDeleteAdditionalImage(index: number) {
-    let image = this.picturesFormArray.value[index];
+    let image = this.additionalImagesFormArray.value[index];
 
     if (this.articleItemSvc.imagesToUploadMap.has(image)) {
       this.articleItemSvc.imagesToUploadMap.delete(image);
-    } else if (this.pictureOverviewControl.value !== image) {
+    } else if (this.overviewImageControl.value !== image) {
       this.articleItemSvc.imagesToDeleteSet.add(image);
     }
-    this.picturesFormArray.removeAt(index);
+    this.additionalImagesFormArray.removeAt(index);
     if (this.articleForm.pristine) { this.articleForm.markAsDirty(); }
-
-    console.log('onDeleteAdditionalImage: this.articleItemSvc.imagesToUploadMap: ', this.articleItemSvc.imagesToUploadMap);
-    console.log('onDeleteAdditionalImage: this.articleItemSvc.imagesToDeleteSet ', this.articleItemSvc.imagesToDeleteSet);
   }
 
   public onOverviewImageHover() {
-    this.hoveredImage = this.pictureOverviewControl.value;
+    this.hoveredImage = this.overviewImageControl.value;
     if (this.hoveredImage) {
       this.hoveredImageUrl = `${this.imageUrlBase}/${this.hoveredImage}`;
     } else {
@@ -266,7 +294,7 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
   }
 
   public onAdditionalImageHover(index: number) {
-    this.hoveredImage = this.picturesFormArray.value[index];
+    this.hoveredImage = this.additionalImagesFormArray.value[index];
     if (this.hoveredImage) {
       this.hoveredImageUrl = `${this.imageUrlBase}/${this.hoveredImage}`;
     } else {
@@ -279,7 +307,7 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
     this.hoveredImageUrl = this.defaultImageUrl;
   }
 
-  public onImageError() {
+  public onImageLoadError() {
     if (!this.hoveredImage) {
       this.setHoveredImageDefaultValue();
       return;
@@ -304,34 +332,20 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
   }
 
 
-  // Handle videos array
-  // --------------------------------------------------------------------------
-  private createVideoControls(videos: string[]) {
-    const videosFCs = videos.map(videoUrl =>
-      this.formBuilder.control(videoUrl, Validators.required));
-    this.articleForm.setControl('videos', this.formBuilder.array(videosFCs));
-  }
-
-  public onAddVideo() {
-    this.videos.push(this.formBuilder.control('', Validators.required));
-  }
-
-  public onDeleteVideo(index: number) {
-    this.videos.removeAt(index);
-  }
-
   // User events.
   // --------------------------------------------------------------------------
 
   public onAddArticle() {
     this.editMode = EditModeType.Create;
     this.articleItemSvc.resetArticle();
-    this.createForm();
+    this.navService.gotoArticleCreatePage();
+  }
+
+  public onDeleteArticle() {
+    this.deleteArticle();
   }
 
   public onSaveArticle() {
-    console.log('@onSaveArticle()');
-
     if (this.editMode === EditModeType.Create) {
       this.createArticleAsync();
 
@@ -354,7 +368,7 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
     // Create article.
     let message: string = '';
     try {
-      await this.articleItemSvc.createArticleAsync(this.articleForm.value);
+      await this.articleItemSvc.createArticleAsync(this.articleForm.getRawValue());
       this.updateForm();
       message = `Der Artikel wurde erfolgreich hinzugefügt.
       `;
@@ -364,13 +378,14 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
         let uploadReport = await this.articleItemSvc.uploadImages();
         if (uploadReport.hasFailedEntries) {
           await this.removeInvalidFileEntriesAsync(uploadReport);
-          await this.articleItemSvc.updateArticleAsync(this.articleForm.value);
+          await this.articleItemSvc.updateArticleAsync(this.articleForm.getRawValue());
           this.updateForm();
         }
         message += uploadReport.getReport();
       }
 
       this.dialogService.inform('Artikel hinzufügen', message);
+      this.navService.gotoArticleEditPage(this.article._id, true);
 
     } catch (ex) {
       this.dialogService.inform('Artikel hinzufügen', message + 'Beim Hinzufügen des Artikels ist ein Fehler aufgetreten: ' + ex.message);
@@ -379,8 +394,6 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
   }
 
   private async updateArticleAsync(): Promise<void> {
-    console.log('@updateArticleAsync()');
-
     let message: string = '';
     try {
       // Delete images selected for deletion.
@@ -397,7 +410,7 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
         }
       }
       // Update article.
-      await this.articleItemSvc.updateArticleAsync(this.articleForm.value);
+      await this.articleItemSvc.updateArticleAsync(this.articleForm.getRawValue());
       this.updateForm();
       message = `Der Artikel wurde erfolgreich aktualisiert.
         `;
@@ -410,21 +423,40 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
       }
   }
 
+  private deleteArticle() {
+    let articleName = this.article.name;
+    let dialogResultObs = this.dialogService.askForDelete('Artikel entfernen',
+      `Soll der Artikel '${articleName}' wirklich entfernt werden ?`);
+
+    dialogResultObs.subscribe((dialogResult: DialogResultType) => {
+      if (dialogResult !== DialogResultType.Delete) { return; }
+      this.articleItemSvc.deleteArticleAsync()
+        .then(() => {
+          this.updateForm();
+          this.dialogService.inform('Artikel entfernen',
+            `Der Artikel '${articleName}' wurde erfolgreich entfernt.`).subscribe( () => this.navService.goBack());
+        })
+        .catch((errorResponse) => {
+          let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
+          this.dialogService.inform('Artikel entfernen',
+            'Beim Entfernen des Artikels ist ein Fehler aufgetreten: ' + errorDetails.message);
+        });
+    });
+  }
+
   /**
    * Remove Image file entries that were planned to upload, but couldn't be uploaded.
    */
   private async removeInvalidFileEntriesAsync(uploadReport: FileUploadReport): Promise<void> {
-    console.log('@removeInvalidFileEntriesAsync()');
-
     // Check and remove overview image.
-    let overviewImageName = this.pictureOverviewControl.value;
+    let overviewImageName = this.overviewImageControl.value;
     if (overviewImageName) {
       let overviewImageStatus = uploadReport.fileStatusMap.get(overviewImageName);
       if (overviewImageStatus && !overviewImageStatus.processedSuccessfully) {
-        if (this.article.pictureOverview && this.article.pictureOverview !== overviewImageName) {
-          this.pictureOverviewControl.setValue(this.article.pictureOverview); // Reset to original value.
+        if (this.article.overviewImage && this.article.overviewImage !== overviewImageName) {
+          this.overviewImageControl.setValue(this.article.overviewImage); // Reset to original value.
         } else {
-          this.pictureOverviewControl.setValue('');
+          this.overviewImageControl.setValue('');
         }
       }
     }
@@ -432,12 +464,24 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
     // Check and remove additional images.
     for (let [fileName, fileStatus] of uploadReport.fileStatusMap) {
       if (!fileStatus.processedSuccessfully) {
-        let index = this.picturesFormArray.value.indexOf(fileName);
+        let index = this.additionalImagesFormArray.value.indexOf(fileName);
         if (index > -1) {
-          this.picturesFormArray.removeAt(index);
+          this.additionalImagesFormArray.removeAt(index);
         }
      }
     }
   }
 
+  /**
+   * Returns invalid controls for debugging purposes.
+   */
+  public getInvalidControls() {
+    let invalidControls = [];
+    for (const controlName in this.articleForm.controls) {
+      if (this.articleForm.controls[controlName].invalid) {
+        invalidControls.push(controlName);
+      }
+    }
+    return invalidControls;
+  }
 }

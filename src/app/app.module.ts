@@ -1,6 +1,5 @@
 import { NgModule, ErrorHandler } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import {defaultRoutes} from './app-routing.module';
+import { AppRoutingModule } from './app-routing.module';
 
 import { SharedModule } from './components/shared/shared.module';
 import { PermissionModule } from './components/permission/permission.module';
@@ -22,7 +21,7 @@ import { DialogComponent } from './components/shared/dialog/dialog.component';
     PermissionModule,
     UserModule,
     ArticleModule,
-    RouterModule.forChild(defaultRoutes)
+    AppRoutingModule
   ],
   declarations: [
     AppComponent,

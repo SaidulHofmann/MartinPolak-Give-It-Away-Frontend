@@ -32,8 +32,12 @@ export class NavigationService {
     this.router.navigate([`/articles/${articleId}/details`]);
   }
 
-  public gotoArticleEditPage(articleId: string) {
-    this.router.navigate([`/articles/${articleId}/edit`]);
+  public gotoArticleCreatePage() {
+    this.router.navigate([`/articles/create`]);
+  }
+
+  public gotoArticleEditPage(articleId: string, replaceUrl: boolean = false) {
+    this.router.navigate([`/articles/${articleId}/edit`], { replaceUrl: replaceUrl });
   }
 
   public gotoArticleGiveAwayPage(articleId: string) {

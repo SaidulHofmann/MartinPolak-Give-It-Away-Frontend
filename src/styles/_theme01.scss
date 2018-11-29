@@ -40,6 +40,10 @@ form {
   //background-color: $gia-bg-color;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .ng-valid[required], .ng-valid.required  {
   border-left: 5px solid $gia-valid-color; /* green */
 }
@@ -61,4 +65,26 @@ form {
 .gia-header {
   font-family: 'Dancing Script';
   font-weight: bold;
+}
+
+.angular-table {
+  width: 100%;
+  border: 1px solid #2C3E50;
+
+  th {
+    padding: 10px 10px;
+    vertical-align: middle !important;
+  }
+
+  tr {
+    height: auto !important;
+    &.highlight {
+      background-color: #C3F3C3 !important;
+    }
+  }
+
+  td {
+    padding: 0px 10px;
+    vertical-align: middle;
+  }
 }

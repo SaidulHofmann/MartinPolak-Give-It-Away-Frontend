@@ -6,7 +6,11 @@ import {Subscription} from 'rxjs/internal/Subscription';
 import {AuthService} from '../../permission/services/auth.service';
 import {ArticleDetailsService} from '../services/article-details.service';
 import {NavigationService} from '../../shared/services/navigation.service';
-import {imageUrlBackend} from '../../../core/globals.core';
+import {imageUrlBackend, imageUrlFrontend, defaultImageName } from '../../../core/globals.core';
+import {DialogService} from '../../shared/services/dialog.service';
+import {ErrorDetails} from '../../../core/types.core';
+import {getCustomOrDefaultError} from '../../../core/errors.core';
+import {ArticleStatusType} from '../../../core/enums.core';
 
 
 @Component({
@@ -15,20 +19,20 @@ import {imageUrlBackend} from '../../../core/globals.core';
   styleUrls: ['./article-details.component.scss']
 })
 export class ArticleDetailsComponent implements OnInit, OnDestroy {
+  public ArticleStatusType = ArticleStatusType;
   public imageUrlBackend: string = imageUrlBackend;
   private subscriptions: Subscription = new Subscription();
   public get article(): Article { return this.articleDetailsSvc.article; }
   public set article(article: Article) { this.articleDetailsSvc.article = article; }
+  public get currentUser(): User { return this.authService.currentUser; }
 
-  public get currentUser(): User {
-    return this.authService.getCurrentUser();
-  }
 
   constructor(
-    private authService: AuthService,
-    private articleDetailsSvc: ArticleDetailsService,
-    private navService: NavigationService,
-    private route: ActivatedRoute) {
+    public authService: AuthService,
+    public articleDetailsSvc: ArticleDetailsService,
+    public navService: NavigationService,
+    private route: ActivatedRoute,
+    private dialogService: DialogService) {
   }
 
   public ngOnInit() {
@@ -37,8 +41,8 @@ export class ArticleDetailsComponent implements OnInit, OnDestroy {
         this.article = data['article'];
         if (!this.article.userHasReservation) {
           this.articleDetailsSvc.assignDefaultReservation();
-        }}
-    );
+        }
+      });
   }
 
   public ngOnDestroy() {
@@ -50,15 +54,39 @@ export class ArticleDetailsComponent implements OnInit, OnDestroy {
   }
 
   public onCreateReservation() {
-    this.articleDetailsSvc.createReservation();
+    this.articleDetailsSvc.createReservationAsync()
+      .then(() => {
+        this.dialogService.inform('Reservation erstellen', 'Die Reservation wurde erfolgreich erstellt.');
+      })
+      .catch((errorResponse) => {
+        let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
+        this.dialogService.inform('Reservation erstellen',
+          'Beim der Erstellung der Reservation ist ein Fehler aufgetreten: ' + errorDetails.message);
+      });
   }
 
   public onUpdateReservation() {
-    this.articleDetailsSvc.updateReservation();
+    this.articleDetailsSvc.updateReservationAsync()
+      .then(() => {
+        this.dialogService.inform('Reservation aktualisieren', 'Die Reservation wurde erfolgreich aktualisiert.');
+      })
+      .catch((errorResponse) => {
+        let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
+        this.dialogService.inform('Reservation aktualisieren',
+          'Beim Aktualisieren der Reservation ist ein Fehler aufgetreten: ' + errorDetails.message);
+      });
   }
 
   public onDeleteReservation(): void {
-    this.articleDetailsSvc.deleteReservation();
+    this.articleDetailsSvc.deleteReservationAsync()
+      .then(() => {
+        this.dialogService.inform('Reservation aufheben', 'Die Reservation wurde aufgehoben.');
+      })
+      .catch((errorResponse) => {
+        let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
+        this.dialogService.inform('Reservation entfernen',
+          'Beim Entfernen der Reservation ist ein Fehler aufgetreten: ' + errorDetails.message);
+      });
   }
 
 }

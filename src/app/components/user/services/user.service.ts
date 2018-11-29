@@ -5,6 +5,7 @@ import {User, UserFilter} from '../../../models/user.model';
 import {DataService} from '../../shared/services/data.service';
 import {UserBackendService} from './user-backend.service';
 import {Subscription} from '../../../../../node_modules/rxjs';
+import {Permission} from '../../../models/permission.model';
 
 
 @Injectable({ providedIn: 'root' })
@@ -50,7 +51,15 @@ export class UserService implements OnDestroy {
   }
 
   private onDataLoaded() {
-    this.setSelectedUserRef();
+    if (this.dataSource.users) {
+      if (!this.selectedUser._id) {
+        this.selectedUser = this.dataSource.users[0];
+      } else {
+        this.setSelectedUserRef();
+      }
+    } else {
+      this.selectedUser = new User();
+    }
   }
 
   public loadUsersPage() {

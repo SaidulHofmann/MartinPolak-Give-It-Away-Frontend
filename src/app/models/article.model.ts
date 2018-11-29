@@ -7,9 +7,8 @@ export class Article {
   name = '';
   description = '';
   handover = '';
-  pictureOverview = '';
-  pictures: string[] = [];
-  videos: string[] = [];
+  overviewImage = '';
+  additionalImages: string[] = [];
   tags = '';
   donationDate: Date = null;
 
@@ -21,7 +20,7 @@ export class Article {
   createdAt: Date = null; // assigned by MongoDb
   updatedAt: Date = null; // assigned by MongoDb
 
-  userHasReservation? = false; // Virtual property assigned by backend.
+  userHasReservation?: boolean = false; // Virtual property assigned by backend.
   usersReservation?: Reservation = null; // Virtual property assigned by backend.
 }
 

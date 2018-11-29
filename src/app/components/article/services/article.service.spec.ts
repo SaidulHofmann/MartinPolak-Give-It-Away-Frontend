@@ -20,7 +20,7 @@ describe('ArticleService', () => {
   //   httpClientSpy = jasmine.createSpyObj(
   //     'HttpClient', ['get', 'put', 'post', 'delete']);
   //   userServiceSpy = jasmine.createSpyObj(
-  //     'UserService', ['getCurrentUser']);
+  //     'UserService', ['currentUser']);
   //   messageServiceSpy = jasmine.createSpyObj(
   //     'MessageService', ['add']);
   //

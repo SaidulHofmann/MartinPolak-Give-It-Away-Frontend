@@ -124,11 +124,18 @@ export class PermissionItemComponent implements OnInit, CanDeactivate<CanCompone
   }
 
   private updatePermission() {
+    let ownPermissionChanged: boolean = this.editingPermission._id === this.authService.currentUser.permission._id;
+
     this.permissionItemSvc.updatePermissionAsync()
       .then((savedPermission: Permission) => {
         this.permissionForm.form.markAsPristine();
-        this.dialogService.inform('Berechtigungs-Eintrag aktualisieren',
-          'Der Berechtigungs-Eintrag wurde erfolgreich aktualisiert.');
+        let message = 'Der Berechtigungs-Eintrag wurde erfolgreich aktualisiert.';
+        if (ownPermissionChanged) {
+          message += `
+
+Sie haben Ihre eignen Berechtigungen geändert. Die geänderten Berechtigungen werden erst nach einer Neuanmeldung wirksam.`;
+        }
+        this.dialogService.inform('Berechtigungs-Eintrag aktualisieren', message);
       })
       .catch((errorResponse) => {
         let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);
