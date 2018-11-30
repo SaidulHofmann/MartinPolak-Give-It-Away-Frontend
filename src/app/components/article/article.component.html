@@ -120,10 +120,10 @@
           <div class="col-md-7">
             <div class="form-group">
               <div class="card-title">
-                <span [ngClass]="{
-                  'alert': !(article.status._id === ArticleStatusType.available),
+                <span [ngClass]="{ 'alert': true,
+                  'alert-info': article.status._id === ArticleStatusType.available,
                   'alert-warning': article.status._id === ArticleStatusType.handoverPending,
-                  'alert-info': article.status._id === ArticleStatusType.donated
+                  'alert-secondary': article.status._id === ArticleStatusType.donated
                   }">{{ article.status ? article.status.name + ' ' : '' }}</span>
                 <span *ngIf="article.userHasReservation && article.status._id !== ArticleStatusType.donated" class="alert alert-success">Reserviert</span>
               </div>
