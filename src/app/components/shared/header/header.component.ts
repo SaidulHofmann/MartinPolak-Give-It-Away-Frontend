@@ -8,7 +8,8 @@ import {AuthService} from '../../permission/services/auth.service';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-
+  public appTitle = 'Give it Away';
+  public appDescription = 'Verschenken Sie, was Sie nicht mehr brauchen !';
   public imageUrlFrontend = imageUrlFrontend;
 
   constructor(public authService: AuthService) { }

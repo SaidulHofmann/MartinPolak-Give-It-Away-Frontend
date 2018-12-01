@@ -9,7 +9,7 @@ describe('ErrorHandlerService', () => {
     });
   });
 
-  it('should be created', inject([ErrorHandlerService], (service: ErrorHandlerService) => {
+  it('can be created by dependency injection', inject([ErrorHandlerService], (service: ErrorHandlerService) => {
     expect(service).toBeTruthy();
   }));
 });

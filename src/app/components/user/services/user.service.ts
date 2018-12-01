@@ -30,7 +30,7 @@ export class UserService implements OnDestroy {
   // ----------------------------------
   constructor(
     private userBackendSvc: UserBackendService,
-    private localDataService: DataService) {
+    private dataService: DataService) {
     this.init();
   }
 
@@ -83,11 +83,12 @@ export class UserService implements OnDestroy {
   // ----------------------------------
 
   public savePageSize() {
-    this.localDataService.saveObject('UserService.userFilter.limit', this.userFilter.limit);
+    this.dataService.saveObject('UserService.userFilter.limit', this.userFilter.limit);
   }
 
+
   public loadPageSize() {
-    let loadedPageSize: number = this.localDataService.loadObject('UserService.userFilter.limit');
+    let loadedPageSize: number = this.dataService.loadObject('UserService.userFilter.limit');
     if (loadedPageSize) {
       this.userFilter.limit = loadedPageSize;
     }

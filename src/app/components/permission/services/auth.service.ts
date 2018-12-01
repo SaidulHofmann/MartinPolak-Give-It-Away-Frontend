@@ -112,8 +112,10 @@ export class AuthService {
   private loadCurrentUser() {
     this._currentUser = JSON.parse(localStorage.getItem('currentUser') || null);
     // Set the permissions from token. The token will be invalid if changed.
-    let tokenPayload = decode(this.currentUser.authToken);
-    this.currentUser.permission = tokenPayload.permission as Permission;
+    if (this._currentUser) {
+      let tokenPayload = decode(this.currentUser.authToken);
+      this.currentUser.permission = tokenPayload.permission as Permission;
+    }
   }
 
 

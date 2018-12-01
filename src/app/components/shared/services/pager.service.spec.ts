@@ -9,7 +9,7 @@ describe('PagerService', () => {
     });
   });
 
-  it('should be created', inject([PagerService], (service: PagerService) => {
+  it('can be created by dependency injection', inject([PagerService], (service: PagerService) => {
     expect(service).toBeTruthy();
   }));
 });

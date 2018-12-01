@@ -6,6 +6,9 @@ import {FooterComponent} from './components/shared/footer/footer.component';
 import {MessagesComponent} from './components/shared/messages/messages.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import {MessageService} from './components/shared/services/message.service';
+import {HttpClient, HttpHandler} from '@angular/common/http';
+
+
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -17,7 +20,7 @@ describe('AppComponent', () => {
         AppComponent, AppNavbarComponent, HeaderComponent, FooterComponent, MessagesComponent
       ],
       imports: [RouterTestingModule],
-      providers: [MessageService]
+      providers: [MessageService, HttpClient, HttpHandler]
     });
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;

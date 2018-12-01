@@ -3,8 +3,8 @@
   <div class="card-img-overlay">
     <p *ngIf="authService.currentUser" class="text-right text-info">{{authService.currentUser.fullname + ' | ' + authService.currentUser.permission.name}}</p>
     <h1>
-      <div class="gia-header">Give it Away</div>
-      <small class="d-none d-sm-inline-block">Verschenken Sie, was Sie nicht mehr brauchen !</small>
+      <div class="gia-header">{{appTitle}}</div>
+      <small class="d-none d-sm-inline-block">{{appDescription}}</small>
     </h1>
   </div>
 </div>

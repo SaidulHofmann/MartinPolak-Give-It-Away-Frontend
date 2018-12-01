@@ -21,28 +21,20 @@ export class ArticleBackendService {
   private reservationsUrl = `${this.apiUrl}/api/reservations`;
 
   constructor(
-    private http: HttpClient,
-    private navService: NavigationService,
     private authService: AuthService,
-    private messageService: MessageService,
-    private dialogService: DialogService) {
-  }
+    private navService: NavigationService,
+    private http: HttpClient
+  ) {}
 
-  private getHttpHeaders(): HttpHeaders {
-    if (!this.authService.currentUser) {
-      throw new Error('Benutzer nicht angemeldet oder Anmeldung abgelaufen.');
-    } else {
-      return new HttpHeaders({
-        'Content-Type': 'application/json',
-        authorization: 'Bearer ' + this.authService.currentUser.authToken
-      });
-    }
+
+  private get getHttpHeaders() {
+    return this.authService.getHttpHeaders();
   }
 
   /** GET articles. */
   public getArticles(page: number = 1, limit: number = 10): Observable<any> {
     return this.http.get(`${this.articlesUrl}/?page=${page}&limit=${limit}`,
-      { headers: this.getHttpHeaders() })
+      { headers: this.getHttpHeaders })
       .pipe(
         tap(res => this.log(`Artikel geladen.`)),
         catchError(this.handleError('getArticles', []))
@@ -56,7 +48,7 @@ export class ArticleBackendService {
       let httpParamsOject = this.getArticleFilterStringObject(articleFilter);
       httpParams = new HttpParams({fromObject: httpParamsOject});
     }
-    return this.http.get(this.articlesUrl, { headers: this.getHttpHeaders(), params: httpParams })
+    return this.http.get(this.articlesUrl, { headers: this.getHttpHeaders, params: httpParams })
       .pipe(
         map(res  => res as HttpResponseArticles),
         tap(() => this.log(`Artikel geladen.`))
@@ -86,7 +78,7 @@ export class ArticleBackendService {
   public getArticleById(id: string, includeUsersReservation: boolean = false): Observable<Article> {
     const url = `${this.articlesUrl}/${id}`;
     return this.http.get<Article>(url, {
-      headers: this.getHttpHeaders(), params: { 'includeUsersReservation': includeUsersReservation.toString() } }).pipe(
+      headers: this.getHttpHeaders, params: { 'includeUsersReservation': includeUsersReservation.toString() } }).pipe(
       map(res  => res['data'] as Article),
       tap(article => this.log(`Àrtikel mit name = '${article.name}' und id = '${article._id}' wurde geladen.`)),
       catchError(this.handleError<Article>(`getArticle id=${id}`))
@@ -99,7 +91,7 @@ export class ArticleBackendService {
       return of([]);
     }
     return this.http.get<Article[]>(`${this.articlesUrl}/?name=${term}`,
-      { headers: this.getHttpHeaders() }).pipe(
+      { headers: this.getHttpHeaders }).pipe(
       map(res  => res['data'].docs as Article[]),
       tap(_ => this.log(`Übereinstimmende Artikel zum Filter "${term}" gefunden.`)),
       catchError(this.handleError<Article[]>('searchArticle', []))
@@ -108,7 +100,7 @@ export class ArticleBackendService {
 
   /** POST: add a new article. */
   public createArticle(article: Article): Observable<Article> {
-    return this.http.post<Article>(this.articlesUrl, article, { headers: this.getHttpHeaders() }).pipe(
+    return this.http.post<Article>(this.articlesUrl, article, { headers: this.getHttpHeaders }).pipe(
       map(res  => res['data'] as Article),
       tap((resArticle: Article) => this.log(`Artikel mit name = '${resArticle.name}' und id = '${resArticle._id}' wurde hinzugefügt.`)),
       catchError(this.handleError<Article>('createArticle'))
@@ -117,7 +109,7 @@ export class ArticleBackendService {
 
   /** PUT: update an article. */
   public updateArticle(article: Article): Observable<any> {
-    return this.http.put(this.articlesUrl, article, { headers: this.getHttpHeaders() }).pipe(
+    return this.http.put(this.articlesUrl, article, { headers: this.getHttpHeaders }).pipe(
       map(res  => res['data'] as Article),
       tap(_ => this.log(`Artikel mit name = '${article.name}' und id = '${article._id}' wurde aktualisiert.`)),
       catchError(this.handleError<any>('updateArticle'))
@@ -135,7 +127,7 @@ export class ArticleBackendService {
     }
     const url = `${this.articlesUrl}/${id}`;
 
-    return this.http.delete<Article>(url, { headers: this.getHttpHeaders() }).pipe(
+    return this.http.delete<Article>(url, { headers: this.getHttpHeaders }).pipe(
       map(res  => res['data'] as Article),
       tap(_ => this.log(`Artikel mit name = '${name}' und id = '${id}' wurde gelöscht.`)),
       catchError(this.handleError<Article>('deleteArticle'))
@@ -143,7 +135,8 @@ export class ArticleBackendService {
   }
 
   private log(message: string) {
-    this.messageService.add('Artikel Service: ' + message);
+    // this.messageService.add('Artikel Service: ' + message);
+    console.log('Artikel Service: ' + message);
   }
 
   /**
@@ -157,7 +150,8 @@ export class ArticleBackendService {
       console.error('ArticleBackendService.handleError(): ', error);
       this.log(`${operation} failed: ${error.message}`);
 
-      this.dialogService.inform('Fehlermeldung', getErrorText(error, operation));
+      // this.dialogService.inform('Fehlermeldung', getErrorText(error, operation));
+      throw error;
 
       // Let the app keep running by returning an empty result.
       return of(result as T);
@@ -176,7 +170,7 @@ export class ArticleBackendService {
     if (reservationFilter.limit) { httpParamsObject.limit = reservationFilter.limit.toString(); }
     let httpParams = new HttpParams({fromObject: httpParamsObject});
 
-    return this.http.get(this.reservationsUrl, { headers: this.getHttpHeaders(), params: httpParams })
+    return this.http.get(this.reservationsUrl, { headers: this.getHttpHeaders, params: httpParams })
       .pipe(
         tap(response => { this.log(`Reservationen geladen.`);
           // console.log('reservation response: ', response);
@@ -187,7 +181,7 @@ export class ArticleBackendService {
 
   /** POST: add a new reservation. */
   public createReservation(reservation: Reservation): Observable<Reservation> {
-    return this.http.post<Reservation>(this.reservationsUrl, reservation, { headers: this.getHttpHeaders() }).pipe(
+    return this.http.post<Reservation>(this.reservationsUrl, reservation, { headers: this.getHttpHeaders }).pipe(
       map((res) => {
         return res['data'] as Reservation;
       }),
@@ -200,7 +194,7 @@ export class ArticleBackendService {
 
   /** PUT: update a reservation. */
   public updateReservation(reservation: Reservation): Observable<Reservation> {
-    return this.http.put<Reservation>(this.reservationsUrl, reservation, { headers: this.getHttpHeaders() }).pipe(
+    return this.http.put<Reservation>(this.reservationsUrl, reservation, { headers: this.getHttpHeaders }).pipe(
       map(res  => res['data'] as Reservation),
       tap((resReservation: Reservation) => {
         this.log(`Reservation für den Artikel '${reservation.article.name}', mit id = '${resReservation._id}' wurde aktualisiert.`);
@@ -220,7 +214,7 @@ export class ArticleBackendService {
     }
     const url = `${this.reservationsUrl}/${id}`;
 
-    return this.http.delete<Reservation>(url, { headers: this.getHttpHeaders() }).pipe(
+    return this.http.delete<Reservation>(url, { headers: this.getHttpHeaders }).pipe(
       map(res  => res['data'] as Reservation),
       tap(_ => this.log(`Reservation für den Artikel '${articleName}' mit id = '${id}' wurde gelöscht.`)),
       catchError(this.handleError<Reservation>('deleteReservation'))

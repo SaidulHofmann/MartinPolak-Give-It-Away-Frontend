@@ -4,12 +4,14 @@ import { UserService } from './user.service';
 import {HttpClient} from '@angular/common/http';
 import {MessageService} from '../../shared/services/message.service';
 import {ArticleService} from '../../article/services/article.service';
+import {RouterTestingModule} from '../../../../../node_modules/@angular/router/testing';
+import {HttpClientTestingModule} from '../../../../../node_modules/@angular/common/http/testing';
+import {UserBackendService} from './user-backend.service';
+import {DataService} from '../../shared/services/data.service';
+import {AuthService} from '../../permission/services/auth.service';
+import {AuthServiceMock} from '../../../core/test-mocks.core';
 
 describe('UserService', () => {
-  let userService: UserService;
-  let httpClientSpy: jasmine.SpyObj<HttpClient>;
-  let messageServiceSpy: jasmine.SpyObj<MessageService>;
-
   beforeEach(() => {
     const httpClientSpyObj = jasmine.createSpyObj(
       'HttpClient', ['get', 'put', 'post', 'delete']);
@@ -17,19 +19,19 @@ describe('UserService', () => {
       'MessageService', ['add']);
 
     TestBed.configureTestingModule({
+      imports: [RouterTestingModule, HttpClientTestingModule],
       providers: [
         UserService,
-        { provide: HttpClient, useValue: httpClientSpyObj },
-        { provide: MessageService, useValue: messageServiceSpyObj }
+        UserBackendService,
+        DataService,
+        {provide: AuthService, useClass: AuthServiceMock}
       ]
     });
 
-    userService = TestBed.get(UserService);
-    httpClientSpy = TestBed.get(HttpClient);
-    messageServiceSpy = TestBed.get(MessageService);
   });
 
-  it('should be created', () => {
+  it('can be created by dependency injection', () => {
+    let userService = new UserService(TestBed.get(UserBackendService), TestBed.get(DataService));
     expect(userService).toBeTruthy();
   });
 
