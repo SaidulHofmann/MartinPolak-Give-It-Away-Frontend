@@ -29,7 +29,7 @@ export class PermissionService implements OnDestroy {
   // ----------------------------------
   constructor(
     private permissionBackendSvc: PermissionBackendService,
-    private localDataService: DataService) {
+    private dataService: DataService) {
     this.init();
   }
 
@@ -82,11 +82,11 @@ export class PermissionService implements OnDestroy {
   // ----------------------------------
 
   public savePageSize() {
-    this.localDataService.saveObject('PermissionService.permissionFilter.limit', this.permissionFilter.limit);
+    this.dataService.saveObject('PermissionService.permissionFilter.limit', this.permissionFilter.limit);
   }
 
   public loadPageSize() {
-    let loadedPageSize: number = this.localDataService.loadObject('PermissionService.permissionFilter.limit');
+    let loadedPageSize: number = this.dataService.loadObject('PermissionService.permissionFilter.limit');
     if (loadedPageSize) {
       this.permissionFilter.limit = loadedPageSize;
     }

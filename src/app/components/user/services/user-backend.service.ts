@@ -1,14 +1,9 @@
 import {Injectable} from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import {catchError, map, tap} from 'rxjs/operators';
-import {MessageService} from '../../shared/services/message.service';
 import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http';
 import {User} from '../../../models/index.model';
-import {Router} from '@angular/router';
 import {HttpResponseUsers, UserFilter} from '../../../models/user.model';
-import {HttpErrorArgs} from '../../../core/types.core';
-import {ErrorCodeType} from '../../../core/enums.core';
-import {NavigationService} from '../../shared/services/navigation.service';
 import {AuthService} from '../../permission/services/auth.service';
 import {apiUrl} from '../../../core/globals.core';
 
@@ -25,10 +20,7 @@ export class UserBackendService {
 
   constructor(
     private authService: AuthService,
-    private http: HttpClient,
-    private router: Router,
-    private messageService: MessageService,
-    private navService: NavigationService) {
+    private http: HttpClient) {
   }
 
   /** GET users. */
@@ -91,7 +83,7 @@ export class UserBackendService {
   }
 
   private log(message: string) {
-    this.messageService.add('User Service: ' + message);
+    console.log('User backend service: ' + message);
   }
 
   /**

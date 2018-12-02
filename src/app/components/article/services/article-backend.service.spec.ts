@@ -1,13 +1,12 @@
 import {TestBed} from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import {HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import {HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {of} from '../../../../../node_modules/rxjs';
 import {ArticleBackendService} from './article-backend.service';
 import {AuthService} from '../../permission/services/auth.service';
 import {NavigationService} from '../../shared/services/navigation.service';
 import {Article} from '../../../models/article.model';
-import {HttpHeaders} from '../../../../../node_modules/@angular/common/http';
 import {fail} from 'assert';
 import {AuthServiceMock} from '../../../core/test-mocks.core';
 

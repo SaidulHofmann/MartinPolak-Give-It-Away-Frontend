@@ -1,6 +1,6 @@
 import { TestBed, inject } from '@angular/core/testing';
-
 import { MessageService } from './message.service';
+
 
 describe('MessageService', () => {
   let messageService: MessageService;
@@ -9,12 +9,12 @@ describe('MessageService', () => {
     TestBed.configureTestingModule({
       providers: [MessageService]
     });
-    messageService = TestBed.get(MessageService);
+    this.messageService = TestBed.get(MessageService);
   });
 
-  it('can be created by dependency injection.', inject([MessageService], (service: MessageService) => {
-    expect(service).toBeTruthy();
-  }));
+  it('can be created by dependency injection.', () => {
+    expect(this.messageService instanceof MessageService).toBe(true);
+  });
 
   it('can store log entries', () => {
     // Arrange
@@ -22,12 +22,12 @@ describe('MessageService', () => {
     const message02 = 'Message02';
 
     // Act
-    messageService.add(message01);
-    messageService.add(message02);
+    this.messageService.add(message01);
+    this.messageService.add(message02);
 
     // Assert
-    expect(messageService.messages[0]).toBe(message01);
-    expect(messageService.messages[1]).toBe(message02);
+    expect(this.messageService.messages[0]).toBe(message01);
+    expect(this.messageService.messages[1]).toBe(message02);
   });
 
   it('can display log entries', () => {
@@ -36,9 +36,9 @@ describe('MessageService', () => {
     const message02 = 'Message02';
 
     // Act
-    messageService.add(message01);
-    messageService.add(message02);
-    let displayEntries: string[] = messageService.messages;
+    this.messageService.add(message01);
+    this.messageService.add(message02);
+    let displayEntries: string[] = this.messageService.messages;
 
     // Assert
     expect(displayEntries).toEqual([message01, message02]);
@@ -50,12 +50,12 @@ describe('MessageService', () => {
     const message02 = 'Message02';
 
     // Act
-    messageService.add(message01);
-    messageService.add(message02);
-    messageService.clear();
+    this.messageService.add(message01);
+    this.messageService.add(message02);
+    this.messageService.clear();
 
     // Assert
-    expect(messageService.messages.length).toBe(0);
+    expect(this.messageService.messages.length).toBe(0);
   });
 
 });

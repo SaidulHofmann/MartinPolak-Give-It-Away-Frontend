@@ -38,7 +38,7 @@ export class ArticleService implements OnDestroy {
   constructor(
     private articleBackend: ArticleBackendService,
     private pagerService: PagerService,
-    private localDataService: DataService) {
+    private dataService: DataService) {
 
     Promise.resolve(this.initAsync());
   }
@@ -50,9 +50,9 @@ export class ArticleService implements OnDestroy {
 
   private async initAsync(): Promise<void> {
     try {
-      this.articleCategories = await this.localDataService.getArticleCategoryFilterAsync();
-      this.articleStatus = await this.localDataService.getArticleStatusFilterAsync();
-      this.sortOptions = this.localDataService.getArticleSortOptions();
+      this.articleCategories = await this.dataService.getArticleCategoryFilterAsync();
+      this.articleStatus = await this.dataService.getArticleStatusFilterAsync();
+      this.sortOptions = this.dataService.getArticleSortOptions();
       this.resetFilter();
       await this.loadArticlesAsync();
     } catch (ex) {

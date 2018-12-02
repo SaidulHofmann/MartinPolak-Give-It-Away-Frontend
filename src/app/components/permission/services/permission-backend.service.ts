@@ -19,12 +19,11 @@ export class PermissionBackendService {
 
   constructor(
     private authService: AuthService,
-    private http: HttpClient,
-    private messageService: MessageService) {
+    private http: HttpClient) {
   }
 
   private log(message: string) {
-    this.messageService.add('User Service: ' + message);
+    console.log('Permission backend service: ' + message);
   }
 
   /**

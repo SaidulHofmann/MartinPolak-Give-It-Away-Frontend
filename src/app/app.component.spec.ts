@@ -27,7 +27,7 @@ describe('AppComponent', () => {
   }));
 
   it('should create the app', async(() => {
-    expect(component).toBeTruthy();
+    expect(component instanceof AppComponent).toBe(true);
   }));
 
   it(`should have as title 'Give it Away'`, async(() => {
