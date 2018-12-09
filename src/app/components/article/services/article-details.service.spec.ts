@@ -5,7 +5,7 @@ import {ArticleService} from './article.service';
 import {ArticleBackendService} from './article-backend.service';
 import {ArticleDetailsService} from './article-details.service';
 import {AuthService} from '../../permission/services/auth.service';
-import {AuthServiceMock} from '../../../core/test-mocks.core';
+import {AuthServiceMock} from '../../../../testing/mocks.test';
 
 
 describe('ArticleDetailsService', () => {

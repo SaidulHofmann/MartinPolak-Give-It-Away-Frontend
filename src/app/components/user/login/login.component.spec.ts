@@ -3,13 +3,14 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
 import {ArticleBackendService} from '../../article/services/article-backend.service';
 import {AuthService} from '../../permission/services/auth.service';
-import {AuthServiceMock} from '../../../core/test-mocks.core';
 import {NavigationService} from '../../shared/services/navigation.service';
 import {ArticleService} from '../../article/services/article.service';
 import {DialogService} from '../../shared/services/dialog.service';
 import {RouterTestingModule} from '../../../../../node_modules/@angular/router/testing';
 import {HttpClientTestingModule} from '../../../../../node_modules/@angular/common/http/testing';
 import {SharedModule} from '../../shared/shared.module';
+import {AuthServiceMock} from '../../../../testing/mocks.test';
+import {ArticleComponent} from '../../article/article.component';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -28,12 +29,12 @@ describe('LoginComponent', () => {
     });
 
     fixture = TestBed.createComponent(LoginComponent);
-    component = fixture.componentInstance;
     fixture.detectChanges();
+    component = fixture.componentInstance;
   });
 
 
   it('can be created by dependency injection', () => {
-    expect(component).toBeTruthy();
+    expect(component instanceof LoginComponent).toBe(true);
   });
 });

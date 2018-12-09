@@ -33,10 +33,10 @@ export class DataService {
     private navService: NavigationService,
     private http: HttpClient) {
 
-    this.preloadCachedData();
+    this.preloadCachedDataAsync();
   }
 
-  private async preloadCachedData(): Promise<void> {
+  public async preloadCachedDataAsync(): Promise<void> {
     try {
       await this.getPermissionListAsync();
       await this.getArticleCategoryListAsync();

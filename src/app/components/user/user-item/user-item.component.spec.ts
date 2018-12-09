@@ -4,10 +4,11 @@ import { UserItemComponent } from './user-item.component';
 import {RouterTestingModule} from '../../../../../node_modules/@angular/router/testing';
 import {HttpClientTestingModule} from '../../../../../node_modules/@angular/common/http/testing';
 import {AuthService} from '../../permission/services/auth.service';
-import {AuthServiceMock} from '../../../core/test-mocks.core';
 import {UserItemService} from '../services/user-item.service';
 import {DialogService} from '../../shared/services/dialog.service';
 import {SharedModule} from '../../shared/shared.module';
+import {AuthServiceMock} from '../../../../testing/mocks.test';
+import {CreateArticleComponent} from '../../article/create-article/create-article.component';
 
 describe('UserItemComponent', () => {
   let component: UserItemComponent;
@@ -30,6 +31,6 @@ describe('UserItemComponent', () => {
   });
 
   it('can be created by dependency injection', () => {
-    expect(component).toBeTruthy();
+    expect(component instanceof UserItemComponent).toBe(true);
   });
 });

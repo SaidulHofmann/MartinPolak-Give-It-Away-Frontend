@@ -5,7 +5,7 @@ import {AuthService} from './auth.service';
 import {PermissionService} from './permission.service';
 import {PermissionBackendService} from './permission-backend.service';
 import {DataService} from '../../shared/services/data.service';
-import {AuthServiceMock} from '../../../core/test-mocks.core';
+import {AuthServiceMock} from '../../../../testing/mocks.test';
 
 
 describe('PermissionService', () => {

@@ -7,7 +7,9 @@ import {SharedModule} from '../shared/shared.module';
 import {PermissionService} from './services/permission.service';
 import {PermissionItemComponent} from './permission-item/permission-item.component';
 import {AuthService} from './services/auth.service';
-import {AuthServiceMock} from '../../core/test-mocks.core';
+import {AuthServiceMock} from '../../../testing/mocks.test';
+import {UserItemComponent} from '../user/user-item/user-item.component';
+
 
 describe('PermissionComponent', () => {
   let component: PermissionComponent;
@@ -28,6 +30,6 @@ describe('PermissionComponent', () => {
   });
 
   it('can be created by dependency injection', () => {
-    expect(component).toBeTruthy();
+    expect(component instanceof PermissionComponent).toBe(true);
   });
 });

@@ -3,8 +3,8 @@ import { DataService } from './data.service';
 import {RouterTestingModule} from '../../../../../node_modules/@angular/router/testing';
 import {HttpClientTestingModule} from '../../../../../node_modules/@angular/common/http/testing';
 import {AuthService} from '../../permission/services/auth.service';
-import {AuthServiceMock} from '../../../core/test-mocks.core';
 import {NavigationService} from './navigation.service';
+import {AuthServiceMock} from '../../../../testing/mocks.test';
 
 
 describe('DataService', () => {

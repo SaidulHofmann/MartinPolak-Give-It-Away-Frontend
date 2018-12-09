@@ -16,7 +16,7 @@ describe('MessageService', () => {
     expect(this.messageService instanceof MessageService).toBe(true);
   });
 
-  it('can store log entries', () => {
+  it('should store log entries', () => {
     // Arrange
     const message01 = 'Message01';
     const message02 = 'Message02';
@@ -30,7 +30,7 @@ describe('MessageService', () => {
     expect(this.messageService.messages[1]).toBe(message02);
   });
 
-  it('can display log entries', () => {
+  it('should display log entries', () => {
     // Arrange
     const message01 = 'Message01';
     const message02 = 'Message02';
@@ -44,7 +44,7 @@ describe('MessageService', () => {
     expect(displayEntries).toEqual([message01, message02]);
   });
 
-  it('can clear log entries', () => {
+  it('should clear log entries', () => {
     // Arrange
     const message01 = 'Message01';
     const message02 = 'Message02';

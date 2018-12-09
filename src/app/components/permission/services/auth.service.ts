@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Article, Permission, User} from '../../../models/index.model';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from '../../../../../node_modules/@angular/common/http';
-import {MessageService} from '../../shared/services/message.service';
 import {NavigationService} from '../../shared/services/navigation.service';
 import {map, tap} from 'rxjs/operators';
 import {Observable} from '../../../../../node_modules/rxjs';
@@ -11,6 +10,7 @@ import {PermissionType} from '../../../core/enums.core';
 import decode from 'jwt-decode';
 import {ArgumentError} from '../../../core/errors.core';
 
+const accessDeniedMessage = 'Der Zugriff auf Server Ressourcen ist nicht möglich weil der Benutzer nicht angemeldet ist.';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -25,17 +25,17 @@ export class AuthService {
     private http: HttpClient,
     private navService: NavigationService) {
 
-    // Temporary
+    // Temporary for testing.
     this.loadCurrentUser();
   }
 
-  private log(message: string) {
+  private log(message: string): void {
     console.log('Authentication Service: ' + message);
   }
 
   public getHttpHeaders(): HttpHeaders {
     if (!this.currentUser) {
-      throw Error('Der Zugriff auf Server Ressourcen ist nicht möglich weil der Benutzer nicht angemeldet ist.');
+      throw Error(accessDeniedMessage);
       this.navService.gotoLoginPage();
     } else {
       return new HttpHeaders({
@@ -47,7 +47,7 @@ export class AuthService {
 
   public getHttpFormHeaders(): HttpHeaders {
     if (!this.currentUser) {
-      throw Error('Der Zugriff auf Server Ressourcen ist nicht möglich weil der Benutzer nicht angemeldet ist.');
+      throw Error(accessDeniedMessage);
       this.navService.gotoLoginPage();
     } else {
       return new HttpHeaders({
@@ -76,16 +76,16 @@ export class AuthService {
     );
   }
 
-  public logout() {
+  public logout(): void {
     this._currentUser = null;
     this.navService.gotoLoginPage();
   }
 
-  public get currentUser() {
+  public get currentUser(): User {
     return this._currentUser;
   }
 
-  public get isAuthenticated() {
+  public get isAuthenticated(): boolean {
     if (this._currentUser
       && this._currentUser.authToken
       && !this.jwtHelper.isTokenExpired(this._currentUser.authToken)) {
@@ -95,20 +95,12 @@ export class AuthService {
     }
   }
 
-  private getAuthToken() {
-    if (this._currentUser) {
-      return this._currentUser.authToken;
-    } else {
-      throw Error('Authentication Token nicht verfügbar weil Benutzer nicht angemeldet.');
-    }
-  }
-
-  private setCurrentUser(user) {
+  private setCurrentUser(user): void {
     this._currentUser = user;
     localStorage.setItem('currentUser', JSON.stringify(user));
   }
 
-  private loadCurrentUser() {
+  private loadCurrentUser(): void {
     this._currentUser = JSON.parse(localStorage.getItem('currentUser') || null);
     // Set the permissions from token. The token will be invalid if changed.
     if (this._currentUser) {

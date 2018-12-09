@@ -1,4 +1,4 @@
-import {TestBed} from '@angular/core/testing';
+import {async, TestBed} from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -8,7 +8,8 @@ import {AuthService} from '../../permission/services/auth.service';
 import {NavigationService} from '../../shared/services/navigation.service';
 import {Article} from '../../../models/article.model';
 import {fail} from 'assert';
-import {AuthServiceMock} from '../../../core/test-mocks.core';
+import {AuthServiceMock} from '../../../../testing/mocks.test';
+
 
 const testArticleId = '5a9e4e65bdd7751e5033123f';
 
@@ -26,15 +27,11 @@ describe('ArticleBackendService', () => {
   });
 
   it('can be created by dependency injection', () => {
-    let articleBackendSvc = new ArticleBackendService(
-      TestBed.get(AuthService),
-      TestBed.get(NavigationService),
-      TestBed.get(HttpClient)
-    );
+    let articleBackendSvc = TestBed.get(ArticleBackendService);
     expect(articleBackendSvc instanceof ArticleBackendService).toBe(true);
   });
 
-  it('#getArticleById() should return an article', (done: DoneFn) => {
+  it('#getArticleById() should return an article', async(() => {
     // Arrange
     const articleStub = new Article();
     articleStub._id = testArticleId;
@@ -53,11 +50,10 @@ describe('ArticleBackendService', () => {
         httpClientSpy.get.calls.mostRecent().returnValue.subscribe((returnValue) => {
           expect(returnValue).toBe(httpResponseStub, 'HttpClientSpy returned stub value.');
         });
-        done();
       },
       (error: HttpErrorResponse) => fail('Error loading article: ' + error.message)
     );
 
-  });
+  }));
 
 });

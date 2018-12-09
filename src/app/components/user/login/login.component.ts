@@ -11,6 +11,7 @@ import {getCustomOrDefaultError} from '../../../core/errors.core';
 import {NavigationService} from '../../shared/services/navigation.service';
 import {AuthService} from '../../permission/services/auth.service';
 import {ArticleService} from '../../article/services/article.service';
+import {DataService} from '../../shared/services/data.service';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +25,7 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     public navService: NavigationService,
     private dialogService: DialogService,
+    private dataService: DataService,
     private articleService: ArticleService) { }
 
   ngOnInit() {
@@ -36,7 +38,9 @@ export class LoginComponent implements OnInit {
     this.authService.login(email, password)
       .subscribe(
         (user: User) => {
-          this.articleService.loadArticlesAsync().then( () => this.navService.gotoArticleOverviewPage());
+          this.dataService.preloadCachedDataAsync()
+            .then(() => this.articleService.loadArticlesAsync())
+            .then(() => this.navService.gotoArticleOverviewPage());
           },
         (errorResponse: HttpErrorResponse) => {
           let errorDetails: ErrorDetails = getCustomOrDefaultError(errorResponse);

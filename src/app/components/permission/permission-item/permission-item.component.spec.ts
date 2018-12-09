@@ -7,6 +7,7 @@ import {AuthService} from '../services/auth.service';
 import {PermissionItemService} from '../services/permission-item.service';
 import {DialogService} from '../../shared/services/dialog.service';
 import {SharedModule} from '../../shared/shared.module';
+import {PermissionComponent} from '../permission.component';
 
 describe('PermissionItemComponent', () => {
   let component: PermissionItemComponent;
@@ -29,6 +30,6 @@ describe('PermissionItemComponent', () => {
   });
 
   it('can be created by dependency injection', () => {
-    expect(component).toBeTruthy();
+    expect(component instanceof PermissionItemComponent).toBe(true);
   });
 });

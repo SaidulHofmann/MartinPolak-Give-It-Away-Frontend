@@ -10,7 +10,6 @@ import {AuthService} from '../../permission/services/auth.service';
 import {ErrorDetails, FileDeleteReport, FileProcessingStatus, FileUploadReport} from '../../../core/types.core';
 import {getCustomOrDefaultError} from '../../../core/errors.core';
 import {defaultImageName, imageUrlFrontend} from '../../../core/globals.core';
-import {Permission} from '../../../models/permission.model';
 
 
 @Injectable({ providedIn: 'root' })

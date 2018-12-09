@@ -16,7 +16,7 @@ export class PermissionGuard implements CanActivate {
                private articleBackendSvc: ArticleBackendService) {
   }
 
-  canActivate(route: ActivatedRouteSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+  public canActivate(route: ActivatedRouteSnapshot): Observable<boolean> | Promise<boolean> | boolean {
     let acceptedPermissions: PermissionType[] = route.data.acceptedPermissions;
     if (!acceptedPermissions) { return false; }
     if (!this.authService.isAuthenticated) {

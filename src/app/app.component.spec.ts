@@ -11,8 +11,8 @@ import {HttpClient, HttpHandler} from '@angular/common/http';
 
 
 describe('AppComponent', () => {
-  let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
+  let component: AppComponent;
 
   beforeEach((() => {
     TestBed.configureTestingModule({
@@ -24,20 +24,11 @@ describe('AppComponent', () => {
     });
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   }));
 
   it('should create the app', async(() => {
     expect(component instanceof AppComponent).toBe(true);
-  }));
-
-  it(`should have as title 'Give it Away'`, async(() => {
-    expect(component.title).toEqual('Give it Away');
-  }));
-
-  it('should render title in a h1 tag', async(() => {
-    fixture.detectChanges(); // performs data binding
-    const h1: HTMLElement = fixture.nativeElement.querySelector('h1');
-    expect(h1.textContent).toContain('Give it Away');
   }));
 
 });

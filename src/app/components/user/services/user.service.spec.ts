@@ -5,7 +5,7 @@ import {HttpClientTestingModule} from '../../../../../node_modules/@angular/comm
 import {UserBackendService} from './user-backend.service';
 import {DataService} from '../../shared/services/data.service';
 import {AuthService} from '../../permission/services/auth.service';
-import {AuthServiceMock} from '../../../core/test-mocks.core';
+import {AuthServiceMock} from '../../../../testing/mocks.test';
 
 describe('UserService', () => {
 

@@ -4,7 +4,7 @@ import {HttpClientTestingModule} from '../../../../../node_modules/@angular/comm
 import {AuthService} from './auth.service';
 import {NavigationService} from '../../shared/services/navigation.service';
 import {AuthGuard} from './auth-guard.service';
-import {AuthServiceMock} from '../../../core/test-mocks.core';
+import {AuthServiceMock} from '../../../../testing/mocks.test';
 
 
 describe('AuthGuard', () => {

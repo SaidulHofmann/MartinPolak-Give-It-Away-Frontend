@@ -4,8 +4,8 @@ import {HttpClientTestingModule} from '../../../../../node_modules/@angular/comm
 import {AuthService} from './auth.service';
 import {NavigationService} from '../../shared/services/navigation.service';
 import {PermissionGuard} from './permission-guard.service';
-import {AuthServiceMock} from '../../../core/test-mocks.core';
 import {ArticleBackendService} from '../../article/services/article-backend.service';
+import {AuthServiceMock} from '../../../../testing/mocks.test';
 
 
 describe('PermissionGuard', () => {

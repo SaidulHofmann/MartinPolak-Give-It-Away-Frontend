@@ -1,7 +1,6 @@
 // Contains objects with test data.
 
-import {Article, ArticleCategory, ArticleStatus, Permission, User, UserRef} from '../models/index.model';
-import {IdNamePair} from './types.core';
+import {Article, Permission, User, UserRef} from '../app/models/index.model';
 
 export const testPermissionStandardbenutzer: Permission = {
   _id: '5b35430567dfb9160c2532bf',

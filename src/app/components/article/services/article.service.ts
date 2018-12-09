@@ -48,7 +48,7 @@ export class ArticleService implements OnDestroy {
     this.loadingSubject.complete();
   }
 
-  private async initAsync(): Promise<void> {
+  public async initAsync(): Promise<void> {
     try {
       this.articleCategories = await this.dataService.getArticleCategoryFilterAsync();
       this.articleStatus = await this.dataService.getArticleStatusFilterAsync();

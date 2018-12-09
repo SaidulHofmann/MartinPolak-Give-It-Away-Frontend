@@ -11,7 +11,7 @@ export class User {
   createdAt = new Date();
   updatedAt = new Date();
 
-  authToken = '';
+  authToken: string = '';
   permission: Permission = null;
 }
 

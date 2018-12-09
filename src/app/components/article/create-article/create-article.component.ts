@@ -15,12 +15,13 @@ import {AuthService} from '../../permission/services/auth.service';
 })
 export class CreateArticleComponent implements OnInit, CanDeactivate<CanComponentDeactivate> {
   public EditModeType = EditModeType;
+  public editMode = EditModeType.Create;
   public article: Article;
   @ViewChild(ArticleItemComponent) private articleItemComponent: ArticleItemComponent;
 
   constructor(
     private authService: AuthService,
-    public navService: NavigationService,
+    public navService: NavigationService
   ) { }
 
   public ngOnInit() {

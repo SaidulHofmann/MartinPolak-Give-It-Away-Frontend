@@ -69,8 +69,7 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
     public articleItemSvc: ArticleItemService,
     private formBuilder: FormBuilder,
     private navService: NavigationService,
-    private dialogService: DialogService,
-    private dataService: DataService) {
+    private dialogService: DialogService) {
   }
 
   public ngOnInit() {
@@ -174,6 +173,7 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
       updatedAt:          this.article.updatedAt || null,
     });
 
+    this.articleForm.get('status').disable();
     this.createImageControls(this.article.additionalImages);
   }
 

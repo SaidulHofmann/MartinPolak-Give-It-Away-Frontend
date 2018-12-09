@@ -1,12 +1,9 @@
 import {Injectable} from '@angular/core';
-import {getErrorText} from '../../../core/errors.core';
 import {Reservation, ReservationFilter} from '../../../models/reservation.model';
 import {catchError, map, tap} from 'rxjs/operators';
 import {Article, ArticleFilter, HttpResponseArticles} from '../../../models/article.model';
 import {Observable, of} from 'rxjs/index';
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
-import {MessageService} from '../../shared/services/message.service';
-import {DialogService} from '../../shared/services/dialog.service';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {NavigationService} from '../../shared/services/navigation.service';
 import {AuthService} from '../../permission/services/auth.service';
 import {apiUrl} from '../../../core/globals.core';
