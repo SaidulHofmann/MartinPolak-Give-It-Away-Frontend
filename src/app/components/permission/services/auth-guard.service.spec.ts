@@ -15,8 +15,8 @@ describe('AuthGuard', () => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule],
       providers: [
-        AuthGuard,
         {provide: AuthService, useClass: AuthServiceMock},
+        AuthGuard,
         NavigationService
       ]
     });
@@ -34,8 +34,13 @@ describe('AuthGuard', () => {
   });
 
   it('should not activate if not logged in', () => {
+    let navigationService = TestBed.get(NavigationService);
+    spyOn(navigationService, 'gotoLoginPage');
+
     this.authService.isAuthenticated = false;
+
     expect(this.authGuard.canActivate()).toBe(false);
+    expect(navigationService.gotoLoginPage).toHaveBeenCalled();
   });
 
 });

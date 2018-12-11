@@ -11,7 +11,10 @@ describe('UserBackendService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule],
-      providers: [UserBackendService, { provide: AuthService, useClass: AuthServiceMock }]
+      providers: [
+        { provide: AuthService, useClass: AuthServiceMock },
+        UserBackendService
+      ]
     });
   });
 

@@ -1,4 +1,4 @@
-import {async, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {async, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '../../../../../node_modules/@angular/common/http/testing';
 import {ArticleService} from './article.service';

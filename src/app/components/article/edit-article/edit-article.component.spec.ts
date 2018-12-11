@@ -33,7 +33,7 @@ describe('EditArticleComponent', () => {
     expect(component instanceof EditArticleComponent).toBe(true);
   });
 
-  it('#editMode should be \'read\' if nothing assigned', () => {
+  it('#editMode should be EditModeType.Read if nothing assigned', () => {
     expect(component.editMode).toBe(EditModeType.Read);
   });
 

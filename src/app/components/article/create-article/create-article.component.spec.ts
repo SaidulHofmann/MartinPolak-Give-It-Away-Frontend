@@ -33,11 +33,11 @@ describe('CreateArticleComponent', () => {
     expect(component instanceof CreateArticleComponent).toBe(true);
   });
 
-  it('#editMode should be Create', () => {
+  it('#editMode should be EditModeType.Create', () => {
     expect(component.editMode).toBe(EditModeType.Create);
   });
 
-  it('#article should be prepared for current user', () => {
+  it('#article.publisher should be set to currentUser', () => {
     let authService = TestBed.get(AuthService);
     expect(component.article.publisher._id).toBe(authService.currentUser._id);
   });

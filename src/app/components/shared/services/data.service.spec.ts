@@ -1,4 +1,4 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { DataService } from './data.service';
 import {RouterTestingModule} from '../../../../../node_modules/@angular/router/testing';
 import {HttpClientTestingModule} from '../../../../../node_modules/@angular/common/http/testing';

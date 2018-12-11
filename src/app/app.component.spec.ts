@@ -6,25 +6,25 @@ import {FooterComponent} from './components/shared/footer/footer.component';
 import {MessagesComponent} from './components/shared/messages/messages.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import {MessageService} from './components/shared/services/message.service';
-import {HttpClient, HttpHandler} from '@angular/common/http';
-
+import {HttpClientTestingModule} from '../../node_modules/@angular/common/http/testing';
 
 
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
   let component: AppComponent;
 
-  beforeEach((() => {
+  beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        AppComponent, AppNavbarComponent, HeaderComponent, FooterComponent, MessagesComponent
-      ],
-      imports: [RouterTestingModule],
-      providers: [MessageService, HttpClient, HttpHandler]
+      imports: [RouterTestingModule, HttpClientTestingModule],
+      declarations: [AppComponent, AppNavbarComponent, HeaderComponent, FooterComponent, MessagesComponent],
+      providers: [
+        MessageService
+      ]
+    }).compileComponents().then(() => {
+      fixture = TestBed.createComponent(AppComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
     });
-    fixture = TestBed.createComponent(AppComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   }));
 
   it('should create the app', async(() => {

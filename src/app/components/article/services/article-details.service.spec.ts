@@ -14,8 +14,8 @@ describe('ArticleDetailsService', () => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule],
       providers: [
-        ArticleDetailsService,
         { provide: AuthService, useClass: AuthServiceMock },
+        ArticleDetailsService,
         ArticleBackendService,
         ArticleService
       ]

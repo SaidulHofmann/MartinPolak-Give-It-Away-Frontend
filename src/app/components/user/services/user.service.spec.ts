@@ -1,4 +1,4 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { UserService } from './user.service';
 import {RouterTestingModule} from '../../../../../node_modules/@angular/router/testing';
 import {HttpClientTestingModule} from '../../../../../node_modules/@angular/common/http/testing';
@@ -13,13 +13,12 @@ describe('UserService', () => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule],
       providers: [
-        UserService,
         { provide: AuthService, useClass: AuthServiceMock },
+        UserService,
         UserBackendService,
         DataService
       ]
     });
-
   });
 
   it('can be created by dependency injection', () => {

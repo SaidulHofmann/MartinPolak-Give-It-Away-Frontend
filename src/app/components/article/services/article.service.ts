@@ -25,7 +25,7 @@ export class ArticleService implements OnDestroy {
   public get articles(): Article[] {
     return this.articlesSubject.getValue();
   }
-  public loadingSubject = new BehaviorSubject<boolean>(false);
+  private loadingSubject = new BehaviorSubject<boolean>(false);
   public loading$ = this.loadingSubject.asObservable();
 
 

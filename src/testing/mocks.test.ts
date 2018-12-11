@@ -39,6 +39,10 @@ export class DataServiceMock {
   public getArticleSortOptions(): IdNamePair[] {
     return new Array<IdNamePair>();
   }
+
+  public async preloadCachedDataAsync(): Promise<void> {
+    return null;
+  }
 }
 
 export class ComponentMock implements CanDeactivate<CanComponentDeactivate> {

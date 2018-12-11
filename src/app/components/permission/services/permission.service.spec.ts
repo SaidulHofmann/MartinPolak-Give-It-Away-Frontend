@@ -14,10 +14,10 @@ describe('PermissionService', () => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule],
       providers: [
+        { provide: AuthService, useClass: AuthServiceMock },
         PermissionService,
         PermissionBackendService,
-        DataService,
-        { provide: AuthService, useClass: AuthServiceMock }
+        DataService
       ]
     });
   });

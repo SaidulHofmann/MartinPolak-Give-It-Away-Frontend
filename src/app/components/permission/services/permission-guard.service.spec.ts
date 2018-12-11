@@ -14,8 +14,8 @@ describe('PermissionGuard', () => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule],
       providers: [
-        PermissionGuard,
         { provide: AuthService, useClass: AuthServiceMock },
+        PermissionGuard,
         NavigationService,
         ArticleBackendService
       ]

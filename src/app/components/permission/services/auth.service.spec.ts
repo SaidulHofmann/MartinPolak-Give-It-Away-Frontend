@@ -1,4 +1,4 @@
-import {async, TestBed} from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {HttpClientTestingModule} from '../../../../../node_modules/@angular/common/http/testing';
 import {AuthService} from './auth.service';
@@ -7,6 +7,7 @@ import {NavigationService} from '../../shared/services/navigation.service';
 
 describe('AuthService', () => {
   let authService;
+  let navigationService: NavigationService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -15,6 +16,8 @@ describe('AuthService', () => {
 
     });
     authService = TestBed.get(AuthService);
+    navigationService = TestBed.get(NavigationService);
+    spyOn(navigationService, 'gotoLoginPage');
   });
 
   it('can be created by dependency injection', () => {
@@ -32,9 +35,8 @@ describe('AuthService', () => {
   });
 
   it('#logout() should redirect to login page', () => {
-    let gotoLoginPageSpy = spyOn(TestBed.get(NavigationService), 'gotoLoginPage').and.callThrough();
     authService.logout();
-    expect(gotoLoginPageSpy.calls.any()).toBe(true, 'NavigationService.gotoLoginPage() called');
+    expect(navigationService.gotoLoginPage).toHaveBeenCalled();
   });
 
 });

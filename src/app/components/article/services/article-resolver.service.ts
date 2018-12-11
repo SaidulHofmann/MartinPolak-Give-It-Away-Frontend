@@ -2,7 +2,6 @@ import {Article} from '../../../models/article.model';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
-import {ArticleService} from './article.service';
 import {ArticleBackendService} from './article-backend.service';
 
 @Injectable({

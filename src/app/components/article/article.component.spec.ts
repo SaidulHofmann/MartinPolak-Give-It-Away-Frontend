@@ -10,7 +10,6 @@ import {DataService} from '../shared/services/data.service';
 import {ArticleBackendService} from './services/article-backend.service';
 import {PagerService} from '../shared/services/pager.service';
 import {NavigationService} from '../shared/services/navigation.service';
-import {EditArticleComponent} from './edit-article/edit-article.component';
 
 
 describe('ArticleComponent', () => {
@@ -43,7 +42,7 @@ describe('ArticleComponent', () => {
     expect(component instanceof ArticleComponent).toBe(true);
   });
 
-  it('#onSetFilter() is triggered when filter button is clicked', () => {
+  it('click on filterButton calls #onSetFilter()', () => {
     spyOn(component, 'onSetFilter').and.callThrough();
     let filterButton: HTMLButtonElement = hostElements.querySelector('#filterButton');
     expect(filterButton).toBeDefined('#filterButton exists.');
@@ -54,7 +53,7 @@ describe('ArticleComponent', () => {
     expect(component.onSetFilter).toHaveBeenCalled();
   });
 
-  it('#onResetFilter() is triggered when reset button is clicked', () => {
+  it('click on resetButton calls #onResetFilter()', () => {
     spyOn(component, 'onResetFilter').and.callThrough();
     let resetButton: HTMLButtonElement = hostElements.querySelector('#resetButton');
     expect(resetButton).toBeDefined('#resetButton exists.');

@@ -17,8 +17,8 @@ describe('ArticleItemService', () => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule],
       providers: [
-        ArticleItemService,
         { provide: AuthService, useClass: AuthServiceMock },
+        ArticleItemService,
         ArticleBackendService,
         ArticleService,
         PagerService,
