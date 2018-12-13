@@ -11,3 +11,67 @@ $gia-invalid-color: #a94442; /* red */
 
 
 /* Mixins */
+
+// Horizontally centers block elements
+@mixin center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// Horizontally and vertically centers block elements
+@mixin center-both {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  @include prefix(transform, translate(-50%, -50%), 'webkit' 'ms');
+}
+
+// Adds a thin black line above the element, and a thin gray line below the element, creating an inlay effect.
+@mixin outline {
+  box-shadow: rgba(255, 255, 255, 0.5) 0 1px 0, inset rgba(0, 0, 0, 0.75) 0 1px 0;
+}
+
+// Given an opacity value, generates that value as well as a way to display that opacity value in Internet Explorer 8 and 9.
+// @param {Float} [0..1] $opacity - Opacity
+@mixin opacity($opacity) {
+  opacity: $opacity;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$opacity * 100})";
+}
+
+// Generates the color black, with, optionally, a set opacity.
+// @param {Float} [0..1] $opacity - Opacity
+@function black($opacity) {
+  @return rgba(0, 0, 0, $opacity);
+}
+
+// Generates the color white, with, optionally, a set opacity.
+// @param {Float}  [0..1] $opacity - Opacity
+@function white($opacity) {
+  @return rgba(255, 255, 255, $opacity);
+}
+
+// Embossing text shadow
+// @param {Float} [0..1] $value - Opacity value
+@mixin text-shadow($value) {
+  text-shadow: rgba(255, 255, 255, $value) 0 1px 0;
+}
+
+// Background gradient helper
+// @param {Color} $start-color - Start color
+// @param {Color} $end-color - End color
+// @param {String} $orientation - Type of gradient, either `vertical`, `horizontal` or `radial`
+@mixin background-gradient($start-color, $end-color, $orientation) {
+  background: $start-color;
+
+  @if $orientation == 'vertical' {
+    background: -webkit-linear-gradient(top, $start-color, $end-color);
+    background: linear-gradient(to bottom, $start-color, $end-color);
+  } @else if $orientation == 'horizontal' {
+    background: -webkit-linear-gradient(left, $start-color, $end-color);
+    background: linear-gradient(to right, $start-color, $end-color);
+  } @else {
+    background: -webkit-radial-gradient(center, ellipse cover, $start-color, $end-color);
+    background: radial-gradient(ellipse at center, $start-color, $end-color);
+  }
+}

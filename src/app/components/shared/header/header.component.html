@@ -4,7 +4,7 @@
     <p *ngIf="authService.currentUser" class="text-right text-info">{{authService.currentUser.fullname + ' | ' + authService.currentUser.permission.name}}</p>
     <h1>
       <div class="gia-header">{{appTitle}}</div>
-      <small class="d-none d-sm-inline-block">{{appDescription}}</small>
+      <div class="appDescription d-none d-sm-inline-block">{{appDescription}}</div>
     </h1>
   </div>
 </div>

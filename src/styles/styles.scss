@@ -1,4 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
+/* Contains common styles and global styles that are imported or defined in themes. */
 
 /* Angular Material Style definitions. */
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
@@ -14,35 +14,16 @@ $fa-font-path: "../../node_modules/font-awesome/fonts";
 @import '../../node_modules/font-awesome/scss/font-awesome';
 
 
-body {
-  //margin: 2rem;
-}
+/* Common styles */
 
-body, input[text], button {
-  // color: #333;
-  font-family: Cambria, Georgia;
+body {
+  min-width: 300px;
 }
 
 .custom-dialog-container .mat-dialog-container {
   padding: 5px;
 }
 
-
-h1 {
-  color: #369;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 230%;
+.newlines {
+  white-space: pre-wrap;
 }
-
-h2, h3 {
-  color: #444;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: lighter;
-}
-
-
-/* everywhere else */
-* {
-  font-family: Arial, Helvetica, sans-serif;
-}
-

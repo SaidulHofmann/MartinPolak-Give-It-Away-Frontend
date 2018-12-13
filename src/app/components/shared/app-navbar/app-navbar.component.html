@@ -10,7 +10,7 @@
         <a class="nav-link" routerLink="/articles"><i class="fa fa-home mr-2"></i>Artikel Übersicht</a>
       </li>
       <li *ngIf="authService.isAuthenticated && authService.canCreateOwnArticle" class="nav-item" routerLinkActive="active">
-        <a class="nav-link" routerLink="articles/create"><i class="fa fa-gift mr-2"></i>Artikel erfassen</a>
+        <a class="nav-link" routerLink="articles/create"><i class="fa fa-plus mr-2"></i>Artikel erfassen</a>
       </li>
     </ul>
 

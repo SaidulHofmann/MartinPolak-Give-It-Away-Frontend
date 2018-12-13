@@ -257,11 +257,12 @@ export class ArticleItemComponent implements OnInit, OnChanges, CanDeactivate<Ca
     });
   }
 
-  public onDeleteOverviewImage() {
+  public onDeleteOverviewImage(fileInput: HTMLInputElement) {
     let overviewImage = this.overviewImageControl.value;
     if (!overviewImage) { return; }
 
     this.overviewImageControl.setValue('');
+    fileInput.value = '';
     if (this.articleForm.pristine) { this.articleForm.markAsDirty(); }
     if (this.additionalImagesFormArray.value.includes(overviewImage)) { return; }
 

@@ -44,21 +44,13 @@
     <div class="col-md-6">
 
       <div class="card">
-        <div class="card-header">
-          Artikel Beschreibung
-        </div>
-        <div class="card-body">
-          {{ article.description }}
-        </div>
+        <div class="card-header">Artikel Beschreibung</div>
+        <div class="card-body newlines">{{article.description}}</div>
       </div>
 
       <div class="card">
-        <div class="card-header">
-          Übergabe
-        </div>
-        <div class="card-body">
-          {{ article.handover }}
-        </div>
+        <div class="card-header">Übergabe</div>
+        <div class="card-body newlines">{{article.handover}}</div>
       </div>
 
       <div class="card mb-3">
@@ -75,11 +67,11 @@
 
           <div *ngIf="currentUser._id !== article.publisher._id; else publisherTemplate">
             <div>Wieso sollen Sie diesen Artikel erhalten ?</div>
-            <textarea [(ngModel)]="article.usersReservation.commentApplicant" rows="4" class="form-control mt-1 mb-3"
+            <textarea [(ngModel)]="article.usersReservation.commentApplicant" rows="6" class="form-control mt-1 mb-3"
                       placeholder="Bitte eine kurze Begründung, weshalb der Artikel Ihnen geschenkt werden soll.">
               </textarea>
             Kommentar des Publizierenden
-            <textarea readonly [(ngModel)]="article.usersReservation.commentPublisher" rows="4" class="form-control mt-1"></textarea>
+            <textarea readonly [(ngModel)]="article.usersReservation.commentPublisher" rows="6" class="form-control mt-1"></textarea>
 
             <div *ngIf="!article.userHasReservation && !(currentUser._id === article.publisher._id)">
               <button type="button" class="btn btn-success mt-3" (click)="onCreateReservation()">Artikel reservieren</button>

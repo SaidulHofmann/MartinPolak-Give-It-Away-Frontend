@@ -59,7 +59,7 @@
         <div class="form-group row">
           <label for="textareaDescription" class="col-sm-3 col-form-label">Beschreibung:</label>
           <div class="col-sm-9">
-            <textarea id="textareaDescription" required rows="4" class="form-control form-control-sm" formControlName="description"
+            <textarea id="textareaDescription" required rows="8" class="form-control form-control-sm" formControlName="description"
                       placeholder="Detailinformationen zum Artikel, dessen Zustand, weshalb dieser verschenkt werden soll, etc."></textarea>
             <div [hidden]="description.valid || description.pristine" class="alert alert-danger">Die Beschreibung muss eingegeben werden.</div>
           </div>
@@ -89,7 +89,7 @@
               <i class="fa fa-image mr-3"></i>Übersichts-Bild hinzufügen</button>
             <div class="input-group">
               <input id="inputOverviewImage" readonly (mouseover)="onOverviewImageHover()" type="text" class="form-control form-control-sm" formControlName="overviewImage">
-              <button type="button" (click)="onDeleteOverviewImage()" [disabled]="!isEditableArticle" class="btn btn-sm pull-right" title="Eintrag löschen" ><i class="fa fa-trash fa-lg"></i></button>
+              <button type="button" (click)="onDeleteOverviewImage(singleFileInput)" [disabled]="!isEditableArticle" class="btn btn-sm pull-right" title="Eintrag löschen" ><i class="fa fa-trash fa-lg"></i></button>
             </div>
           </div>
         </div>

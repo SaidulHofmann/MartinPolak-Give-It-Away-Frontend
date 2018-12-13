@@ -127,7 +127,8 @@
                   }">{{ article.status ? article.status.name + ' ' : '' }}</span>
                 <span *ngIf="article.userHasReservation && article.status._id !== ArticleStatusType.donated" class="alert alert-success">Reserviert</span>
               </div>
-              <div class="card-title">{{ article.description }}</div>
+              <br/>
+              <div class="card-title newlines">{{ article.description }}</div>
             </div>
           </div>
 
